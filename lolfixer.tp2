@@ -2,7 +2,8 @@ BACKUP ~lolfixer/backup~
 AUTHOR ~Trollololol~
 VERSION ~v0.0000000001a~
 
-BEGIN ~Area Fixer~
+BEGIN ~Script Assigner (assigns missing/unassigned scripts to areas)~
+  GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
 COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
@@ -10,14 +11,7 @@ COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
-    READ_LONG  0x70 "cont_off" ELSE 0
-    READ_SHORT 0x74 "cont_num" ELSE 0
     READ_ASCII 0x94 "script"
-    READ_LONG  0xa4 "door_num" ELSE 0
-    READ_LONG  0xa8 "door_off" ELSE 0
-    READ_LONG  0xc0 "rest_off" ELSE 0
-    READ_LONG  0xc4 "note_off" ELSE 0
-    READ_LONG  0xc8 "note_num" ELSE 213
     
     // G3 Debugging Suite - assign missing area script
     PATCH_IF (NOT FILE_EXISTS_IN_GAME ~%script%.bcs~) BEGIN
@@ -45,6 +39,20 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       PATCH_PRINT "%SOURCE_FILE% error: Area Script (%SOURCE_FILE%.bcs) assigned"
       WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
     END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+    READ_LONG  0x70 "cont_off" ELSE 0
+    READ_SHORT 0x74 "cont_num" ELSE 0
         
     // BGFixpack: Super Happy modder Pack - if trap is undetectable, undisarmable, and has no script, remove trapped flag
     FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN
@@ -65,22 +73,72 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         WRITE_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) 0
       END
     END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Map Note Offset Fixer (fixes incorrect map note offsets)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+    READ_LONG  0xc0 "rest_off" ELSE 0
+    READ_LONG  0xc4 "note_off" ELSE 0
+    READ_LONG  0xc8 "note_num" ELSE 213
     
     // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
     PATCH_IF (("%note_num%" = 0) AND ("%note_off%" != ("%rest_off%" + 0xe4))) BEGIN
       PATCH_PRINT "%SOURCE_FILE% error: Map Note Offsets Fixed"
       WRITE_LONG 0xc4 ("%rest_off%" + 0xe4)
     END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Door Unpicker (makes doors that need keys but were pickable - unpickable)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+    READ_LONG  0xa4 "door_num" ELSE 0
+    READ_LONG  0xa8 "door_off" ELSE 0
 	
-    // G3 Debugging Suite - make keyed doors unpickable & locked
+    // G3 Debugging Suite - make keyed doors unpickable
     FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
       READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry      
+      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry
         READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
         PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
           WRITE_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) 100
         END
+      END
+    END
+  END  
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Door Locker (locks doors that need keys but were unlocked)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+    READ_LONG  0xa4 "door_num" ELSE 0
+    READ_LONG  0xa8 "door_off" ELSE 0
+	
+    // G3 Debugging Suite - make keyed doors locked
+    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
+      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
+      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry
         READ_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) "flags"
         PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but ws not locked! Locked now"
