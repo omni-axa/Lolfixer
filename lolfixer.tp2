@@ -67,7 +67,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       READ_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) "trap_remove"
       READ_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) "trapped"
       READ_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) "script"
-      PATCH_IF ((("%script%" STRING_EQUAL_CASE "" = 0) OR ("%script%" STRING_EQUAL_CASE "None" = 0)) AND
+      PATCH_IF ((("%script%" STRING_EQUAL_CASE "") OR ("%script%" STRING_EQUAL_CASE "None")) AND
                  ("%trapped%" = 1) AND ("%trap_detect%" > 99) AND ("%trap_remove%" > 99)) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
         WRITE_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) 0
@@ -149,7 +149,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     // G3 Debugging Suite - make keyed doors unpickable
     FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
       READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") AND ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
+      PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
         READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
         PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
@@ -175,7 +175,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     // G3 Debugging Suite - make keyed doors locked
     FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
       READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") AND ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
+      PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
         READ_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) "flags"
         PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but ws not locked! Locked now"
