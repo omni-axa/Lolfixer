@@ -149,15 +149,24 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END  
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Creature Fixer~
+BEGIN ~Creature Resource Fixer (res_fixer for ALL CREATURES)~
+  GROUP ~Creature Stuff~
+  
+//ResFixer - Basic fixing
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_INCLUDE ~lolfixer/lib/fj_cre_validity.tpp~
+  PATCH_IF valid BEGIN
+    PATCH_INCLUDE ~lolfixer/lib/fj_cre_reindex.tpp~
+    PATCH_INCLUDE ~lolfixer/lib/fj_cre_eff_v2.tpp~
+  END
+BUT_ONLY_IF_IT_CHANGES
 
-//G3 Debugging Suite - Equip invalid items
+BEGIN ~BG Proficiency Nuller (sets any BG proficiencies to 0)~
+  GROUP ~Creature Stuff~
+
+//G3 Debugging Suite - Null BG Proficiencies
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN 
-    READ_LONG  0x2b8 "slot_off" ELSE 0
-    READ_LONG  0x2bc "itm_off" ELSE 0
-    READ_LONG  0x2c0 "itm_num" ELSE 0
-
     FOR (index = 0; index < 8; index = index + 1) BEGIN
       READ_BYTE (0x6e + "%index%") "prof"
       PATCH_IF ("%prof%" > 0) BEGIN
@@ -165,6 +174,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         WRITE_BYTE (0x6e + "%index%") 0
       END
     END
+  END  
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Inventory Overhauler (moves invalid equippable items to inventory and equips anything in the inventory to a free slot)~
+  GROUP ~Creature Stuff~
+
+//G3 Debugging Suite - Equip invalid items
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN 
+    READ_LONG  0x2b8 "slot_off" ELSE 0
+    READ_LONG  0x2bc "itm_off" ELSE 0
+    READ_LONG  0x2c0 "itm_num" ELSE 0
 
     // tracking variables
     SET "2hweapon" = 0
@@ -649,53 +670,26 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Item Fixer~
+BEGIN ~Item Resource Fixer (res_fixer for ALL ITEMS)~
+  GROUP ~Item Stuff~
 
+//ResFixer - Basic Fixing
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN    
+    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+  GROUP ~Item Stuff~
+
+//G3Debugging Suite - Permanent effects with non-zero duration	
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
     READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-  
-    //ResFixer
-    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
 	
-	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
-      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
-      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
-      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
-      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-	  
-	  //G3 Debugging Suite	  
-      PATCH_IF ("%target%" != 1) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
-        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
-      END
-	  
-	  //G3 Debugging Suite	  
-      PATCH_IF ("%timing%" != 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
-        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
-      END
-	  
-	  //G3 Debugging Suite	  
-      PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making non-dispellable..."
-        WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
-      END
-	  
-	  //G3 Debugging Suite
-      PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect always occur..."
-        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
-        WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
-      END
-    END
-	
-	//Permanent effects with non-zero duration	
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x38 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x38 * "%index%")) "abil_fx_idx"
@@ -712,19 +706,105 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Spell Fixer~
+BEGIN ~Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
+  GROUP ~Item Stuff~
 
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"	
+	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
+      PATCH_IF ("%target%" != 1) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
+  GROUP ~Item Stuff~
+  
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+	
+	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
+      PATCH_IF ("%timing%" != 2) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+	
+	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
+	  
+      PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making non-dispellable..."
+        WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+	
+	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
+	  
+      PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect always occur..."
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
+        WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
+  GROUP ~Spell Stuff~
+
+//ResFixer
+COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN  	
+    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~ 
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+  GROUP ~Spell Stuff~
+
+//G3 Debugging Suite
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x34) BEGIN  	
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
     READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-  
-    //ResFixer
-    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~ 
-
-	//G3 Debugging Suite - Permanent effects with non-zero durations
+	
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x28 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x28 * "%index%")) "abil_fx_idx"
