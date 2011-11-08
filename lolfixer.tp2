@@ -1,0 +1,684 @@
+BACKUP ~lolfixer/backup~
+AUTHOR ~Trollololol~
+VERSION ~v0.0000000001a~
+
+BEGIN ~Area Fixer~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+    READ_LONG  0x70 "cont_off" ELSE 0
+    READ_SHORT 0x74 "cont_num" ELSE 0
+    READ_ASCII 0x94 "script"
+    READ_LONG  0xa4 "door_num" ELSE 0
+    READ_LONG  0xa8 "door_off" ELSE 0
+    READ_LONG  0xc0 "rest_off" ELSE 0
+    READ_LONG  0xc4 "note_off" ELSE 0
+    READ_LONG  0xc8 "note_num" ELSE 213
+    
+    // G3 Debugging Suite - assign missing area script
+    PATCH_IF (NOT FILE_EXISTS_IN_GAME ~%script%.bcs~) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%script%.bcs) created"
+      INNER_ACTION BEGIN
+        <<<<<<<< %script%.BAF
+>>>>>>>>
+        COMPILE ~%script%.BAF~
+      END
+	END
+    
+    // G3 Debugging Suite - assign missing area script
+    PATCH_IF ((("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) AND (NOT FILE_EXISTS_IN_GAME ~%SOURCE_FILE%.bcs~)) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%SOURCE_FILE%.bcs) created and assigned"
+      INNER_ACTION BEGIN
+        <<<<<<<< %SOURCE_RES%.BAF
+>>>>>>>>
+        COMPILE ~%SOURCE_RES%.BAF~
+      END
+      WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
+    END
+    
+    // G3 Debugging Suite - assign unassigned area script
+    PATCH_IF (NOT ("%script%" STRING_EQUAL_CASE "%SOURCE_RES%") AND (FILE_EXISTS_IN_GAME ~%SOURCE_FILE%.bcs~)) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Area Script (%SOURCE_FILE%.bcs) assigned"
+      WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
+    END
+        
+    // BGFixpack: Super Happy modder Pack - if trap is undetectable, undisarmable, and has no script, remove trapped flag
+    FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN
+      READ_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) "trap_detect"
+      READ_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) "trap_remove"
+      READ_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) "trapped"
+      READ_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) "script"    
+      PATCH_IF ((("%script%" STRING_COMPARE_CASE "" = 0) OR ("%script%" STRING_COMPARE_CASE "None" = 0)) AND
+                 ("%trapped%" = 1) AND ("%trap_detect%" > 99) AND ("%trap_remove%" > 99)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
+        WRITE_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) 0
+        WRITE_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) 0
+        WRITE_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) 0
+        WRITE_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) ~~ #8
+      END ELSE PATCH_IF (("%trap_detect%" > 99) AND ("%trapped%" = 1)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
+        WRITE_SHORT ("%cont_off%" + 0x2C + ("%index%" * 0xc0)) 0
+        WRITE_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) 0
+      END
+    END
+    
+    // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
+    PATCH_IF (("%note_num%" = 0) AND ("%note_off%" != ("%rest_off%" + 0xe4))) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Map Note Offsets Fixed"
+      WRITE_LONG 0xc4 ("%rest_off%" + 0xe4)
+    END
+	
+    // G3 Debugging Suite - make keyed doors unpickable & locked
+    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
+      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
+      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry      
+        READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
+        PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
+          WRITE_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) 100
+        END
+        READ_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) "flags"
+        PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but ws not locked! Locked now"
+          WRITE_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) ("%flags%" BOR 0b00000010)
+        END
+      END
+    END
+  END  
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Creature Fixer~
+
+//G3 Debugging Suite - Equip invalid items
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN 
+    READ_LONG  0x2b8 "slot_off" ELSE 0
+    READ_LONG  0x2bc "itm_off" ELSE 0
+    READ_LONG  0x2c0 "itm_num" ELSE 0
+
+    FOR (index = 0; index < 8; index = index + 1) BEGIN
+      READ_BYTE (0x6e + "%index%") "prof"
+      PATCH_IF ("%prof%" > 0) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Has BG proficiencies set! Nulling %prof% -> 0"
+        WRITE_BYTE (0x6e + "%index%") 0
+      END
+    END
+
+    // tracking variables
+    SET "2hweapon" = 0
+    SET "offhand" = 0
+    SET "bow" = 0
+    SET "arrows" = 0
+    SET "xbow" = 0
+    SET "bolts" = 0
+    SET "sling" = 0
+    SET "bullets" = 0
+    SET "helm" = 0
+    SET "armor" = 0
+    SET "gloves" = 0
+    SET "lring" = 0
+    SET "rring" = 0
+    SET "boots" = 0
+    SET "belt" = 0
+    SET "amulet" = 0
+    SET "weapon1" = 0
+    SET "weapon2" = 0
+    SET "weapon3" = 0
+    SET "weapon4" = 0
+    SET "quiver1" = 0
+    SET "quiver2" = 0
+    SET "quiver3" = 0
+    SET "quiver4" = 0
+    SET "cloak" = 0
+    FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
+      READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
+      PATCH_IF ("%ref%" != 0xffff) BEGIN
+        READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
+		PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
+				    (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
+				    (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
+					(~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IMPINVIS~) OR
+					(~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
+					(~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
+					(~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
+					(~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GOLSTONE~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GORAIR~) OR
+					(~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GOLFLE~) OR
+					(~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
+					(~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
+					(~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
+ 					(~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
+					(~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
+					(~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
+					(~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
+					(~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
+					(~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
+					(~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
+					(~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
+					(~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
+					(~%item%~ STRING_EQUAL_CASE ~GOLCLA~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
+          INNER_PATCH_FILE ~%item%.itm~ BEGIN
+            READ_SHORT 0x1c "type"
+            READ_BYTE 0x18 "flags"
+		  END
+          PATCH_IF ("%index%" = 0) BEGIN // helm slot
+            SET "helm" = 1
+            PATCH_IF ("%type%" != 7) BEGIN // helm
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid helm: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "helm" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 1) BEGIN // armor slot
+            SET "armor" = 1
+            PATCH_IF ("%type%" != 2) BEGIN // armor
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid armor: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "armor" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 2) BEGIN // shield slot
+            SET "offhand" = 1
+            PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) BEGIN // 2h check
+              PATCH_PRINT ~%SOURCE_FILE%: Two-handed offhand: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "offhand" = 0
+            END ELSE
+            PATCH_IF ("%type%" != 12) BEGIN // if not shield, check for valid melee abilities
+              SET "legit_offhand" = 0
+              INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                READ_LONG  0x64 "abil_off"
+                READ_SHORT 0x68 "abil_num"
+                FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                  READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                  PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
+                    SET "legit_offhand" = 1
+                  END
+                END
+			  END
+              PATCH_IF ("%legit_offhand%" = 0) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid offhand item: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			  SET "offhand" = 0
+              END
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 3) BEGIN // glove slot
+            SET "gloves" = 1
+            PATCH_IF ("%type%" != 6) BEGIN // gloves
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid gloves: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "gloves" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 4) BEGIN
+            SET "lring" = 1
+            PATCH_IF ("%type%" != 10) BEGIN // rings
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid Lring: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "lring" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 5) BEGIN
+            SET "rring" = 1
+            PATCH_IF ("%type%" != 10) BEGIN // rings
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid Rring: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "rring" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 6) BEGIN // amulet slot
+            SET "amulet" = 1
+            PATCH_IF ("%type%" != 1) BEGIN // amulet
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid amulet: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "amulet" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 7) BEGIN // belt slot
+            SET "belt" = 1
+            PATCH_IF ("%type%" != 3) BEGIN // belt
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid belt: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "belt" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 8) BEGIN // boot slot
+            SET "boots" = 1
+            PATCH_IF ("%type%" != 4) BEGIN // boot
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid boots: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "boots" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
+            SET "weapon1" = 1
+            SET "legit_weapon" = 0
+		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_LONG  0x64 "abil_off"
+              READ_SHORT 0x68 "abil_num"
+              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  SET "legit_weapon" = 1
+		        END
+              END
+	        END
+            PATCH_IF ("%legit_weapon%" = 0) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon1: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "weapon1" = 0
+            END
+		  END ELSE
+          PATCH_IF ("%index%" = 10) BEGIN // first weapon slot
+            SET "weapon2" = 1
+            SET "legit_weapon" = 0
+		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_LONG  0x64 "abil_off"
+              READ_SHORT 0x68 "abil_num"
+              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  SET "legit_weapon" = 1
+		        END
+              END
+	        END
+            PATCH_IF ("%legit_weapon%" = 0) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon2: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "weapon2" = 0
+            END
+		  END ELSE
+          PATCH_IF ("%index%" = 11) BEGIN // first weapon slot
+            SET "weapon3" = 1
+            SET "legit_weapon" = 0
+		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_LONG  0x64 "abil_off"
+              READ_SHORT 0x68 "abil_num"
+              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  SET "legit_weapon" = 1
+		        END
+              END
+	        END
+            PATCH_IF ("%legit_weapon%" = 0) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon3: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "weapon3" = 0
+            END
+		  END ELSE
+          PATCH_IF ("%index%" = 12) BEGIN // first weapon slot
+            SET "weapon4" = 1
+            SET "legit_weapon" = 0
+		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_LONG  0x64 "abil_off"
+              READ_SHORT 0x68 "abil_num"
+              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  SET "legit_weapon" = 1
+		        END
+              END
+	        END
+            PATCH_IF ("%legit_weapon%" = 0) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon4: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "weapon4" = 0
+            END
+		  END ELSE
+          PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
+            SET "quiver1" = 1
+            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "quiver1" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 14) BEGIN // first quiver slot
+            SET "quiver2" = 1
+            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "quiver2" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 15) BEGIN // first quiver slot
+            SET "quiver3" = 1
+            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "quiver3" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 16) BEGIN // first quiver slot
+            SET "quiver4" = 1
+            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+  			SET "quiver4" = 0
+            END
+          END ELSE
+          PATCH_IF ("%index%" = 17) BEGIN // cloak
+            SET "cloak" = 1
+            PATCH_IF ("%type%" != 32) BEGIN // cloak
+              PATCH_PRINT ~%SOURCE_FILE%: Invalid cloak: %item%.itm! Moving to inventory~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+            END
+          END ELSE
+          PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~AMULET~
+  		  SET "%amulet%" = 1
+          END
+          PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~ARMOR~
+  		  SET "%armor%" = 1
+          END
+          PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BELT~
+  		  SET "%belt%" = 1
+          END
+          PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
+  		  SET "%boots%" = 1
+          END
+          PATCH_IF (((("%type%" =  5) OR 
+                      ("%type%" = 14) OR 
+                      ("%type%" = 31)) AND ("%quiver1%" = 0)) AND ("%index%" > 17)) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
+  		  SET "%quiver1%" = 1
+          END
+          PATCH_IF (((("%type%" =  5) OR 
+                      ("%type%" = 14) OR 
+                      ("%type%" = 31)) AND ("%quiver2%" = 0)) AND ("%index%" > 17)) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
+  		  SET "%quiver2%" = 1
+          END
+          PATCH_IF (((("%type%" =  5) OR 
+                      ("%type%" = 14) OR 
+                      ("%type%" = 31)) AND ("%quiver3%" = 0)) AND ("%index%" > 17)) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
+  		  SET "%quiver3%" = 1
+          END
+          PATCH_IF (((("%type%" =  5) OR 
+                      ("%type%" = 14) OR 
+                      ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%index%" > 17)) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER4 INV~
+  		  SET "%quiver4%" = 1
+          END
+          PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~GLOVES~
+            SET "gloves" = 1
+          END
+          PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping HELM~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~HELMET~
+            SET "helm" = 1
+          END
+          PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping LRING~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~LRING~
+            SET "lring" = 1
+          END
+          PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping RRING~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~RRING~
+            SET "rring" = 1
+          END
+          PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
+            SET "offhand" = 1
+          END
+          PATCH_IF (((("%type%" = 15) OR // bow
+                      ("%type%" = 16) OR // dagger
+                      ("%type%" = 17) OR // maces
+                      ("%type%" = 18) OR // sling
+                      ("%type%" = 19) OR // short sword
+                      ("%type%" = 20) OR // swords
+                      ("%type%" = 21) OR // hammer
+                      ("%type%" = 22) OR // morning stars
+                      ("%type%" = 23) OR // flail
+                      ("%type%" = 24) OR // darts
+                      ("%type%" = 25) OR // axe
+                      ("%type%" = 26) OR // staff
+                      ("%type%" = 27) OR // xbow
+                      ("%type%" = 28) OR // hand to hand
+                      ("%type%" = 29) OR // Spear
+                      ("%type%" = 30) OR // halberd
+                      ("%type%" = 32) OR // cloak
+                      ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%index%" > 17)))  BEGIN
+            PATCH_IF NOT ((("%flags%" BAND 0b00000010) = 0b00000010) AND ("%offhand%" = 1)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON1 INV~
+  			SET "%weapon1%" = 1
+            END
+		  END ELSE
+          PATCH_IF (((("%type%" = 15) OR // bow
+                      ("%type%" = 16) OR // dagger
+                      ("%type%" = 17) OR // maces
+                      ("%type%" = 18) OR // sling
+                      ("%type%" = 19) OR // short sword
+                      ("%type%" = 20) OR // swords
+                      ("%type%" = 21) OR // hammer
+                      ("%type%" = 22) OR // morning stars
+                      ("%type%" = 23) OR // flail
+                      ("%type%" = 24) OR // darts
+                      ("%type%" = 25) OR // axe
+                      ("%type%" = 26) OR // staff
+                      ("%type%" = 27) OR // xbow
+                      ("%type%" = 28) OR // hand to hand
+                      ("%type%" = 29) OR // Spear
+                      ("%type%" = 30) OR // halberd
+                      ("%type%" = 32) OR // cloak
+                      ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%index%" > 17)))  BEGIN
+            PATCH_IF NOT ((("%flags%" BAND 0b00000010) = 0b00000010) AND ("%offhand%" = 1)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON2 INV~
+  			SET "%weapon2%" = 1
+            END
+		  END ELSE
+          PATCH_IF (((("%type%" = 15) OR // bow
+                      ("%type%" = 16) OR // dagger
+                      ("%type%" = 17) OR // maces
+                      ("%type%" = 18) OR // sling
+                      ("%type%" = 19) OR // short sword
+                      ("%type%" = 20) OR // swords
+                      ("%type%" = 21) OR // hammer
+                      ("%type%" = 22) OR // morning stars
+                      ("%type%" = 23) OR // flail
+                      ("%type%" = 24) OR // darts
+                      ("%type%" = 25) OR // axe
+                      ("%type%" = 26) OR // staff
+                      ("%type%" = 27) OR // xbow
+                      ("%type%" = 28) OR // hand to hand
+                      ("%type%" = 29) OR // Spear
+                      ("%type%" = 30) OR // halberd
+                      ("%type%" = 32) OR // cloak
+                      ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%index%" > 17)))  BEGIN
+            PATCH_IF NOT ((("%flags%" BAND 0b00000010) = 0b00000010) AND ("%offhand%" = 1)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON3 INV~
+  			SET "%weapon3%" = 1
+            END
+		  END ELSE
+          PATCH_IF (((("%type%" = 15) OR // bow
+                      ("%type%" = 16) OR // dagger
+                      ("%type%" = 17) OR // maces
+                      ("%type%" = 18) OR // sling
+                      ("%type%" = 19) OR // short sword
+                      ("%type%" = 20) OR // swords
+                      ("%type%" = 21) OR // hammer
+                      ("%type%" = 22) OR // morning stars
+                      ("%type%" = 23) OR // flail
+                      ("%type%" = 24) OR // darts
+                      ("%type%" = 25) OR // axe
+                      ("%type%" = 26) OR // staff
+                      ("%type%" = 27) OR // xbow
+                      ("%type%" = 28) OR // hand to hand
+                      ("%type%" = 29) OR // Spear
+                      ("%type%" = 30) OR // halberd
+                      ("%type%" = 32) OR // cloak
+                      ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%index%" > 17)))  BEGIN
+            PATCH_IF NOT ((("%flags%" BAND 0b00000010) = 0b00000010) AND ("%offhand%" = 1)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON4 INV~
+  			  SET "%weapon4%" = 1
+            END
+		  END
+		END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Item Fixer~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+  
+    //ResFixer
+    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
+	
+	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
+      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
+      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
+      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
+	  
+	  //G3 Debugging Suite	  
+      PATCH_IF ("%target%" != 1) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
+      END
+	  
+	  //G3 Debugging Suite	  
+      PATCH_IF ("%timing%" != 2) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
+      END
+	  
+	  //G3 Debugging Suite	  
+      PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making non-dispellable..."
+        WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
+      END
+	  
+	  //G3 Debugging Suite
+      PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect always occur..."
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
+        WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+      END
+    END
+	
+	//Permanent effects with non-zero duration	
+    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+      READ_SHORT ("%abil_off%" + 0x1e + (0x38 * "%index%")) "abil_fx_num"
+      READ_SHORT ("%abil_off%" + 0x20 + (0x38 * "%index%")) "abil_fx_idx"
+	  FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
+        READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
+        READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
+        READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
+        PATCH_IF ((("%timing%" = 1) OR ("%timing%" = 9)) AND ("%duration%" > 0)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE%: Ability #%index% has a permanent effect with non-zero duration (effect #%index2%, opcode %opcode%)! Nulling duration..."
+          WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
+        END
+      END
+	END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Spell Fixer~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN  	
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+  
+    //ResFixer
+    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~ 
+
+	//G3 Debugging Suite - Permanent effects with non-zero durations
+    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+      READ_SHORT ("%abil_off%" + 0x1e + (0x28 * "%index%")) "abil_fx_num"
+      READ_SHORT ("%abil_off%" + 0x20 + (0x28 * "%index%")) "abil_fx_idx"
+	  FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
+        READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
+        READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
+        READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
+        PATCH_IF ((("%timing%" = 1) OR ("%timing%" = 9)) AND ("%duration%" > 0)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE%: Ability #%index% has a permanent effect with non-zero duration (effect #%index2%, opcode %opcode%)! Nulling duration..."
+          WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
+        END
+      END
+    END	  
+  END
+BUT_ONLY_IF_IT_CHANGES
