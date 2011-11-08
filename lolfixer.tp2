@@ -2,7 +2,7 @@ BACKUP ~lolfixer/backup~
 AUTHOR ~Trollololol~
 VERSION ~v0.0000000001a~
 
-BEGIN ~Script Assigner (assigns missing/unassigned scripts to areas)~
+BEGIN ~Area Stuff - Script Assigner (assigns missing/unassigned scripts to areas)~
   GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
@@ -10,9 +10,9 @@ COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
               ~ar0087.are~ ~override/xr2600.are~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_ASCII 0x94 "script"
-	
+
 	SET "exists" = 0
     SET "unassigned" = 0
     SET "missing" = 0
@@ -49,7 +49,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
+BEGIN ~Area Stuff - Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
   GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
@@ -57,17 +57,17 @@ COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
               ~ar0087.are~ ~override/xr2600.are~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_LONG  0x70 "cont_off" ELSE 0
     READ_SHORT 0x74 "cont_num" ELSE 0
-        
+
     // BGFixpack: Super Happy modder Pack - if trap is undetectable, undisarmable, and has no script, remove trapped flag
     FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN
       READ_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) "trap_detect"
       READ_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) "trap_remove"
       READ_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) "trapped"
-      READ_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) "script"    
-      PATCH_IF ((("%script%" STRING_COMPARE_CASE "" = 0) OR ("%script%" STRING_COMPARE_CASE "None" = 0)) AND
+      READ_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) "script"
+      PATCH_IF ((("%script%" STRING_EQUAL_CASE "" = 0) OR ("%script%" STRING_EQUAL_CASE "None" = 0)) AND
                  ("%trapped%" = 1) AND ("%trap_detect%" > 99) AND ("%trap_remove%" > 99)) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
         WRITE_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) 0
@@ -83,7 +83,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Map Note Offset Fixer (fixes incorrect map note offsets)~
+BEGIN ~Area Stuff - Map Note Offset Fixer (fixes incorrect map note offsets)~
   GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
@@ -91,11 +91,11 @@ COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
               ~ar0087.are~ ~override/xr2600.are~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_LONG  0xc0 "rest_off" ELSE 0
     READ_LONG  0xc4 "note_off" ELSE 0
     READ_LONG  0xc8 "note_num" ELSE 213
-    
+
     // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
     PATCH_IF (("%note_num%" = 0) AND ("%note_off%" != ("%rest_off%" + 0xe4))) BEGIN
       PATCH_PRINT "%SOURCE_FILE% error: Map Note Offsets Fixed"
@@ -104,7 +104,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Door Unpicker (makes doors that need keys but were pickable - unpickable)~
+BEGIN ~Area Stuff - Missing Ambient Remover (removes ambients that don't have their WAV present)~
   GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
@@ -112,25 +112,29 @@ COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
               ~ar0087.are~ ~override/xr2600.are~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN 
-    READ_LONG  0xa4 "door_num" ELSE 0
-    READ_LONG  0xa8 "door_off" ELSE 0
-	
-    // G3 Debugging Suite - make keyed doors unpickable
-    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
-      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry
-        READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
-        PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
-          WRITE_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) 100
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+    READ_SHORT 0x82 "amb_num"
+    READ_LONG  0x84 "amb_off"
+
+    FOR (index = 0 ; index < amb_num ; index = index + 1) BEGIN
+      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+        READ_ASCII ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) "resref"
+        PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+          SET "exists" = 0
+          INNER_PATCH_FILE ~%resref%.wav~ BEGIN
+            SET "exists" = 1
+          END
+          PATCH_IF ("%exists%" = 0) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ambient #%index% does not exist (%resref%.wav)! Nulling..."
+            WRITE_ASCIIE ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
+          END
         END
       END
     END
-  END  
+  END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Door Locker (locks doors that need keys but were unlocked)~
+BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
   GROUP ~Area Stuff~
 
 // ensures area regexp search doesn't die
@@ -141,11 +145,37 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_LONG  0xa4 "door_num" ELSE 0
     READ_LONG  0xa8 "door_off" ELSE 0
-	
+
+    // G3 Debugging Suite - make keyed doors unpickable
+    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
+      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
+      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") AND ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
+        READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
+        PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
+          WRITE_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) 100
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Area Stuff - Door Locker (locks doors that need keys but were unlocked)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+    READ_LONG  0xa4 "door_num" ELSE 0
+    READ_LONG  0xa8 "door_off" ELSE 0
+
     // G3 Debugging Suite - make keyed doors locked
     FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
       READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND ("%resref%" STRING_COMPARE_CASE "none")) BEGIN // legit key entry
+      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") AND ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
         READ_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) "flags"
         PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but ws not locked! Locked now"
@@ -153,12 +183,12 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         END
       END
     END
-  END  
+  END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Creature Resource Fixer (res_fixer for ALL CREATURES)~
+BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
-  
+
 //ResFixer - Basic fixing
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_INCLUDE ~lolfixer/lib/fj_cre_validity.tpp~
@@ -168,12 +198,12 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~BG Proficiency Nuller (sets any BG proficiencies to 0)~
+BEGIN ~Creature Stuff - BG Proficiency Nuller (sets any BG proficiencies to 0)~
   GROUP ~Creature Stuff~
 
 //G3 Debugging Suite - Null BG Proficiencies
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN 
+  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN
     FOR (index = 0; index < 8; index = index + 1) BEGIN
       READ_BYTE (0x6e + "%index%") "prof"
       PATCH_IF ("%prof%" > 0) BEGIN
@@ -181,15 +211,15 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         WRITE_BYTE (0x6e + "%index%") 0
       END
     END
-  END  
+  END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Inventory Overhauler (moves invalid equippable items to inventory and equips anything in the inventory to a free slot)~
+BEGIN ~Creature Stuff - Inventory Overhauler (moves invalid equippable items to inventory and equips anything in the inventory to a free slot)~
   GROUP ~Creature Stuff~
 
 //G3 Debugging Suite - Equip invalid items
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN 
+  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN
     READ_LONG  0x2b8 "slot_off" ELSE 0
     READ_LONG  0x2bc "itm_off" ELSE 0
     READ_LONG  0x2c0 "itm_num" ELSE 0
@@ -509,32 +539,32 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
   		  SET "%boots%" = 1
           END
-          PATCH_IF (((("%type%" =  5) OR 
-                      ("%type%" = 14) OR 
+          PATCH_IF (((("%type%" =  5) OR
+                      ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver1%" = 0)) AND ("%index%" > 17)) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
   		  SET "%quiver1%" = 1
           END
-          PATCH_IF (((("%type%" =  5) OR 
-                      ("%type%" = 14) OR 
+          PATCH_IF (((("%type%" =  5) OR
+                      ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver2%" = 0)) AND ("%index%" > 17)) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
   		  SET "%quiver2%" = 1
           END
-          PATCH_IF (((("%type%" =  5) OR 
-                      ("%type%" = 14) OR 
+          PATCH_IF (((("%type%" =  5) OR
+                      ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver3%" = 0)) AND ("%index%" > 17)) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
   		  SET "%quiver3%" = 1
           END
-          PATCH_IF (((("%type%" =  5) OR 
-                      ("%type%" = 14) OR 
+          PATCH_IF (((("%type%" =  5) OR
+                      ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%index%" > 17)) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
             REMOVE_CRE_ITEM ~%item%~
@@ -677,26 +707,26 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Item Resource Fixer (res_fixer for ALL ITEMS)~
+BEGIN ~Item Stuff - Item Resource Fixer (res_fixer for ALL ITEMS)~
   GROUP ~Item Stuff~
 
 //ResFixer - Basic Fixing
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN    
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+BEGIN ~Item Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
   GROUP ~Item Stuff~
 
-//G3Debugging Suite - Permanent effects with non-zero duration	
+//G3Debugging Suite - Permanent effects with non-zero duration
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
     READ_LONG  0x6a "fx_off"
-	
+
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x38 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x38 * "%index%")) "abil_fx_idx"
@@ -713,13 +743,13 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
+BEGIN ~Item Stuff - Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"	
+    READ_SHORT 0x70 "fx_num"
 	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
@@ -731,14 +761,14 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
+BEGIN ~Item Stuff - Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
   GROUP ~Item Stuff~
-  
+
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
-	
+
 	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
@@ -750,18 +780,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
+BEGIN ~Item Stuff - Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
-	
+
 	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
-	  
+
       PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making non-dispellable..."
         WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
@@ -770,19 +800,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
+BEGIN ~Item Stuff - Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN  
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
-	
+
 	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
       READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-	  
+
       PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect always occur..."
         WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
@@ -792,26 +822,26 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
+BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
   GROUP ~Spell Stuff~
 
 //ResFixer
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN  	
-    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~ 
+  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN
+    PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+BEGIN ~Spell Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
   GROUP ~Spell Stuff~
 
 //G3 Debugging Suite
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN  	
+  PATCH_IF (SOURCE_SIZE > 0x34) BEGIN
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
     READ_LONG  0x6a "fx_off"
-	
+
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x28 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x28 * "%index%")) "abil_fx_idx"
@@ -824,6 +854,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
           WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
         END
       END
-    END	  
+    END
   END
 BUT_ONLY_IF_IT_CHANGES
