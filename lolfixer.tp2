@@ -5,12 +5,8 @@ VERSION ~v0.0000000001a~
 BEGIN ~Area Stuff - Script Assigner (assigns missing/unassigned scripts to areas)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_ASCII 0x94 "script"
 
     SET "exists" = 0
@@ -52,12 +48,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0x70 "cont_off" ELSE 0
     READ_SHORT 0x74 "cont_num" ELSE 0
 
@@ -86,12 +78,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Map Note Offset Fixer (fixes incorrect map note offsets)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0xc0 "rest_off" ELSE 0
     READ_LONG  0xc4 "note_off" ELSE 0
     READ_LONG  0xc8 "note_num" ELSE 213
@@ -107,12 +95,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Missing Ambient Remover (removes ambients that don't have their WAV present)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_SHORT 0x82 "amb_num"
     READ_LONG  0x84 "amb_off"
 
@@ -137,12 +121,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Missing Actor Remover (removes actors that don't have their CRE present)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
 
@@ -170,12 +150,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0xa4 "door_num" ELSE 0
     READ_LONG  0xa8 "door_off" ELSE 0
 
@@ -196,12 +172,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Door Locker (locks doors that need keys but were unlocked)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0xa4 "door_num" ELSE 0
     READ_LONG  0xa8 "door_off" ELSE 0
 
@@ -222,12 +194,8 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Area Stuff - Missing Rest Spawn Remover (nulls rest spawn entries that don't have their CRE present)~
   GROUP ~Area Stuff~
 
-// ensures area regexp search doesn't die
-COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-              ~ar0087.are~ ~override/xr2600.are~
-
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
     READ_LONG  0xc0 "rest_off" ELSE 0
 
     // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
