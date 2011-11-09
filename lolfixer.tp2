@@ -13,7 +13,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_ASCII 0x94 "script"
 
-	SET "exists" = 0
+    SET "exists" = 0
     SET "unassigned" = 0
     SET "missing" = 0
     INNER_PATCH_FILE ~%SOURCE_RES%.bcs~ BEGIN
@@ -36,7 +36,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
 >>>>>>>>
         COMPILE ~%script%.BAF~
       END
-	END ELSE
+    END ELSE
     PATCH_IF ((("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) AND (NOT FILE_EXISTS_IN_GAME ~%SOURCE_FILE%.bcs~)) BEGIN
       PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%SOURCE_RES%.bcs) created and assigned"
       INNER_ACTION BEGIN
@@ -145,22 +145,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
-	
+
     FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
       READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
       PATCH_IF ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$") BEGIN // ignore creatures starting with RD
-        SET "exists" = 0    
+        SET "exists" = 0
         INNER_PATCH_FILE ~%resref%.cre~ BEGIN
           SET "exists" = 1
-        END    
+        END
         PATCH_IF ("%exists%" = 0) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
           LPF fj_are_structure
-	        INT_VAR fj_delete_mode    = "%index%"
-	        STR_VAR fj_structure_type = actor
+            INT_VAR fj_delete_mode    = "%index%"
+            STR_VAR fj_structure_type = actor
           END
-		  SET "index" = "index" - 1
-		  READ_SHORT 0x58 "actor_num"
+          SET "index" = "index" - 1
+          READ_SHORT 0x58 "actor_num"
         END
       END
     END
@@ -219,6 +219,49 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Area Stuff - Missing Rest Spawn Remover (nulls rest spawn entries that don't have their CRE present)~
+  GROUP ~Area Stuff~
+
+// ensures area regexp search doesn't die
+COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+              ~ar0087.are~ ~override/xr2600.are~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+    READ_LONG  0xc0 "rest_off" ELSE 0
+
+    // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
+    FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
+      READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
+      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
+                ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
+                ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
+        SET "exists" = 0
+        INNER_PATCH_FILE ~%resref%.cre~ BEGIN
+          SET "exists" = 1
+        END
+        PATCH_IF ("%exists%" = 0) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn creature file does not exist (%resref%.cre)! Nulling..."
+          WRITE_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "NONE" #8
+          SET "none_count" = 0
+          PATCH_PRINT "Counting spawning creatures..."
+          FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+            READ_ASCII ("%rest_off%" + 0x48 + ("%index2%" * 0x08)) "resref2"
+            PATCH_IF (("%resref2%" STRING_EQUAL_CASE "") OR ("%resref2%" STRING_EQUAL_CASE "none")) BEGIN
+              SET "none_count" = "none_count" + 1
+            END
+          END
+          READ_LONG ("%rest_off%" + 0x98 + ("%index%" * 0x08)) "spawncount"
+          PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" > 0)) BEGIN
+            PATCH_PRINT "No creatures in Rest Spawn Entry! Setting number of creatures to 0..."
+            WRITE_LONG ("%rest_off%" + 0x98 + ("%index%" * 0x08)) 0
+          END
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
 
@@ -271,50 +314,50 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
       PATCH_IF ("%ref%" != 0xffff) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
-		PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
-				    (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
-				    (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
-					(~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IMPINVIS~) OR
-					(~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
-					(~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
-					(~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
-					(~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GOLSTONE~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GORAIR~) OR
-					(~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GOLFLE~) OR
-					(~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
-					(~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
-					(~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
- 					(~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
-					(~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
-					(~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
-					(~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
-					(~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
-					(~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
-					(~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
-					(~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
-					(~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
-					(~%item%~ STRING_EQUAL_CASE ~GOLCLA~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
+        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMPINVIS~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GOLSTONE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GORAIR~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GOLFLE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
+                     (~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~GOLCLA~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
           INNER_PATCH_FILE ~%item%.itm~ BEGIN
             READ_SHORT 0x1c "type"
             READ_BYTE 0x18 "flags"
-		  END
+          END
           PATCH_IF ("%index%" = 0) BEGIN // helm slot
             SET "helm" = 1
             PATCH_IF ("%type%" != 7) BEGIN // helm
               PATCH_PRINT ~%SOURCE_FILE%: Invalid helm: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "helm" = 0
+              SET "helm" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 1) BEGIN // armor slot
@@ -323,7 +366,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid armor: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "armor" = 0
+              SET "armor" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 2) BEGIN // shield slot
@@ -332,7 +375,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Two-handed offhand: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "offhand" = 0
+              SET "offhand" = 0
             END ELSE
             PATCH_IF ("%type%" != 12) BEGIN // if not shield, check for valid melee abilities
               SET "legit_offhand" = 0
@@ -345,12 +388,12 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "legit_offhand" = 1
                   END
                 END
-			  END
+              END
               PATCH_IF ("%legit_offhand%" = 0) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid offhand item: %item%.itm! Moving to inventory~
                 REMOVE_CRE_ITEM ~%item%~
                 ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			  SET "offhand" = 0
+                SET "offhand" = 0
               END
             END
           END ELSE
@@ -360,7 +403,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid gloves: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "gloves" = 0
+              SET "gloves" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 4) BEGIN
@@ -369,7 +412,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid Lring: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "lring" = 0
+              SET "lring" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 5) BEGIN
@@ -378,7 +421,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid Rring: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "rring" = 0
+              SET "rring" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 6) BEGIN // amulet slot
@@ -387,7 +430,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid amulet: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "amulet" = 0
+              SET "amulet" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 7) BEGIN // belt slot
@@ -396,7 +439,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid belt: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "belt" = 0
+              SET "belt" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 8) BEGIN // boot slot
@@ -405,96 +448,96 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid boots: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "boots" = 0
+              SET "boots" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
             SET "weapon1" = 1
             SET "legit_weapon" = 0
-		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_LONG  0x64 "abil_off"
               READ_SHORT 0x68 "abil_num"
               FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                 READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
                 PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
                   SET "legit_weapon" = 1
-		        END
+                END
               END
-	        END
+            END
             PATCH_IF ("%legit_weapon%" = 0) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon1: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "weapon1" = 0
+              SET "weapon1" = 0
             END
-		  END ELSE
+          END ELSE
           PATCH_IF ("%index%" = 10) BEGIN // first weapon slot
             SET "weapon2" = 1
             SET "legit_weapon" = 0
-		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_LONG  0x64 "abil_off"
               READ_SHORT 0x68 "abil_num"
               FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                 READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
                 PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
                   SET "legit_weapon" = 1
-		        END
+                END
               END
-	        END
+            END
             PATCH_IF ("%legit_weapon%" = 0) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon2: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "weapon2" = 0
+              SET "weapon2" = 0
             END
-		  END ELSE
+          END ELSE
           PATCH_IF ("%index%" = 11) BEGIN // first weapon slot
             SET "weapon3" = 1
             SET "legit_weapon" = 0
-		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_LONG  0x64 "abil_off"
               READ_SHORT 0x68 "abil_num"
               FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                 READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
                 PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
                   SET "legit_weapon" = 1
-		        END
+                END
               END
-	        END
+            END
             PATCH_IF ("%legit_weapon%" = 0) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon3: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "weapon3" = 0
+              SET "weapon3" = 0
             END
-		  END ELSE
+          END ELSE
           PATCH_IF ("%index%" = 12) BEGIN // first weapon slot
             SET "weapon4" = 1
             SET "legit_weapon" = 0
-		    INNER_PATCH_FILE ~%item%.itm~ BEGIN
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_LONG  0x64 "abil_off"
               READ_SHORT 0x68 "abil_num"
               FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                 READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
                 PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
                   SET "legit_weapon" = 1
-		        END
+                END
               END
-	        END
+            END
             PATCH_IF ("%legit_weapon%" = 0) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Invalid weapon4: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "weapon4" = 0
+              SET "weapon4" = 0
             END
-		  END ELSE
+          END ELSE
           PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
             SET "quiver1" = 1
             PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "quiver1" = 0
+              SET "quiver1" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 14) BEGIN // first quiver slot
@@ -503,7 +546,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "quiver2" = 0
+              SET "quiver2" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 15) BEGIN // first quiver slot
@@ -512,7 +555,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "quiver3" = 0
+              SET "quiver3" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 16) BEGIN // first quiver slot
@@ -521,7 +564,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Invalid quiver: %item%.itm! Moving to inventory~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-  			SET "quiver4" = 0
+              SET "quiver4" = 0
             END
           END ELSE
           PATCH_IF ("%index%" = 17) BEGIN // cloak
@@ -536,25 +579,25 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~AMULET~
-  		  SET "%amulet%" = 1
+            SET "%amulet%" = 1
           END
           PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~ARMOR~
-  		  SET "%armor%" = 1
+            SET "%armor%" = 1
           END
           PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BELT~
-  		  SET "%belt%" = 1
+            SET "%belt%" = 1
           END
           PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
-  		  SET "%boots%" = 1
+            SET "%boots%" = 1
           END
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
@@ -562,7 +605,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
-  		  SET "%quiver1%" = 1
+            SET "%quiver1%" = 1
           END
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
@@ -570,7 +613,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
-  		  SET "%quiver2%" = 1
+            SET "%quiver2%" = 1
           END
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
@@ -578,7 +621,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
-  		  SET "%quiver3%" = 1
+            SET "%quiver3%" = 1
           END
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
@@ -586,7 +629,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER4 INV~
-  		  SET "%quiver4%" = 1
+            SET "%quiver4%" = 1
           END
           PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
@@ -640,9 +683,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON1 INV~
-  			SET "%weapon1%" = 1
+              SET "%weapon1%" = 1
             END
-		  END ELSE
+          END ELSE
           PATCH_IF (((("%type%" = 15) OR // bow
                       ("%type%" = 16) OR // dagger
                       ("%type%" = 17) OR // maces
@@ -665,9 +708,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON2 INV~
-  			SET "%weapon2%" = 1
+              SET "%weapon2%" = 1
             END
-		  END ELSE
+          END ELSE
           PATCH_IF (((("%type%" = 15) OR // bow
                       ("%type%" = 16) OR // dagger
                       ("%type%" = 17) OR // maces
@@ -690,9 +733,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON3 INV~
-  			SET "%weapon3%" = 1
+              SET "%weapon3%" = 1
             END
-		  END ELSE
+          END ELSE
           PATCH_IF (((("%type%" = 15) OR // bow
                       ("%type%" = 16) OR // dagger
                       ("%type%" = 17) OR // maces
@@ -715,10 +758,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON4 INV~
-  			  SET "%weapon4%" = 1
+                SET "%weapon4%" = 1
             END
-		  END
-		END
+          END
+        END
       END
     END
   END
@@ -747,7 +790,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x38 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x38 * "%index%")) "abil_fx_idx"
-	  FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
+      FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
         READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
         READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
         READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
@@ -756,7 +799,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
         END
       END
-	END
+    END
   END
 BUT_ONLY_IF_IT_CHANGES
 
@@ -767,7 +810,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
-	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
       PATCH_IF ("%target%" != 1) BEGIN
@@ -786,7 +829,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
 
-	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
       PATCH_IF ("%timing%" != 2) BEGIN
@@ -805,7 +848,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
 
-	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
 
@@ -825,7 +868,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
 
-	FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
       READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
@@ -862,7 +905,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_SHORT ("%abil_off%" + 0x1e + (0x28 * "%index%")) "abil_fx_num"
       READ_SHORT ("%abil_off%" + 0x20 + (0x28 * "%index%")) "abil_fx_idx"
-	  FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
+      FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
         READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
         READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
         READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
