@@ -211,22 +211,64 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         PATCH_IF ("%exists%" = 0) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn creature file does not exist (%resref%.cre)! Nulling..."
           WRITE_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "NONE" #8
-          SET "none_count" = 0
-          PATCH_PRINT "Counting spawning creatures..."
-          FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
-            READ_ASCII ("%rest_off%" + 0x48 + ("%index2%" * 0x08)) "resref2"
-            PATCH_IF (("%resref2%" STRING_EQUAL_CASE "") OR ("%resref2%" STRING_EQUAL_CASE "none")) BEGIN
-              SET "none_count" = "none_count" + 1
-            END
-          END
-          READ_LONG ("%rest_off%" + 0x98 + ("%index%" * 0x08)) "spawncount"
-          PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" > 0)) BEGIN
-            PATCH_PRINT "No creatures in Rest Spawn Entry! Setting number of creatures to 0..."
-            WRITE_LONG ("%rest_off%" + 0x98 + ("%index%" * 0x08)) 0
-          END
         END
       END
     END
+    SET "none_count" = 0
+    FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
+      READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
+      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+        SET "none_count" = "none_count" + 1
+      END
+    END
+    READ_SHORT ("%rest_off%" + 0x98) "spawncount"
+    PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" != 0)) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: No creatures in Rest Spawn Entry but area still set to spawn something! Setting number of spawnable creatures to 0..."
+      WRITE_SHORT ("%rest_off%" + 0x98) 0
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Area Stuff - Missing Spawn Remover (nulls spawn entries that don't have their CRE present)~
+  GROUP ~Area Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) AND ( !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2400~) AND !(~%SOURCE_RES%~ STRING_EQUAL_CASE ~xr2600~) ) THEN BEGIN
+    READ_LONG  0x60 "spawn_off"
+    READ_LONG  0x64 "spawn_num"
+	FOR (index = 0 ; index < spawn_num ; index = index + 1) BEGIN
+      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+        READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
+        PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
+                  ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
+                  ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
+          SET "exists" = 0      
+          INNER_PATCH_FILE ~%resref%.cre~ BEGIN
+            SET "exists" = 1
+          END      
+          PATCH_IF ("%exists%" = 0) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% creature file does not exist (%resref%.cre)! Nulling..."
+			WRITE_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) ~NONE~ #8
+          END
+        END
+      END
+      SET "none_count" = 0
+      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+        READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
+        PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+          SET "none_count" = "none_count" + 1
+        END
+      END
+      PATCH_IF ("%none_count%" = 10) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% has no creatures to spawn! Removing spawn entry..."
+        LPF fj_are_structure
+          INT_VAR fj_delete_mode    = "%index%"
+          STR_VAR fj_structure_type = spawn
+        END
+        SET "index" = "index" - 1
+        READ_LONG  0x64 "spawn_num"
+      END
+    END	
   END
 BUT_ONLY_IF_IT_CHANGES
 
