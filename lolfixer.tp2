@@ -1,6 +1,157 @@
 BACKUP ~lolfixer/backup~
-AUTHOR ~Trollololol~
-VERSION ~v0.0000000001a~
+AUTHOR ~Lollorian~
+VERSION ~0.1A~
+
+BEGIN ~Area Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Area Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x28f) THEN BEGIN
+    READ_LONG  0x54 "actor_off"
+    READ_SHORT 0x58 "actor_num"
+    READ_SHORT 0x5a "info_num"
+    READ_LONG  0x5c "info_off"
+    READ_LONG  0x60 "spawn_off"
+    READ_LONG  0x64 "spawn_num"
+    READ_LONG  0x68 "ent_off"
+    READ_LONG  0x6c "ent_num"
+    READ_LONG  0x70 "cont_off"
+    READ_SHORT 0x74 "cont_num"
+    READ_SHORT 0x76 "item_num"
+    READ_LONG  0x78 "item_off"
+    READ_LONG  0x7c "vert_off"
+    READ_SHORT 0x80 "vert_num"
+    READ_SHORT 0x82 "amb_num"
+    READ_LONG  0x84 "amb_off"
+    READ_LONG  0x88 "var_off"
+    READ_LONG  0x8c "var_num"
+    READ_ASCII 0x94 "script"
+    READ_LONG  0x9c "bmp_size"
+    READ_LONG  0xa0 "bmp_off"
+    READ_LONG  0xa4 "door_num"
+    READ_LONG  0xa8 "door_off"
+    READ_LONG  0xac "anim_num"
+    READ_LONG  0xb0 "anim_off"
+    READ_LONG  0xb4 "tiled_num"
+    READ_LONG  0xb8 "tiled_off"
+    READ_LONG  0xbc "song_off"
+    READ_LONG  0xc0 "rest_off"
+    READ_LONG  0xc4 "note_off"
+    READ_LONG  0xc8 "note_num"
+    SET "running_offset" = 0x11c
+
+    // check actors
+    PATCH_IF ("%running_offset%" != "%actor_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Actor offset is incorrect! Correcting..."
+      WRITE_LONG  0x54 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%actor_num%" * 0x110))
+    // check info points
+    PATCH_IF ("%running_offset%" != "%info_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Info Point offset is incorrect! Correcting..."
+      WRITE_LONG  0x5c "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%info_num%" * 0xc4))
+    // check spawn points
+    PATCH_IF ("%running_offset%" != "%spawn_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Spawn Point offset is incorrect! Correcting..."
+      WRITE_LONG  0x60 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%spawn_num%" * 0xc8))
+    // check entrance points
+    PATCH_IF ("%running_offset%" != "%ent_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Entrances offset is incorrect! Correcting..."
+      WRITE_LONG  0x68 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%ent_num%" * 0x68))
+    // check containers
+    PATCH_IF ("%running_offset%" != "%cont_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Containers offset is incorrect! Correcting..."
+      WRITE_LONG  0x70 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%cont_num%" * 0xc0))
+    // check items
+    PATCH_IF ("%running_offset%" != "%item_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Items offset is incorrect! Correcting..."
+      WRITE_LONG  0x78 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%item_num%" * 0x14))
+    // check ambients
+    PATCH_IF ("%running_offset%" != "%amb_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Ambients offset is incorrect! Correcting..."
+      WRITE_LONG  0x84 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%amb_num%" * 0xd4))
+    // check variables
+    PATCH_IF ("%running_offset%" != "%var_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Variables offset is incorrect! Correcting..."
+      WRITE_LONG  0x88 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%var_num%" * 0x54))
+    // check doors
+    PATCH_IF ("%running_offset%" != "%door_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Door offset is incorrect! Correcting..."
+      WRITE_LONG  0xa8 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%door_num%" * 0xc8))
+    // check tiled objects
+    PATCH_IF ("%running_offset%" != "%tiled_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Tiled Objects offset is incorrect! Correcting..."
+      WRITE_LONG  0xb8 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%tiled_num%" * 0x6c))
+    // check vertices
+    PATCH_IF ("%running_offset%" != "%vert_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Vertices offset is incorrect! Correcting..."
+      WRITE_LONG  0x7c "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%vert_num%" * 0x04))
+    // check animations
+    PATCH_IF ("%running_offset%" != "%anim_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Animations offset is incorrect! Correcting..."
+      WRITE_LONG  0xb0 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%anim_num%" * 0x4c))
+    // check bitmap
+    PATCH_IF ("%running_offset%" != "%bmp_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Bitmap offset is incorrect! Correcting..."
+      WRITE_LONG  0xa0 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + "%bmp_size%")
+    // check songs block
+    PATCH_IF ("%running_offset%" != "%song_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Songs offset is incorrect! Correcting..."
+      WRITE_LONG  0xbc "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + 0x90)
+    // check rest spawn block
+    PATCH_IF ("%running_offset%" != "%rest_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn offset is incorrect! Correcting..."
+      WRITE_LONG  0xc0 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + 0xe4)
+    // check map notes
+    PATCH_IF ("%running_offset%" != "%note_off%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Map Notes offset is incorrect! Correcting..."
+      WRITE_LONG  0xc4 "running_offset"
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Area Stuff - Script Assigner (assigns missing/unassigned scripts to areas)~
   GROUP ~Area Stuff~
@@ -335,6 +486,69 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Creature Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Creature Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN
+    READ_BYTE  0x33  "fx_type"
+    READ_LONG  0x2a0 "known_off"
+    READ_LONG  0x2a4 "known_num"
+    READ_LONG  0x2a8 "meminfo_off"
+    READ_LONG  0x2ac "meminfo_num"
+    READ_LONG  0x2b0 "mem_off"
+    READ_LONG  0x2b4 "mem_num"
+    READ_LONG  0x2b8 "slot_off"
+    READ_LONG  0x2bc "item_off"
+    READ_LONG  0x2c0 "item_num"
+    READ_LONG  0x2c4 "fx_off"
+    READ_LONG  0x2c8 "fx_num"
+    SET "running_offset" = 0x2d4
+    SET "running_spl_idx" = 0
+
+    // check known spells
+    PATCH_IF ("%known_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Known Spells offset is incorrect! Correcting..."
+      WRITE_LONG  0x2a0 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%known_num%" * 0x0c))
+    // check spell memorization info
+    PATCH_IF ("%meminfo_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Memorization Info offset is incorrect! Correcting..."
+      WRITE_LONG  0x2a8 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%meminfo_num%" * 0x10))
+    // check memorized spells
+    PATCH_IF ("%mem_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Memorized Spells offset is incorrect! Correcting..."
+      WRITE_LONG  0x2b0 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%mem_num%" * 0x0c))
+    // check effects
+    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Effects offset is incorrect! Correcting..."
+      WRITE_LONG  0x2c4 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%fx_num%" * (0x30 + ("%fx_type%" * 0xd8))))
+    // check items
+    PATCH_IF ("%item_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Item offset is incorrect! Correcting..."
+      WRITE_LONG  0x2bc "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%item_num%" * 0x14))
+    // check slot offset
+    PATCH_IF ("%slot_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Item Slot offset is incorrect! Correcting..."
+      WRITE_LONG  0x2b8 "running_offset"
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
 
@@ -350,7 +564,6 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Creature Stuff - Inventory Unborker (removes spurious references to the item table)~
   GROUP ~Creature Stuff~
 
-//G3 Debugging Suite - Equip invalid items
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d4) THEN BEGIN
     READ_LONG  0x2b8 "slot_off" ELSE 0
@@ -870,6 +1083,32 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Item Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+    SET "running_offset" = 0x72
+
+    // check abilities/extended header
+    PATCH_IF ("%abil_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Abilities offset is incorrect! Correcting..."
+      WRITE_LONG  0x64 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%abil_num%" * 0x38))
+    // check features/equipped effects
+    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Equipped Effect offset is incorrect! Correcting..."
+      WRITE_LONG  0x6a "running_offset"
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Item Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
   GROUP ~Item Stuff~
 
@@ -982,6 +1221,32 @@ BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x34) BEGIN
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Spell Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Spell Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+    SET "running_offset" = 0x72
+
+    // check abilities/extended header
+    PATCH_IF ("%abil_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Abilities offset is incorrect! Correcting..."
+      WRITE_LONG  0x64 "running_offset"
+    END
+
+    SET "running_offset" = ("%running_offset%" + ("%abil_num%" * 0x28))
+    // check features/equipped effects
+    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Casting Effect offset is incorrect! Correcting..."
+      WRITE_LONG  0x6a "running_offset"
+    END
   END
 BUT_ONLY_IF_IT_CHANGES
 
