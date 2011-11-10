@@ -581,6 +581,24 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Creature Stuff - Inventory Cleaner (removes items that don't exist)~
+  GROUP ~Creature Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
+    READ_LONG  0x2bc "itm_off" ELSE 0
+    READ_LONG  0x2c0 "itm_num" ELSE 0
+
+    FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
+      READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
+      PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
+        REMOVE_CRE_ITEM ~%item%~
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Creature Stuff - Inventory Overhauler (moves invalid equippable items to inventory and equips anything in the inventory to a free slot)~
   GROUP ~Creature Stuff~
 
