@@ -620,9 +620,25 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
       PATCH_IF ("%ref%" != 0xffff) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
-        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
+        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AADEMRNG~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AAGOLSTN~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AAHELM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AAOROFN1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AAREVIMM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~AAWEATH1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ARROPHEO~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BAZPLO02~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BEHOLDER~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~CBBNLCH0~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~CBBNLCH1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~DRAGGRE1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~DRAGSHA1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~DW#SKRNG~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~DWDUST~) OR
                     (~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
                     (~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
                     (~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
@@ -633,7 +649,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     (~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
                     (~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMCLOUD~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE10~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
@@ -641,18 +659,51 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     (~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
                     (~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
                     (~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~KUORING~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~LICH~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~LICHIM2~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~LK#IBELT~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAGE03~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAGE04~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAGE05~) OR
                     (~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAGEBRAC~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MAHARPER~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MASAKIIM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MEL01~) OR
                     (~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
                     (~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MINHP20~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MISTPO~) OR
                     (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~MONHP80~) OR
                     (~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
                     (~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~REGHP2R~) OR
                     (~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~RINGDEMN~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~RINGWOLF~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~S1-20~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~SAREVIMM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~SENGUA04~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~SPEC02~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~SPECTR~) OR
                     (~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~T-BAMM02~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TELSLAV~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TELSLAV2~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TRANS3~) OR
                     (~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
                     (~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TZ25_!SK~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TZ25_#MH~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~TZ25__NB~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~VAMPREG1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~WALLPASS~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
+                    (~%item%~ STRING_EQUAL_CASE ~VORSQUI1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZY18BALA~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYINVULN~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
           INNER_PATCH_FILE ~%item%.itm~ BEGIN
             READ_SHORT 0x1c "type"
             READ_BYTE 0x18 "flags"
