@@ -928,31 +928,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
             END
-          END ELSE
+          END
           PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~AMULET~
             SET "%amulet%" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~ARMOR~
             SET "%armor%" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BELT~
             SET "%belt%" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
             SET "%boots%" = 1
-          END
+          END ELSE
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver1%" = 0)) AND ("%index%" > 17)) BEGIN
@@ -960,7 +960,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
             SET "%quiver1%" = 1
-          END
+          END ELSE
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver2%" = 0)) AND ("%index%" > 17)) BEGIN
@@ -968,7 +968,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
             SET "%quiver2%" = 1
-          END
+          END ELSE
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver3%" = 0)) AND ("%index%" > 17)) BEGIN
@@ -976,7 +976,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
             SET "%quiver3%" = 1
-          END
+          END ELSE
           PATCH_IF (((("%type%" =  5) OR
                       ("%type%" = 14) OR
                       ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%index%" > 17)) BEGIN
@@ -984,37 +984,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER4 INV~
             SET "%quiver4%" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~GLOVES~
             SET "gloves" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping HELM~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~HELMET~
             SET "helm" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping LRING~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~LRING~
             SET "lring" = 1
-          END
+          END ELSE
           PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0))) AND ("%index%" > 17) BEGIN
             PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping RRING~
             REMOVE_CRE_ITEM ~%item%~
             ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~RRING~
             SET "rring" = 1
-          END
-          PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
-            SET "offhand" = 1
-          END
+          END ELSE
           PATCH_IF (((("%type%" = 15) OR // bow
                       ("%type%" = 16) OR // dagger
                       ("%type%" = 17) OR // maces
@@ -1038,6 +1032,36 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON1 INV~
               SET "%weapon1%" = 1
+            END
+          END ELSE
+          PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN
+            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
+            REMOVE_CRE_ITEM ~%item%~
+            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
+            SET "offhand" = 1
+          END ELSE
+          PATCH_IF ((("%type%" != 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN // if not shield, check for valid melee abilities
+            SET "2handed" = 0
+            SET "legit_offhand" = 0
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_BYTE 0x18 "flags"
+              READ_LONG  0x64 "abil_off"
+              READ_SHORT 0x68 "abil_num"
+              PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) BEGIN // 2h check
+                  SET "2handed" = 1
+              END
+              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
+                  SET "legit_offhand" = 1
+                END
+              END
+            END
+            PATCH_IF (("%legit_offhand%" = 1) AND ("%2handed%" = 0))BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping OFFHAND~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
+              SET "offhand" = 1
             END
           END ELSE
           PATCH_IF (((("%type%" = 15) OR // bow
