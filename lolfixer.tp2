@@ -571,6 +571,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
         REMOVE_CRE_ITEM ~%item%~
+        SET "index" = "index" - 1
         READ_LONG  0x2c0 "itm_num"
       END
     END
