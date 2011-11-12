@@ -2,8 +2,8 @@ BACKUP ~lolfixer/backup~
 AUTHOR ~Lollorian~
 VERSION ~0.1A~
 
-BEGIN ~Area Stuff (Recommended) - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Area Stuff (Recommended)~
+BEGIN ~Area Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Area Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
@@ -247,7 +247,7 @@ ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
 END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
+  PATCH_IF (SOURCE_SIZE > 0x11b AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~F_6666~)) THEN BEGIN
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
 
@@ -475,8 +475,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Creature Stuff (Recommended) - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Creature Stuff (Recommended)~
+BEGIN ~Creature Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Creature Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
@@ -553,26 +553,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           PATCH_PRINT "%SOURCE_FILE% error: Inventory Item Slot #%index% refers to an item outside the Item Table! Setting to -1..."
           WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
         END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Creature Stuff (Recommended) - Inventory Cleaner (removes items that don't exist)~
-  GROUP ~Creature Stuff (Recommended)~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
-    READ_LONG  0x2bc "itm_off" ELSE 0
-    READ_LONG  0x2c0 "itm_num" ELSE 0
-
-    FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
-      READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
-      PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
-        REMOVE_CRE_ITEM ~%item%~
-        SET "index" = "index" - 1
-        READ_LONG  0x2c0 "itm_num"
       END
     END
   END
@@ -826,6 +806,26 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
         READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
         PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Creature Stuff (Recommended) - Inventory Cleaner (removes items that don't exist)~
+  GROUP ~Creature Stuff (Recommended)~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
+    READ_LONG  0x2bc "itm_off" ELSE 0
+    READ_LONG  0x2c0 "itm_num" ELSE 0
+
+    FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
+      READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
+      PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
+        REMOVE_CRE_ITEM ~%item%~
+        SET "index" = "index" - 1
+        READ_LONG  0x2c0 "itm_num"
       END
     END
   END
@@ -1408,8 +1408,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Item Stuff (Recommended) - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Item Stuff (Recommended)~
+BEGIN ~Item Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
@@ -1549,8 +1549,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Spell Stuff (Recommended) - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Spell Stuff (Recommended)~
+BEGIN ~Spell Stuff - Offset Checker (fixes incorrect offsets)~
+  GROUP ~Spell Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
