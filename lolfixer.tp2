@@ -247,7 +247,7 @@ ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
 END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~F_6666~)) THEN BEGIN
+  PATCH_IF ((SOURCE_SIZE > 0x11b) AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~F_6666~)) THEN BEGIN
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
 
@@ -558,274 +558,288 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Creature Stuff - Tutu-to-BGT Convertor (converts any Tutu item references to BGT stuff)~
-  GROUP ~Creature Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
-    READ_LONG  0x2bc "itm_off" ELSE 0
-    READ_LONG  0x2c0 "itm_num" ELSE 0
-    FOR (index = 0; index < itm_num; index = index + 1) BEGIN
-      READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_AROW01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_AROW02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_AROW07" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_BOW01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_BOW03" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_BOW08" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_BLUN02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_BULL02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_CHAN04" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_CHAN05" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_DAGG01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_DAGG03" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_DAGG05" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_DART01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_DART02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_HELM09" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_HELM11" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_JELLGR1" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_LEAT01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_LEAT02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_LEAT04" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_MAGE01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_MAGE02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_MAGE05" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_AGEBRAC" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_MISC33" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_PLAT01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_PLAT04" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_POTN20" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_POTN21" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_POTN36" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_POTN37" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_POTN45" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_RING95" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SCRL96" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SHLD01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SHLD08" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SLNG02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SPER01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SPER02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_STAF01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_STAF02" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_STAF07" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SW2H01" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SW1H04" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SW1H07" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SW1H08" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END ELSE
-      PATCH_IF ("%item%" STRING_COMPARE_CASE "_SW1H24" = 0) BEGIN
-        WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
-        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-        PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Creature Stuff (Recommended) - Inventory Cleaner (removes items that don't exist)~
+BEGIN ~Creature Stuff (Recommended) - Inventory Cleaner (removes items that don't exist and converts them into already present items where applicable)~
   GROUP ~Creature Stuff (Recommended)~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
+  PATCH_IF ((SOURCE_SIZE > 0x2d3) AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SENDRO03~)) THEN BEGIN
     READ_LONG  0x2bc "itm_off" ELSE 0
     READ_LONG  0x2c0 "itm_num" ELSE 0
 
     FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
       READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
       PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
-        REMOVE_CRE_ITEM ~%item%~
-        SET "index" = "index" - 1
-        READ_LONG  0x2c0 "itm_num"
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW07") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW03") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW08") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BLUN02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BULL02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN04") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN05") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG03") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG05") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM09") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM11") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_JELLGR1") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT04") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE05") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AGEBRAC") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MISC33") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT04") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN20") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN21") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN36") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN37") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN45") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_RING95") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SCRL96") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD08") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SLNG02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF02") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF07") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW2H01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H01") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H01" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H04") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H07") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H08") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H24") BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) THEN BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) THEN BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~MIN1HP~) THEN BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MINHP1" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) THEN BEGIN
+          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
+          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+        END ELSE
+        BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
+          REMOVE_CRE_ITEM ~%item%~
+          SET "index" = "index" - 1
+          READ_LONG  0x2c0 "itm_num"
+        END
       END
     END
   END
@@ -882,6 +896,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     (~%item%~ STRING_EQUAL_CASE ~BEHOLDER~) OR
                     (~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~BONEDAG~) OR
                     (~%item%~ STRING_EQUAL_CASE ~CBBNLCH0~) OR
                     (~%item%~ STRING_EQUAL_CASE ~CBBNLCH1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
@@ -928,6 +943,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~MONHP80~) OR
                     (~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~POWEATH1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~REGHP2R~) OR
                     (~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
@@ -950,10 +966,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     (~%item%~ STRING_EQUAL_CASE ~TZ25__NB~) OR
                     (~%item%~ STRING_EQUAL_CASE ~VAMPREG1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~VERMTYPE~) OR
                     (~%item%~ STRING_EQUAL_CASE ~VORSQUI1~) OR
                     (~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
                     (~%item%~ STRING_EQUAL_CASE ~ZY18BALA~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYINVULN~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
+                    (~%item%~ STRING_EQUAL_CASE ~ZYCLCKN1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYHELME5~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYHELMN1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYINVULN~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYOROFN1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYREG1P3~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYRINGN1~) OR
+                    (~%item%~ STRING_EQUAL_CASE ~ZYSW1HN3~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
           INNER_PATCH_FILE ~%item%.itm~ BEGIN
             READ_SHORT 0x1c "type"
             READ_BYTE 0x18 "flags"
