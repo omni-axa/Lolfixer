@@ -933,7 +933,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
       PATCH_IF ("%ref%" != 0xffff) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
-        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
+        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR														//Bandit Scalp
+				   ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR		//Child's Body
+				   ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR		//Ramazith's Prot Ring
+				   ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR		//Shandalar's Wardstone
+				   ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR		//Imnesvale Chicken's Beljuril
+				   ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR		//Genie's Tears of Bhaal
+				   ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR		//Kangaxx's Gaxx Ring
+				   ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR		//Ihtafeer's Head
+				   ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR		//Kuo-Tuan Prince's Blood
+				   ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR		//Adalon's Blood
+				   ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR		//Adalon's Note
+					(~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AADEMRNG~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AAGOLSTN~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AAHELM~) OR
