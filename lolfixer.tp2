@@ -272,7 +272,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
               STR_VAR fj_structure_type = actor
             END
             SET "index" = "index" - 1
-            READ_SHORT 0x58 "actor_num"
+            SET "actor_num" = "actor_num" - 1
           END
         END
       END
@@ -325,7 +325,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             STR_VAR fj_structure_type = spawn
           END
           SET "index" = "index" - 1
-          READ_LONG  0x64 "spawn_num"
+          SET "spawn_num" = "spawn_num" - 1
         END
       END
     END
@@ -678,13 +678,14 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
     READ_LONG  0x2b8 "slot_off" ELSE 0
     READ_SHORT 0x2c0 "itm_num" ELSE 0
-
-    FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
-      READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
-      PATCH_IF ("%ref%" != 0xffff) BEGIN
-        PATCH_IF ((%ref% + 1) > %itm_num%) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Inventory Item Slot #%index% refers to an item outside the Item Table! Setting to -1..."
-          WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+    PATCH_IF ("slot_off" > 0x2d3) THEN BEGIN
+      FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
+        READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
+        PATCH_IF ("%ref%" != 0xffff) BEGIN
+          PATCH_IF ((%ref% + 1) > %itm_num%) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item Slot #%index% refers to an item outside the Item Table! Setting to -1..."
+            WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+          END
         END
       END
     END
@@ -698,280 +699,281 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF ((SOURCE_SIZE > 0x2d3)) THEN BEGIN
     READ_LONG  0x2bc "itm_off" ELSE 0
     READ_LONG  0x2c0 "itm_num" ELSE 0
-
-    FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
-      READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
-      PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW07") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW03") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW08") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BLUN02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_BULL02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN04") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN05") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG03") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG05") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM09") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM11") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_JELLGR1") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT04") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE05") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_AGEBRAC") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_MISC33") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT04") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN20") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN21") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN36") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN37") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN45") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_RING95") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SCRL96") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD08") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SLNG02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF02") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF07") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW2H01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H01") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H01" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H04") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H07") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H08") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H24") BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) THEN BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) THEN BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~MIN1HP~) THEN BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MINHP1" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        PATCH_IF (~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) THEN BEGIN
-          WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
-          READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-          PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-        END ELSE
-        BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
-          REMOVE_CRE_ITEM ~%item%~
-          SET "index" = "index" - 1
-          READ_LONG  0x2c0 "itm_num"
+    PATCH_IF ("itm_off" > 0x2d3) THEN BEGIN
+      FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
+        READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
+        PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_AROW07") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW03") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_BOW08") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_BLUN02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_BULL02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN04") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_CHAN05") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG03") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_DAGG05") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_DART02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM09") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_HELM11") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_JELLGR1") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_LEAT04") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_MAGE05") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_AGEBRAC") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_MISC33") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_PLAT04") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN20") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN21") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN36") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN37") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN45") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_RING95") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SCRL96") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SHLD08") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SLNG02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SPER02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF02") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_STAF07") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW2H01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H01") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H01" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H04") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H07") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H08") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_SW1H24") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~MIN1HP~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MINHP1" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
+            REMOVE_CRE_ITEM ~%item%~
+            SET "index" = "index" - 1
+            SET "itm_num" = "itm_num" - 1
+          END
         END
       END
     END
@@ -1014,570 +1016,548 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
     SET "quiver4" = 0
     SET "cloak" = 0
     SET "2handedequip" = 0
-    FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
-      READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
-      PATCH_IF ("%ref%" != 0xffff) BEGIN
-        READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
-        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR                                                           //Bandit Scalp
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR          //Child's Body
-                   ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR          //Ramazith's Prot Ring
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR        //Shandalar's Wardstone
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR         //Imnesvale Chicken's Beljuril
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR         //Genie's Tears of Bhaal
-                   ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR          //Kangaxx's Gaxx Ring
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR         //Ihtafeer's Head
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR        //Kuo-Tuan Prince's Blood
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Blood
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Note
-                    (~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AADEMRNG~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AAGOLSTN~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AAHELM~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AAOROFN1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AAREVIMM~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~AAWEATH1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ARROPHEO~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~BAZPLO02~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~BEHOLDER~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~BONEDAG~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~CBBNLCH0~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~CBBNLCH1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~DRAGGRE1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~DRAGSHA1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~DW#SKRNG~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~DWDUST~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GOLCLA~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GOLFLE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GOLSTONE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GORAIR~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMCLOUD~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE10~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IMPINVIS~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~KUORING~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~LICH~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~LICHIM2~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~LK#IBELT~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAGE03~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAGE04~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAGE05~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAGEBRAC~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MAHARPER~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MASAKIIM~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MEL01~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MINHP20~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MISTPO~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~MONHP80~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~POWEATH1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~REGHP2R~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~RINGDEMN~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~RINGWOLF~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~S1-20~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~SAREVIMM~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~SENGUA04~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~SPEC02~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~SPECTR~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~T-BAMM02~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TELSLAV~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TELSLAV2~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TRANS3~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TZ25_!SK~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TZ25_#MH~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~TZ25__NB~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~VAMPREG1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~VERMTYPE~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~VORSQUI1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZY18BALA~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYCLCKN1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYHELME5~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYHELMN1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYINVULN~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYOROFN1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYREG1P3~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYRINGN1~) OR
-                    (~%item%~ STRING_EQUAL_CASE ~ZYSW1HN3~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
-          INNER_PATCH_FILE ~%item%.itm~ BEGIN
-            READ_SHORT 0x1c "type"
-            READ_BYTE 0x18 "flags"
-          END
-          PATCH_IF ("%index%" = 0) BEGIN // helm slot
-            SET "helm" = 1
-            PATCH_IF ("%type%" != 7) BEGIN // helm
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid HELM: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "helm" = 0
+    PATCH_IF (("slot_off" > 0x2d3) AND ("itm_off" > 0x2d3)) THEN BEGIN
+      FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
+        READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
+        PATCH_IF ("%ref%" != 0xffff) BEGIN
+          READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
+          PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR                                                           //Bandit Scalp
+                     ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR          //Child's Body
+                     ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR          //Ramazith's Prot Ring
+                     ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR        //Shandalar's Wardstone
+                     ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR         //Imnesvale Chicken's Beljuril
+                     ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR         //Genie's Tears of Bhaal
+                     ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR          //Kangaxx's Gaxx Ring
+                     ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR         //Ihtafeer's Head
+                     ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR        //Kuo-Tuan Prince's Blood
+                     ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Blood
+                     ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Note
+                      (~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AADEMRNG~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AAGOLSTN~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AAHELM~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AAOROFN1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AAREVIMM~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~AAWEATH1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ARROPHEO~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~BAZPLO02~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~BEHOLDER~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~BHAALHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~BHAALIMM~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~BONEDAG~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~CBBNLCH0~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~CBBNLCH1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~CHWRAITH~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~DRAGGRE1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~DRAGSHA1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~DW#SKRNG~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~DWDUST~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~FAMMY~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GHOST~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GHOST3~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GOLCLA~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GOLFLE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GOLSTONE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GORAIR~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~GORMISTI~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ILLBLUR~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMCHS~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMCLOUD~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMUNE1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMUNE10~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMUNE2~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMMUNE3~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMOENHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IMPINVIS~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~INVULNER~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~IRONGOL~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~JONHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~KUORING~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~LICH~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~LICHIM2~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~LK#IBELT~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAGE03~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAGE04~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAGE05~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAGE06~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAGEBRAC~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MAHARPER~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MASAKIIM~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MEL01~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MGLOBE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MINHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MINHP20~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MISTPO~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MONHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~MONHP80~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~NOCIRC~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~POWEATH1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~REGHP1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~REGHP2R~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~RIDRING~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~RINGDEMN~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~RINGWOLF~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~S1-20~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~SAREVIMM~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~SENGUA04~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~SPEC02~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~SPECTR~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~STONSKIN~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~T-BAMM02~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TELSLAV~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TELSLAV2~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TRANS3~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TROLLDIE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TSTATUE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TZ25_!SK~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TZ25_#MH~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~TZ25__NB~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~VAMPREG1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~VAMPREG2~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~VERMTYPE~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~VORSQUI1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~WALLPASS~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZY18BALA~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYCLCKN1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYHELME5~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYHELMN1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYINVULN~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYOROFN1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYREG1P3~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYRINGN1~) OR
+                      (~%item%~ STRING_EQUAL_CASE ~ZYSW1HN3~)) AND (FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
+            INNER_PATCH_FILE ~%item%.itm~ BEGIN
+              READ_SHORT 0x1c "type"
+              READ_BYTE 0x18 "flags"
             END
-          END
-          PATCH_IF ("%index%" = 1) BEGIN // armor slot
-            SET "armor" = 1
-            PATCH_IF ("%type%" != 2) BEGIN // armor
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid ARMOR: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "armor" = 0
+            PATCH_IF ("%index%" = 0) BEGIN // helm slot
+              SET "helm" = 1
+              PATCH_IF ("%type%" != 7) BEGIN // helm
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid HELM: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "helm" = 0
+              END
             END
-          END
-          PATCH_IF ("%index%" = 2) BEGIN // shield slot
-            SET "offhand" = 1
-            PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) BEGIN // 2h check
-              PATCH_PRINT ~%SOURCE_FILE%: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "offhand" = 0
-            END ELSE
-            PATCH_IF ("%type%" != 12) BEGIN // if not shield, check for valid melee abilities
-              SET "legit_offhand" = 0
+            PATCH_IF ("%index%" = 1) BEGIN // armor slot
+              SET "armor" = 1
+              PATCH_IF ("%type%" != 2) BEGIN // armor
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid ARMOR: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "armor" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 2) BEGIN // shield slot
+              SET "offhand" = 1
+              PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) BEGIN // 2h check
+                PATCH_PRINT ~%SOURCE_FILE%: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "offhand" = 0
+              END ELSE
+              PATCH_IF ("%type%" != 12) BEGIN // if not shield, check for valid melee abilities
+                SET "legit_offhand" = 0
+                INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                  READ_LONG  0x64 "abil_off"
+                  READ_SHORT 0x68 "abil_num"
+                  FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                    READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                    PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
+                      SET "legit_offhand" = 1
+                    END
+                  END
+                END
+                PATCH_IF ("%legit_offhand%" = 0) BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE%: Invalid OFFHAND: %item%.itm! Moving to inventory~
+                  REMOVE_CRE_ITEM ~%item%~
+                  ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                  SET "offhand" = 0
+                END
+              END
+            END
+            PATCH_IF ("%index%" = 3) BEGIN // glove slot
+              SET "gloves" = 1
+              PATCH_IF ("%type%" != 6) BEGIN // gloves
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid GLOVES: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "gloves" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 4) BEGIN
+              SET "lring" = 1
+              PATCH_IF ("%type%" != 10) BEGIN // rings
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid LRING: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "lring" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 5) BEGIN
+              SET "rring" = 1
+              PATCH_IF ("%type%" != 10) BEGIN // rings
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid RRING: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "rring" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 6) BEGIN // amulet slot
+              SET "amulet" = 1
+              PATCH_IF ("%type%" != 1) BEGIN // amulet
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid AMULET: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "amulet" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 7) BEGIN // belt slot
+              SET "belt" = 1
+              PATCH_IF ("%type%" != 3) BEGIN // belt
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid BELT: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "belt" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 8) BEGIN // boot slot
+              SET "boots" = 1
+              PATCH_IF ("%type%" != 4) BEGIN // boot
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid BOOTS: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "boots" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
+              SET "weapon1" = 1
+              SET "legit_weapon" = 0
               INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                READ_BYTE  0x18 "flags"
                 READ_LONG  0x64 "abil_off"
                 READ_SHORT 0x68 "abil_num"
                 FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                   READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                  PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
-                    SET "legit_offhand" = 1
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                    SET "legit_weapon" = 1
                   END
                 END
+                PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
+                    SET "2handedequip" = 1
+                END
               END
-              PATCH_IF ("%legit_offhand%" = 0) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid OFFHAND: %item%.itm! Moving to inventory~
+              PATCH_IF ("%legit_weapon%" = 0) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON1: %item%.itm! Moving to inventory~
                 REMOVE_CRE_ITEM ~%item%~
                 ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-                SET "offhand" = 0
+                SET "weapon1" = 0
               END
             END
-          END
-          PATCH_IF ("%index%" = 3) BEGIN // glove slot
-            SET "gloves" = 1
-            PATCH_IF ("%type%" != 6) BEGIN // gloves
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid GLOVES: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "gloves" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 4) BEGIN
-            SET "lring" = 1
-            PATCH_IF ("%type%" != 10) BEGIN // rings
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid LRING: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "lring" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 5) BEGIN
-            SET "rring" = 1
-            PATCH_IF ("%type%" != 10) BEGIN // rings
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid RRING: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "rring" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 6) BEGIN // amulet slot
-            SET "amulet" = 1
-            PATCH_IF ("%type%" != 1) BEGIN // amulet
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid AMULET: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "amulet" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 7) BEGIN // belt slot
-            SET "belt" = 1
-            PATCH_IF ("%type%" != 3) BEGIN // belt
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid BELT: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "belt" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 8) BEGIN // boot slot
-            SET "boots" = 1
-            PATCH_IF ("%type%" != 4) BEGIN // boot
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid BOOTS: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "boots" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
-            SET "weapon1" = 1
-            SET "legit_weapon" = 0
-            INNER_PATCH_FILE ~%item%.itm~ BEGIN
-              READ_BYTE  0x18 "flags"
-              READ_LONG  0x64 "abil_off"
-              READ_SHORT 0x68 "abil_num"
-              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
-                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
-                  SET "legit_weapon" = 1
+            PATCH_IF ("%index%" = 10) BEGIN // first weapon slot
+              SET "weapon2" = 1
+              SET "legit_weapon" = 0
+              INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                READ_BYTE  0x18 "flags"
+                READ_LONG  0x64 "abil_off"
+                READ_SHORT 0x68 "abil_num"
+                FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                  READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                    SET "legit_weapon" = 1
+                  END
+                END
+                PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
+                    SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
-                  SET "2handedequip" = 1
+              PATCH_IF ("%legit_weapon%" = 0) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON2: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "weapon2" = 0
               END
             END
-            PATCH_IF ("%legit_weapon%" = 0) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON1: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "weapon1" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 10) BEGIN // first weapon slot
-            SET "weapon2" = 1
-            SET "legit_weapon" = 0
-            INNER_PATCH_FILE ~%item%.itm~ BEGIN
-              READ_BYTE  0x18 "flags"
-              READ_LONG  0x64 "abil_off"
-              READ_SHORT 0x68 "abil_num"
-              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
-                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
-                  SET "legit_weapon" = 1
+            PATCH_IF ("%index%" = 11) BEGIN // first weapon slot
+              SET "weapon3" = 1
+              SET "legit_weapon" = 0
+              INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                READ_BYTE  0x18 "flags"
+                READ_LONG  0x64 "abil_off"
+                READ_SHORT 0x68 "abil_num"
+                FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                  READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                    SET "legit_weapon" = 1
+                  END
+                END
+                PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
+                    SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
-                  SET "2handedequip" = 1
+              PATCH_IF ("%legit_weapon%" = 0) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON3: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "weapon3" = 0
               END
             END
-            PATCH_IF ("%legit_weapon%" = 0) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON2: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "weapon2" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 11) BEGIN // first weapon slot
-            SET "weapon3" = 1
-            SET "legit_weapon" = 0
-            INNER_PATCH_FILE ~%item%.itm~ BEGIN
-              READ_BYTE  0x18 "flags"
-              READ_LONG  0x64 "abil_off"
-              READ_SHORT 0x68 "abil_num"
-              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
-                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
-                  SET "legit_weapon" = 1
+            PATCH_IF ("%index%" = 12) BEGIN // first weapon slot
+              SET "weapon4" = 1
+              SET "legit_weapon" = 0
+              INNER_PATCH_FILE ~%item%.itm~ BEGIN
+                READ_BYTE  0x18 "flags"
+                READ_LONG  0x64 "abil_off"
+                READ_SHORT 0x68 "abil_num"
+                FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
+                  READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                    SET "legit_weapon" = 1
+                  END
+                END
+                PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
+                    SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
-                  SET "2handedequip" = 1
+              PATCH_IF ("%legit_weapon%" = 0) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON4: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "weapon4" = 0
               END
             END
-            PATCH_IF ("%legit_weapon%" = 0) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON3: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "weapon3" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 12) BEGIN // first weapon slot
-            SET "weapon4" = 1
-            SET "legit_weapon" = 0
-            INNER_PATCH_FILE ~%item%.itm~ BEGIN
-              READ_BYTE  0x18 "flags"
-              READ_LONG  0x64 "abil_off"
-              READ_SHORT 0x68 "abil_num"
-              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
-                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
-                  SET "legit_weapon" = 1
-                END
-              END
-              PATCH_IF (("%legit_weapon%" = 1) AND (("%flags%" BAND 0b00000010) = 0b00000010)) BEGIN // 2h check
-                  SET "2handedequip" = 1
+            PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
+              SET "quiver1" = 1
+              PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER1: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "quiver1" = 0
               END
             END
-            PATCH_IF ("%legit_weapon%" = 0) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON4: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "weapon4" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
-            SET "quiver1" = 1
-            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER1: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "quiver1" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 14) BEGIN // first quiver slot
-            SET "quiver2" = 1
-            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER2: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "quiver2" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 15) BEGIN // first quiver slot
-            SET "quiver3" = 1
-            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER3: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "quiver3" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 16) BEGIN // first quiver slot
-            SET "quiver4" = 1
-            PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER4: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-              SET "quiver4" = 0
-            END
-          END
-          PATCH_IF ("%index%" = 17) BEGIN // cloak
-            SET "cloak" = 1
-            PATCH_IF ("%type%" != 32) BEGIN // cloak
-              PATCH_PRINT ~%SOURCE_FILE%: Invalid CLOAK: %item%.itm! Moving to inventory~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
-            END
-          END
-          PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~AMULET~
-            SET "%amulet%" = 1
-          END
-          PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~ARMOR~
-            SET "%armor%" = 1
-          END
-          PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BELT~
-            SET "%belt%" = 1
-          END
-          PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
-            SET "%boots%" = 1
-          END
-          PATCH_IF (((("%type%" =  5) OR
-                      ("%type%" = 14) OR
-                      ("%type%" = 31)) AND ("%quiver1%" = 0)) AND ("%index%" > 17)) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
-            SET "%quiver1%" = 1
-          END ELSE
-          PATCH_IF (((("%type%" =  5) OR
-                      ("%type%" = 14) OR
-                      ("%type%" = 31)) AND ("%quiver2%" = 0)) AND ("%index%" > 17)) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
-            SET "%quiver2%" = 1
-          END ELSE
-          PATCH_IF (((("%type%" =  5) OR
-                      ("%type%" = 14) OR
-                      ("%type%" = 31)) AND ("%quiver3%" = 0)) AND ("%index%" > 17)) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
-            SET "%quiver3%" = 1
-          END ELSE
-          PATCH_IF (((("%type%" =  5) OR
-                      ("%type%" = 14) OR
-                      ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%index%" > 17)) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER4 INV~
-            SET "%quiver4%" = 1
-          END
-          PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~GLOVES~
-            SET "gloves" = 1
-          END
-          PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping HELM~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~HELMET~
-            SET "helm" = 1
-          END
-          PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping LRING~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~LRING~
-            SET "lring" = 1
-          END ELSE
-          PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping RRING~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~RRING~
-            SET "rring" = 1
-          END
-          PATCH_IF (((("%type%" = 15) OR // bow
-                      ("%type%" = 16) OR // dagger
-                      ("%type%" = 17) OR // maces
-                      ("%type%" = 18) OR // sling
-                      ("%type%" = 19) OR // short sword
-                      ("%type%" = 20) OR // swords
-                      ("%type%" = 21) OR // hammer
-                      ("%type%" = 22) OR // morning stars
-                      ("%type%" = 23) OR // flail
-                      ("%type%" = 24) OR // darts
-                      ("%type%" = 25) OR // axe
-                      ("%type%" = 26) OR // staff
-                      ("%type%" = 27) OR // xbow
-                      ("%type%" = 28) OR // hand to hand
-                      ("%type%" = 29) OR // Spear
-                      ("%type%" = 30) OR // halberd
-                      ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%index%" > 17)))  BEGIN
-            PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON1 INV~
-              SET "%weapon1%" = 1
-            END
-          END ELSE
-          PATCH_IF (((("%type%" = 15) OR // bow
-                      ("%type%" = 16) OR // dagger
-                      ("%type%" = 17) OR // maces
-                      ("%type%" = 18) OR // sling
-                      ("%type%" = 19) OR // short sword
-                      ("%type%" = 20) OR // swords
-                      ("%type%" = 21) OR // hammer
-                      ("%type%" = 22) OR // morning stars
-                      ("%type%" = 23) OR // flail
-                      ("%type%" = 24) OR // darts
-                      ("%type%" = 25) OR // axe
-                      ("%type%" = 26) OR // staff
-                      ("%type%" = 27) OR // xbow
-                      ("%type%" = 28) OR // hand to hand
-                      ("%type%" = 29) OR // Spear
-                      ("%type%" = 30) OR // halberd
-                      ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%index%" > 17)))  BEGIN
-            PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON2 INV~
-              SET "%weapon2%" = 1
-            END
-          END ELSE
-          PATCH_IF (((("%type%" = 15) OR // bow
-                      ("%type%" = 16) OR // dagger
-                      ("%type%" = 17) OR // maces
-                      ("%type%" = 18) OR // sling
-                      ("%type%" = 19) OR // short sword
-                      ("%type%" = 20) OR // swords
-                      ("%type%" = 21) OR // hammer
-                      ("%type%" = 22) OR // morning stars
-                      ("%type%" = 23) OR // flail
-                      ("%type%" = 24) OR // darts
-                      ("%type%" = 25) OR // axe
-                      ("%type%" = 26) OR // staff
-                      ("%type%" = 27) OR // xbow
-                      ("%type%" = 28) OR // hand to hand
-                      ("%type%" = 29) OR // Spear
-                      ("%type%" = 30) OR // halberd
-                      ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%index%" > 17)))  BEGIN
-            PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON3 INV~
-              SET "%weapon3%" = 1
-            END
-          END ELSE
-          PATCH_IF (((("%type%" = 15) OR // bow
-                      ("%type%" = 16) OR // dagger
-                      ("%type%" = 17) OR // maces
-                      ("%type%" = 18) OR // sling
-                      ("%type%" = 19) OR // short sword
-                      ("%type%" = 20) OR // swords
-                      ("%type%" = 21) OR // hammer
-                      ("%type%" = 22) OR // morning stars
-                      ("%type%" = 23) OR // flail
-                      ("%type%" = 24) OR // darts
-                      ("%type%" = 25) OR // axe
-                      ("%type%" = 26) OR // staff
-                      ("%type%" = 27) OR // xbow
-                      ("%type%" = 28) OR // hand to hand
-                      ("%type%" = 29) OR // Spear
-                      ("%type%" = 30) OR // halberd
-                      ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%index%" > 17)))  BEGIN
-            PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
-              REMOVE_CRE_ITEM ~%item%~
-              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON4 INV~
-                SET "%weapon4%" = 1
-            END
-          END
-          PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
-            SET "offhand" = 1
-          END ELSE
-          PATCH_IF ((("%type%" != 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN // if not shield, check for valid melee abilities
-            SET "2handed" = 0
-            SET "legit_offhand" = 0
-            INNER_PATCH_FILE ~%item%.itm~ BEGIN
-              READ_BYTE  0x18 "flags"
-              READ_LONG  0x64 "abil_off"
-              READ_SHORT 0x68 "abil_num"
-              PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) BEGIN // 2h check
-                  SET "2handed" = 1
-              END
-              FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
-                READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
-                  SET "legit_offhand" = 1
-                END
+            PATCH_IF ("%index%" = 14) BEGIN // first quiver slot
+              SET "quiver2" = 1
+              PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER2: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "quiver2" = 0
               END
             END
-            PATCH_IF (("%2handedequip%" = 0) AND ("%legit_offhand%" = 1) AND ("%2handed%" = 0))BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping OFFHAND~
+            PATCH_IF ("%index%" = 15) BEGIN // first quiver slot
+              SET "quiver3" = 1
+              PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER3: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "quiver3" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 16) BEGIN // first quiver slot
+              SET "quiver4" = 1
+              PATCH_IF NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER4: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+                SET "quiver4" = 0
+              END
+            END
+            PATCH_IF ("%index%" = 17) BEGIN // cloak
+              SET "cloak" = 1
+              PATCH_IF ("%type%" != 32) BEGIN // cloak
+                PATCH_PRINT ~%SOURCE_FILE%: Invalid CLOAK: %item%.itm! Moving to inventory~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~INV~
+              END
+            END
+            PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~AMULET~
+              SET "%amulet%" = 1
+            END
+            PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~ARMOR~
+              SET "%armor%" = 1
+            END
+            PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BELT~
+              SET "%belt%" = 1
+            END
+            PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~BOOTS~
+              SET "%boots%" = 1
+            END
+            PATCH_IF (((("%type%" =  5) OR
+                        ("%type%" = 14) OR
+                        ("%type%" = 31)) AND ("%quiver1%" = 0)) AND ("%index%" > 17)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER1 INV~
+              SET "%quiver1%" = 1
+            END ELSE
+            PATCH_IF (((("%type%" =  5) OR
+                        ("%type%" = 14) OR
+                        ("%type%" = 31)) AND ("%quiver2%" = 0)) AND ("%index%" > 17)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER2 INV~
+              SET "%quiver2%" = 1
+            END ELSE
+            PATCH_IF (((("%type%" =  5) OR
+                        ("%type%" = 14) OR
+                        ("%type%" = 31)) AND ("%quiver3%" = 0)) AND ("%index%" > 17)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER3 INV~
+              SET "%quiver3%" = 1
+            END ELSE
+            PATCH_IF (((("%type%" =  5) OR
+                        ("%type%" = 14) OR
+                        ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%index%" > 17)) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~QUIVER4 INV~
+              SET "%quiver4%" = 1
+            END
+            PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~GLOVES~
+              SET "gloves" = 1
+            END
+            PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping HELM~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~HELMET~
+              SET "helm" = 1
+            END
+            PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping LRING~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~LRING~
+              SET "lring" = 1
+            END ELSE
+            PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping RRING~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~RRING~
+              SET "rring" = 1
+            END
+            PATCH_IF (((("%type%" = 15) OR // bow
+                        ("%type%" = 16) OR // dagger
+                        ("%type%" = 17) OR // maces
+                        ("%type%" = 18) OR // sling
+                        ("%type%" = 19) OR // short sword
+                        ("%type%" = 20) OR // swords
+                        ("%type%" = 21) OR // hammer
+                        ("%type%" = 22) OR // morning stars
+                        ("%type%" = 23) OR // flail
+                        ("%type%" = 24) OR // darts
+                        ("%type%" = 25) OR // axe
+                        ("%type%" = 26) OR // staff
+                        ("%type%" = 27) OR // xbow
+                        ("%type%" = 28) OR // hand to hand
+                        ("%type%" = 29) OR // Spear
+                        ("%type%" = 30) OR // halberd
+                        ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%index%" > 17)))  BEGIN
+              PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON1 INV~
+                SET "%weapon1%" = 1
+              END
+            END ELSE
+            PATCH_IF (((("%type%" = 15) OR // bow
+                        ("%type%" = 16) OR // dagger
+                        ("%type%" = 17) OR // maces
+                        ("%type%" = 18) OR // sling
+                        ("%type%" = 19) OR // short sword
+                        ("%type%" = 20) OR // swords
+                        ("%type%" = 21) OR // hammer
+                        ("%type%" = 22) OR // morning stars
+                        ("%type%" = 23) OR // flail
+                        ("%type%" = 24) OR // darts
+                        ("%type%" = 25) OR // axe
+                        ("%type%" = 26) OR // staff
+                        ("%type%" = 27) OR // xbow
+                        ("%type%" = 28) OR // hand to hand
+                        ("%type%" = 29) OR // Spear
+                        ("%type%" = 30) OR // halberd
+                        ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%index%" > 17)))  BEGIN
+              PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON2 INV~
+                SET "%weapon2%" = 1
+              END
+            END ELSE
+            PATCH_IF (((("%type%" = 15) OR // bow
+                        ("%type%" = 16) OR // dagger
+                        ("%type%" = 17) OR // maces
+                        ("%type%" = 18) OR // sling
+                        ("%type%" = 19) OR // short sword
+                        ("%type%" = 20) OR // swords
+                        ("%type%" = 21) OR // hammer
+                        ("%type%" = 22) OR // morning stars
+                        ("%type%" = 23) OR // flail
+                        ("%type%" = 24) OR // darts
+                        ("%type%" = 25) OR // axe
+                        ("%type%" = 26) OR // staff
+                        ("%type%" = 27) OR // xbow
+                        ("%type%" = 28) OR // hand to hand
+                        ("%type%" = 29) OR // Spear
+                        ("%type%" = 30) OR // halberd
+                        ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%index%" > 17)))  BEGIN
+              PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON3 INV~
+                SET "%weapon3%" = 1
+              END
+            END ELSE
+            PATCH_IF (((("%type%" = 15) OR // bow
+                        ("%type%" = 16) OR // dagger
+                        ("%type%" = 17) OR // maces
+                        ("%type%" = 18) OR // sling
+                        ("%type%" = 19) OR // short sword
+                        ("%type%" = 20) OR // swords
+                        ("%type%" = 21) OR // hammer
+                        ("%type%" = 22) OR // morning stars
+                        ("%type%" = 23) OR // flail
+                        ("%type%" = 24) OR // darts
+                        ("%type%" = 25) OR // axe
+                        ("%type%" = 26) OR // staff
+                        ("%type%" = 27) OR // xbow
+                        ("%type%" = 28) OR // hand to hand
+                        ("%type%" = 29) OR // Spear
+                        ("%type%" = 30) OR // halberd
+                        ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%index%" > 17)))  BEGIN
+              PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
+                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
+                REMOVE_CRE_ITEM ~%item%~
+                ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~WEAPON4 INV~
+                  SET "%weapon4%" = 1
+              END
+            END
+            PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
               REMOVE_CRE_ITEM ~%item%~
               ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~SHIELD~
               SET "offhand" = 1
             END
-          END
-          PATCH_IF ((("%type%" = 32) AND ("%cloak%" = 0))) AND ("%index%" > 17) BEGIN
-            PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping CLOAK~
-            REMOVE_CRE_ITEM ~%item%~
-            ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~CLOAK~
-            SET "cloak" = 1
+            PATCH_IF ((("%type%" = 32) AND ("%cloak%" = 0))) AND ("%index%" > 17) BEGIN
+              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping CLOAK~
+              REMOVE_CRE_ITEM ~%item%~
+              ADD_CRE_ITEM ~%item%~ #0 #0 #0 ~IDENTIFIED~ ~CLOAK~
+              SET "cloak" = 1
+            END
           END
         END
       END
