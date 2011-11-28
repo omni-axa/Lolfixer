@@ -168,15 +168,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     READ_ASCII 0x94 "script"
 
     SET "exists" = 0
+    SET "scexists" = 0
     SET "unassigned" = 0
     SET "missing" = 0
     INNER_PATCH_FILE ~%SOURCE_RES%.bcs~ BEGIN
       SET "exists" = 1
     END
-    PATCH_IF (("%script%" STRING_EQUAL_CASE "%SOURCE_RES%") AND ("%exists%" = 0)) BEGIN
+    INNER_PATCH_FILE ~%script%.bcs~ BEGIN
+      SET "scexists" = 1
+    END
+    PATCH_IF (("%scexists%" = 0) AND ("%exists%" = 0)) BEGIN
       SET "missing" = 1
     END
-    PATCH_IF (NOT ("%script%" STRING_EQUAL_CASE "%SOURCE_RES%") AND ("%exists%" = 1)) BEGIN
+    PATCH_IF (("%scexists%" = 0) AND ("%exists%" = 1)) BEGIN
       SET "unassigned" = 1
     END
     PATCH_IF ("%unassigned%" = 1) BEGIN
@@ -184,21 +188,23 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
     END ELSE
     PATCH_IF ("%missing%" = 1) BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%script%.bcs) created"
-      INNER_ACTION BEGIN
-        <<<<<<<< %script%.BAF
+      PATCH_IF NOT (("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%script%.bcs) created"
+        INNER_ACTION BEGIN
+          <<<<<<<< %script%.BAF
 >>>>>>>>
-        COMPILE ~%script%.BAF~
-      END
-    END ELSE
-    PATCH_IF ((("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) AND (NOT FILE_EXISTS_IN_GAME ~%SOURCE_FILE%.bcs~)) BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%SOURCE_RES%.bcs) created and assigned"
-      INNER_ACTION BEGIN
-        <<<<<<<< %SOURCE_RES%.BAF
+          COMPILE ~%script%.BAF~
+        END
+      END ELSE
+      BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%SOURCE_RES%.bcs) created and assigned"
+        INNER_ACTION BEGIN
+          <<<<<<<< %SOURCE_RES%.BAF
 >>>>>>>>
-        COMPILE ~%SOURCE_RES%.BAF~
+          COMPILE ~%SOURCE_RES%.BAF~
+        END
+        WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
       END
-      WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
     END
   END
 BUT_ONLY_IF_IT_CHANGES
