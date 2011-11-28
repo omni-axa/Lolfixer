@@ -217,18 +217,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
     READ_SHORT 0x82 "amb_num"
     READ_LONG  0x84 "amb_off"
-
-    FOR (index = 0 ; index < amb_num ; index = index + 1) BEGIN
-      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
-        READ_ASCII ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) "resref"
-        PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
-          SET "exists" = 0
-          INNER_PATCH_FILE ~%resref%.wav~ BEGIN
-            SET "exists" = 1
-          END
-          PATCH_IF ("%exists%" = 0) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Ambient #%index% does not exist (%resref%.wav)! Nulling..."
-            WRITE_ASCIIE ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
+    PATCH_IF (amb_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < amb_num ; index = index + 1) BEGIN
+        FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+          READ_ASCII ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) "resref"
+          PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+            SET "exists" = 0
+            INNER_PATCH_FILE ~%resref%.wav~ BEGIN
+              SET "exists" = 1
+            END
+            PATCH_IF ("%exists%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ambient #%index% does not exist (%resref%.wav)! Nulling..."
+              WRITE_ASCIIE ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
+            END
           END
         END
       END
@@ -247,25 +248,26 @@ ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
 END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF ((SOURCE_SIZE > 0x11b) AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~F_6666~)) THEN BEGIN
+  PATCH_IF ((SOURCE_SIZE > 0x11b)) THEN BEGIN
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
-
-    FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
-      READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
-      PATCH_IF ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$") BEGIN // ignore creatures starting with RD
-        SET "exists" = 0
-        INNER_PATCH_FILE ~%resref%.cre~ BEGIN
-          SET "exists" = 1
-        END
-        PATCH_IF ("%exists%" = 0) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
-          LPF fj_are_structure
-            INT_VAR fj_delete_mode    = "%index%"
-            STR_VAR fj_structure_type = actor
+    PATCH_IF (actor_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
+        READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
+        PATCH_IF ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$") BEGIN // ignore creatures starting with RD
+          SET "exists" = 0
+          INNER_PATCH_FILE ~%resref%.cre~ BEGIN
+            SET "exists" = 1
           END
-          SET "index" = "index" - 1
-          READ_SHORT 0x58 "actor_num"
+          PATCH_IF ("%exists%" = 0) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
+            LPF fj_are_structure
+              INT_VAR fj_delete_mode    = "%index%"
+              STR_VAR fj_structure_type = actor
+            END
+            SET "index" = "index" - 1
+            READ_SHORT 0x58 "actor_num"
+          END
         END
       END
     END
@@ -286,37 +288,39 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
     READ_LONG  0x60 "spawn_off"
     READ_LONG  0x64 "spawn_num"
-    FOR (index = 0 ; index < spawn_num ; index = index + 1) BEGIN
-      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
-        READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
-        PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
-                  ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
-                  ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
-          SET "exists" = 0
-          INNER_PATCH_FILE ~%resref%.cre~ BEGIN
-            SET "exists" = 1
+    PATCH_IF (spawn_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < spawn_num ; index = index + 1) BEGIN
+        FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+          READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
+          PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
+                    ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
+                    ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
+            SET "exists" = 0
+            INNER_PATCH_FILE ~%resref%.cre~ BEGIN
+              SET "exists" = 1
+            END
+            PATCH_IF ("%exists%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% creature file does not exist (%resref%.cre)! Nulling..."
+              WRITE_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) ~NONE~ #8
+            END
           END
-          PATCH_IF ("%exists%" = 0) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% creature file does not exist (%resref%.cre)! Nulling..."
-            WRITE_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) ~NONE~ #8
+        END
+        SET "none_count" = 0
+        FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
+          READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
+          PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+            SET "none_count" = "none_count" + 1
           END
         END
-      END
-      SET "none_count" = 0
-      FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
-        READ_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) "resref"
-        PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
-          SET "none_count" = "none_count" + 1
+        PATCH_IF ("%none_count%" = 10) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% has no creatures to spawn! Removing spawn entry..."
+          LPF fj_are_structure
+            INT_VAR fj_delete_mode    = "%index%"
+            STR_VAR fj_structure_type = spawn
+          END
+          SET "index" = "index" - 1
+          READ_LONG  0x64 "spawn_num"
         END
-      END
-      PATCH_IF ("%none_count%" = 10) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% has no creatures to spawn! Removing spawn entry..."
-        LPF fj_are_structure
-          INT_VAR fj_delete_mode    = "%index%"
-          STR_VAR fj_structure_type = spawn
-        END
-        SET "index" = "index" - 1
-        READ_LONG  0x64 "spawn_num"
       END
     END
   END
@@ -335,34 +339,109 @@ END
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
     READ_LONG  0xc0 "rest_off" ELSE 0
+    PATCH_IF (rest_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
+        READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
+        PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
+                  ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
+                  ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
+          SET "exists" = 0
+          INNER_PATCH_FILE ~%resref%.cre~ BEGIN
+            SET "exists" = 1
+          END
+          PATCH_IF ("%exists%" = 0) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn creature file does not exist (%resref%.cre)! Nulling..."
+            WRITE_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "NONE" #8
+          END
+        END
+      END
+      SET "none_count" = 0
+      FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
+        READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
+        PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
+          SET "none_count" = "none_count" + 1
+        END
+      END
+      READ_SHORT ("%rest_off%" + 0x98) "spawncount"
+      PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" != 0)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: No creatures in Rest Spawn Entry but area still set to spawn something! Setting number of spawnable creatures to 0..."
+        WRITE_SHORT ("%rest_off%" + 0x98) 0
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
 
-    // BGFixpack: Super Happy modder Pack - fix common error of incorrect map note offsets
-    FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
-      READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
-      PATCH_IF (("%resref%" STRING_COMPARE_CASE "") AND                  // ignore empty entries
-                ("%resref%" STRING_COMPARE_CASE "none") AND              // ignore 'none'
-                ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$")) BEGIN // ignore creatures starting with RD
-        SET "exists" = 0
-        INNER_PATCH_FILE ~%resref%.cre~ BEGIN
-          SET "exists" = 1
+BEGIN ~Area Stuff - Vertex Indexer (fixes mismatching vertex indices in Infopaths, Containers and Doors)~
+  GROUP ~Area Stuff~
+
+ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
+  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
+END
+ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
+  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
+END
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
+    READ_SHORT 0x5a "info_num"
+    READ_LONG  0x5c "info_off"
+    READ_LONG  0x70 "cont_off"
+    READ_SHORT 0x74 "cont_num"
+    READ_LONG  0xa4 "door_num"
+    READ_LONG  0xa8 "door_off"
+    SET "vert_running_index" = 0
+    PATCH_IF (info_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < info_num ; index = index + 1) BEGIN
+        // vertex count
+        READ_SHORT ("%info_off%" + 0x2a + ("%index%" * 0xc4)) "vert_run_num"
+        READ_LONG  ("%info_off%" + 0x2c + ("%index%" * 0xc4)) "vert_run_idx"
+        PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Info Point #%index% has vertex index error (should be %vert_running_index%)"
+          WRITE_LONG  ("%info_off%" + 0x2c + ("%index%" * 0xc4)) "vert_running_index"
         END
-        PATCH_IF ("%exists%" = 0) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn creature file does not exist (%resref%.cre)! Nulling..."
-          WRITE_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "NONE" #8
-        END
+        SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
       END
     END
-    SET "none_count" = 0
-    FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
-      READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
-      PATCH_IF (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN
-        SET "none_count" = "none_count" + 1
+    PATCH_IF (cont_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN // check indices
+        // vertex count
+        READ_LONG  ("%cont_off%" + 0x50 + ("%index%" * 0xc0)) "vert_run_idx"
+        READ_SHORT ("%cont_off%" + 0x54 + ("%index%" * 0xc0)) "vert_run_num"
+        PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Container #%index% has vertex index error (should be %vert_running_index%)"
+          WRITE_LONG  ("%cont_off%" + 0x50 + ("%index%" * 0xc0)) "vert_running_index"
+        END
+        SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
       END
     END
-    READ_SHORT ("%rest_off%" + 0x98) "spawncount"
-    PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" != 0)) BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: No creatures in Rest Spawn Entry but area still set to spawn something! Setting number of spawnable creatures to 0..."
-      WRITE_SHORT ("%rest_off%" + 0x98) 0
+    PATCH_IF (door_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
+        // vertex count
+        FOR (index2 = 0 ; index2 < 4 ; index2 = index2 + 1) BEGIN
+          PATCH_IF ("%index2%" = 0) BEGIN
+            SET "idx_off" = 0x2c
+            SET "num_off" = 0x30
+          END ELSE
+          PATCH_IF ("%index2%" = 1) BEGIN
+            SET "idx_off" = 0x34
+            SET "num_off" = 0x32
+          END ELSE
+          PATCH_IF ("%index2%" = 2) BEGIN
+            SET "idx_off" = 0x48
+            SET "num_off" = 0x4c
+          END ELSE BEGIN
+            SET "idx_off" = 0x50
+            SET "num_off" = 0x4e
+          END
+          READ_LONG  ("%door_off%" + "%idx_off%" + ("%index%" * 0xc8)) "vert_run_idx"
+          READ_SHORT ("%door_off%" + "%num_off%" + ("%index%" * 0xc8)) "vert_run_num"
+          PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has vertex index error (should be %vert_running_index%)"
+            WRITE_LONG  ("%door_off%" + "%idx_off%" + ("%index%" * 0xc8)) "vert_running_index"
+          END
+          SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
+        END
+      END
     END
   END
 BUT_ONLY_IF_IT_CHANGES
@@ -459,7 +538,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
 //        WRITE_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) ("%flags%" BOR 0b00000010)
           INNER_ACTION BEGIN
             APPEND_OUTER ~lolfixer/check.txt~ ~%area% %door_name% %resref%~
-		  END
+          END
         END
       END
     END
@@ -473,11 +552,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
   END
   SPRINT file ~%SOURCE_FILE%~
   SET ld=99999
-  DECOMPILE_AND_PATCH BEGIN  
+  DECOMPILE_AND_PATCH BEGIN
     FOR (i = 0 ; i < num_lines ; i = i + 1) BEGIN
-	  INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
+      INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
         READ_2DA_ENTRY i 1 1 "door_name"
-	  END
+      END
       COUNT_REGEXP_INSTANCES CASE_SENSITIVE ~Lock("%door_name%")~ ld
       INNER_ACTION BEGIN
         ACTION_IF (%ld%>0) AND !(%ld%=99999) THEN BEGIN
@@ -495,11 +574,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
   END
   SPRINT file ~%SOURCE_FILE%~
   SET ld=99999
-  DECOMPILE_AND_PATCH BEGIN  
+  DECOMPILE_AND_PATCH BEGIN
     FOR (i = 0 ; i < num_lines ; i = i + 1) BEGIN
-	  INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
+      INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
         READ_2DA_ENTRY i 1 1 "door_name"
-	  END
+      END
       COUNT_REGEXP_INSTANCES CASE_SENSITIVE ~Lock("%door_name%")~ ld
       INNER_ACTION BEGIN
         ACTION_IF (%ld%>0) AND !(%ld%=99999) THEN BEGIN
@@ -610,7 +689,7 @@ BEGIN ~Creature Stuff - Inventory Cleaner (removes items that don't exist and co
   GROUP ~Creature Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF ((SOURCE_SIZE > 0x2d3) AND NOT (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SENDRO03~)) THEN BEGIN
+  PATCH_IF ((SOURCE_SIZE > 0x2d3)) THEN BEGIN
     READ_LONG  0x2bc "itm_off" ELSE 0
     READ_LONG  0x2c0 "itm_num" ELSE 0
 
@@ -933,18 +1012,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
       PATCH_IF ("%ref%" != 0xffff) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%ref%")) "item"
-        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR														//Bandit Scalp
-				   ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR		//Child's Body
-				   ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR		//Ramazith's Prot Ring
-				   ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR		//Shandalar's Wardstone
-				   ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR		//Imnesvale Chicken's Beljuril
-				   ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR		//Genie's Tears of Bhaal
-				   ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR		//Kangaxx's Gaxx Ring
-				   ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR		//Ihtafeer's Head
-				   ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR		//Kuo-Tuan Prince's Blood
-				   ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR		//Adalon's Blood
-				   ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR		//Adalon's Note
-					(~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
+        PATCH_IF (!((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR                                                           //Bandit Scalp
+                   ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR          //Child's Body
+                   ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR          //Ramazith's Prot Ring
+                   ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR        //Shandalar's Wardstone
+                   ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR         //Imnesvale Chicken's Beljuril
+                   ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR         //Genie's Tears of Bhaal
+                   ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR          //Kangaxx's Gaxx Ring
+                   ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR         //Ihtafeer's Head
+                   ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR        //Kuo-Tuan Prince's Blood
+                   ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Blood
+                   ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Note
+                    (~%item%~ STRING_EQUAL_CASE ~AA8BALA~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AADEMRNG~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AAGOLSTN~) OR
                     (~%item%~ STRING_EQUAL_CASE ~AAHELM~) OR
