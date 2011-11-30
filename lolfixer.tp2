@@ -1381,25 +1381,25 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 6))         "ref"
-              SET "%amulet%" = 1
+              SET "amulet" = 1
             END ELSE
             PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02))             "ref"
-              SET "%armor%" = 1
+              SET "armor" = 1
             END ELSE
             PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 7))         "ref"
-              SET "%belt%" = 1
+              SET "belt" = 1
             END ELSE
             PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 8))         "ref"
-              SET "%boots%" = 1
+              SET "boots" = 1
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
@@ -1407,7 +1407,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 13))        "ref"
-              SET "%quiver1%" = 1
+              SET "quiver1" = 1
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
@@ -1415,7 +1415,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 14))        "ref"
-              SET "%quiver2%" = 1
+              SET "quiver2" = 1
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
@@ -1423,7 +1423,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 15))        "ref"
-              SET "%quiver3%" = 1
+              SET "quiver3" = 1
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
@@ -1431,7 +1431,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 16))        "ref"
-              SET "%quiver4%" = 1
+              SET "quiver4" = 1
             END ELSE
             PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
@@ -1478,7 +1478,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 9))         "ref"
-                SET "%weapon1%" = 1
+                SET "weapon1" = 1
               END
             END ELSE
             PATCH_IF (((("%type%" = 15) OR // bow
@@ -1502,7 +1502,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 10))        "ref"
-                SET "%weapon2%" = 1
+                SET "weapon2" = 1
               END
             END ELSE
             PATCH_IF (((("%type%" = 15) OR // bow
@@ -1526,7 +1526,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 11))        "ref"
-                SET "%weapon3%" = 1
+                SET "weapon3" = 1
               END
             END ELSE
             PATCH_IF (((("%type%" = 15) OR // bow
@@ -1550,7 +1550,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 12))        "ref"
-                  SET "%weapon4%" = 1
+                SET "weapon4" = 1
               END
             END ELSE
             PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
