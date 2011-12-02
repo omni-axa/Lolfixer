@@ -259,13 +259,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     READ_SHORT 0x58 "actor_num"
     PATCH_IF (actor_off > 0x11b) THEN BEGIN
       FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
+        READ_BYTE  ("%actor_off%" + 0x28 + (0x110 * "%index%")) "flags"  // flags first byte
         READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
         PATCH_IF ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$") BEGIN // ignore creatures starting with RD
           SET "exists" = 0
+          SET "attached" = 0
           INNER_PATCH_FILE ~%resref%.cre~ BEGIN
             SET "exists" = 1
           END
-          PATCH_IF ("%exists%" = 0) BEGIN
+          PATCH_IF (("%flags%" BAND 0b10000000) = 0b00000000) BEGIN
+            SET "attached" = 1
+          END
+          PATCH_IF (("%exists%" = 0) AND ("%attached%" = 0)) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
             LPF fj_are_structure
               INT_VAR fj_delete_mode    = "%index%"
@@ -488,7 +493,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES 
+BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
   GROUP ~Area Stuff~
@@ -572,7 +577,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-*/
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
   INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
@@ -595,7 +599,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-
+*/
 BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
 
@@ -1651,7 +1655,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-*/ /* 
+*/ /*
 BEGIN ~Item Stuff - Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
   GROUP ~Item Stuff~
 
