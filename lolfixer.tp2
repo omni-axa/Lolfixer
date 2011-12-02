@@ -376,7 +376,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-
+/*
 BEGIN ~Area Stuff - Vertex Indexer (fixes mismatching vertex indices in Infopaths, Containers and Doors)~
   GROUP ~Area Stuff~
 
@@ -452,7 +452,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-/* BEGIN ~Area Stuff - Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
+BEGIN ~Area Stuff - Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
   GROUP ~Area Stuff~
 
 ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
@@ -488,9 +488,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
+BUT_ONLY_IF_IT_CHANGES 
 
-/* BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
+BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
   GROUP ~Area Stuff~
 
 ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
@@ -517,7 +517,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
+BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Area Stuff - Door Lock Debugger (finds doors that need keys but were unlocked)~
   GROUP ~Area Stuff~
@@ -550,7 +550,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-
+/*
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
   INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
