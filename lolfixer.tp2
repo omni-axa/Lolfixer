@@ -550,7 +550,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
   INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
@@ -573,6 +572,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
+*/
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
   INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
@@ -607,8 +607,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_cre_eff_v2.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
-
-/* BEGIN ~Creature Stuff - Offset Checker (fixes incorrect offsets)~
+/*
+BEGIN ~Creature Stuff - Offset Checker (fixes incorrect offsets)~
   GROUP ~Creature Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
@@ -669,8 +669,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       WRITE_LONG  0x2b8 "running_offset"
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
+BUT_ONLY_IF_IT_CHANGES
+*/
 BEGIN ~Creature Stuff - Inventory Unborker (removes spurious references to the item table)~
   GROUP ~Creature Stuff~
 
@@ -1581,8 +1581,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
-
-/* BEGIN ~Item Stuff - Offset Checker (fixes incorrect offsets)~
+/*
+BEGIN ~Item Stuff - Offset Checker (fixes incorrect offsets)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1606,9 +1606,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       WRITE_LONG  0x6a "running_offset"
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
-/* BEGIN ~Item Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+BUT_ONLY_IF_IT_CHANGES
+*/ /*
+BEGIN ~Item Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
   GROUP ~Item Stuff~
 
 //G3Debugging Suite - Permanent effects with non-zero duration
@@ -1632,9 +1632,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
-/* BEGIN ~Item Stuff - Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
+BUT_ONLY_IF_IT_CHANGES
+*/ /*
+BEGIN ~Item Stuff - Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1650,9 +1650,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
-/* BEGIN ~Item Stuff - Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
+BUT_ONLY_IF_IT_CHANGES
+*/ /* 
+BEGIN ~Item Stuff - Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1669,9 +1669,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
-/* BEGIN ~Item Stuff - Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
+BUT_ONLY_IF_IT_CHANGES
+*/ /*
+BEGIN ~Item Stuff - Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1689,9 +1689,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
-/*  BEGIN ~Item Stuff - Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
+BUT_ONLY_IF_IT_CHANGES
+*/ /*
+BEGIN ~Item Stuff - Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1711,8 +1711,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
+BUT_ONLY_IF_IT_CHANGES
+*/
 BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
   GROUP ~Spell Stuff~
 
@@ -1722,8 +1722,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
-
-/* BEGIN ~Spell Stuff - Offset Checker (fixes incorrect offsets)~
+/*
+BEGIN ~Spell Stuff - Offset Checker (fixes incorrect offsets)~
   GROUP ~Spell Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
@@ -1747,8 +1747,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
       WRITE_LONG  0x6a "running_offset"
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
-
+BUT_ONLY_IF_IT_CHANGES
+*/
 BEGIN ~Spell Stuff - Innate Fixer (makes Innate spells level 1)~
   GROUP ~Spell Stuff~
 
@@ -1763,8 +1763,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-
-/* BEGIN ~Spell Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+/*
+BEGIN ~Spell Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
   GROUP ~Spell Stuff~
 
 //G3 Debugging Suite
@@ -1788,4 +1788,5 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
       END
     END
   END
-BUT_ONLY_IF_IT_CHANGES */
+BUT_ONLY_IF_IT_CHANGES
+*/
