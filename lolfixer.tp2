@@ -852,6 +852,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
+          PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN08") BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN08" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
           PATCH_IF ("%item%" STRING_EQUAL_CASE "_POTN21") BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
@@ -952,13 +957,18 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
-          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) THEN BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
-          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) THEN BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~IOUNX6~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "IOUNX8" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
@@ -967,8 +977,13 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
-          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) THEN BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (~%item%~ STRING_EQUAL_CASE ~SLING04~) THEN BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
@@ -1637,8 +1652,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-*/ /*
-BEGIN ~Item Stuff - Equipped Effect Targetter (makes any items that don't target self on equip, target self)~
+*/
+BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1648,75 +1663,105 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
+      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
+      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
+      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
       PATCH_IF ("%target%" != 1) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
         WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
       END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/ /*
-BEGIN ~Item Stuff - Equipped Effect Activator (makes any equipped effects that didn't activate on equip now activate)~
-  GROUP ~Item Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-
-    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
       PATCH_IF ("%timing%" != 2) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
         WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
       END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/ /*
-BEGIN ~Item Stuff - Equipped Effect Undispeller (makes any dispellable equipped effects undispellable)~
-  GROUP ~Item Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-
-    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
-
       PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making non-dispellable..."
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making undispellable..."
         WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
       END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/ /*
-BEGIN ~Item Stuff - Equipped Item 100% Probability Check (makes equipped effects that don't have a 100% probability of happening always activate)~
-  GROUP ~Item Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-
-    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
-      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-
       PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect always occur..."
+        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect occur at 100% probability..."
         WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
         WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
       END
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-*/
+
+BEGIN ~Item Stuff - Melee/Ranged Item Equalizer (finds inconsistencies in AXES and DAGGERS that can attack in range and fixes them)~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_SHORT 0x1c "type"
+
+    PATCH_IF (("%type%" = 16) OR ("%type%" = 25)) BEGIN
+      READ_LONG  0x64 "abil_off"
+      READ_SHORT 0x68 "abil_num"
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+        READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
+        PATCH_IF ("%abil_type%" = 2) BEGIN
+          READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand_old"
+          READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand_old"
+          READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust_old"
+          READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
+          READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
+          READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
+          SET "anim_overhand" = "anim_overhand_old"
+          SET "anim_backhand" = "anim_backhand_old"
+          SET "anim_thrust" = "anim_thrust_old"
+          PATCH_IF (("%is_arrow%" > 0)) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be an ARROW!"
+          END
+          PATCH_IF (("%is_bolt%" > 0)) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BOLT!"
+          END
+          PATCH_IF (("%is_bullet%" > 0)) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x35 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BULLET!"
+          END
+          PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") < 100) BEGIN
+            SET "perfection" = 0
+            PATCH_IF (("%anim_overhand%" > 0) AND ("%perfection%" = 0)) BEGIN
+              SET "anim_overhand" = 100 - ("anim_backhand" + "anim_thrust")
+              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
+                SET "perfection" = 1
+              END
+            END
+            PATCH_IF (("%anim_backhand%" > 0) AND ("%perfection%" = 0)) BEGIN
+              SET "anim_backhand" = 100 - ("anim_overhand" + "anim_thrust")
+              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
+                SET "perfection" = 1
+              END
+            END
+            PATCH_IF (("%anim_thrust%" > 0) AND ("%perfection%" = 0)) BEGIN
+              SET "anim_thrust" = 100 - ("anim_overhand" + "anim_backhand")
+              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
+                SET "perfection" = 1
+              END
+            END
+            PATCH_IF ("%perfection%" = 0) BEGIN
+              SET "anim_overhand" = 100 - ("anim_backhand" + "anim_thrust")
+              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
+                SET "perfection" = 1
+              END
+            END
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! %perfection% Corrections achieved..."
+            PATCH_PRINT "  Overhand Swing: %anim_overhand_old% -> %anim_overhand%"
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand_old% -> %anim_backhand%"
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
+            PATCH_PRINT "  Thrust        : %anim_thrust_old% -> %anim_thrust%"
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
+          END
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
   GROUP ~Spell Stuff~
 
