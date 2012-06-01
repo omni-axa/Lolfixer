@@ -712,7 +712,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
 			INNER_ACTION BEGIN
 			  APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Inventory Item Slot #%index% refers to an item outside the Item Table~
 			END
-			FOR (index1 = 0; index1 < item_num; index1 = index1 + 1) BEGIN
+			FOR (index1 = 0; index1 < itm_num; index1 = index1 + 1) BEGIN
 				SET "found" = 0
 				SET "match" = 0
 				SET "replaced" = 0
