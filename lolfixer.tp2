@@ -185,16 +185,12 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     END
     PATCH_IF ("%unassigned%" = 1) BEGIN
       PATCH_PRINT "%SOURCE_FILE% error: Area Script (%SOURCE_RES%.bcs) assigned"
-      INNER_ACTION BEGIN
-        APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%%SOURCE_RES%.bcs exists but area has non-existent %script%.bcs assigned%TAB%%TAB%%SOURCE_RES%.bcs assigned~
-      END
       WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
     END ELSE
     PATCH_IF ("%missing%" = 1) BEGIN
       PATCH_IF NOT (("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%script%.bcs) created"
         INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Area has non-existent %script%.bcs assigned%TAB%%TAB%%script%.bcs created~
           <<<<<<<< %script%.BAF
 >>>>>>>>
           COMPILE ~%script%.BAF~
@@ -203,7 +199,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Missing area Script (%SOURCE_RES%.bcs) created and assigned"
         INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Area has no script assigned%TAB%%TAB%%SOURCE_RES%.bcs created and assigned~
           <<<<<<<< %SOURCE_RES%.BAF
 >>>>>>>>
           COMPILE ~%SOURCE_RES%.BAF~
@@ -239,9 +234,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             END
             PATCH_IF ("%exists%" = 0) BEGIN
               PATCH_PRINT "%SOURCE_FILE% error: Ambient #%index% does not exist (%resref%.wav)! Nulling..."
-              INNER_ACTION BEGIN
-                APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Ambient #%index% does not exist (%resref%.wav)%TAB%%TAB%NULLed (can prevent stuttering)~
-              END
               WRITE_ASCIIE ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
             END
           END
@@ -280,9 +272,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
           END
           PATCH_IF (("%exists%" = 0) AND ("%attached%" = 0)) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Actor #%index% does not exist (%resref%.cre)%TAB%%TAB%Actor removed (can prevent crashes)~
-            END
             LPF fj_are_structure
               INT_VAR fj_delete_mode    = "%index%"
               STR_VAR fj_structure_type = actor
@@ -323,9 +312,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             END
             PATCH_IF ("%exists%" = 0) BEGIN
               PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% creature file does not exist (%resref%.cre)! Nulling..."
-              INNER_ACTION BEGIN
-                APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Spawn Point #%index% creature file does not exist (%resref%.cre)%TAB%%TAB%NULLed~
-              END
               WRITE_ASCII ("%spawn_off%" + 0x24 + ("%index2%" * 0x08) + ("%index%" * 0xc8)) ~NONE~ #8
             END
           END
@@ -339,9 +325,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         END
         PATCH_IF ("%none_count%" = 10) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Spawn Point #%index% has no creatures to spawn! Removing spawn entry..."
-          INNER_ACTION BEGIN
-            APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Spawn Point #%index% has no creatures to spawn%TAB%%TAB%Spawn Point removed~
-          END
           LPF fj_are_structure
             INT_VAR fj_delete_mode    = "%index%"
             STR_VAR fj_structure_type = spawn
@@ -379,9 +362,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
           END
           PATCH_IF ("%exists%" = 0) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn creature file does not exist (%resref%.cre)! Nulling..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%Rest Spawn creature file does not exist (%resref%.cre)%TAB%%TAB%NULLed (can prevent crashes on resting)~
-            END
             WRITE_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "NONE" #8
           END
         END
@@ -396,9 +376,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       READ_SHORT ("%rest_off%" + 0x98) "spawncount"
       PATCH_IF (("%none_count%" = 10) AND ("%spawncount%" != 0)) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: No creatures in Rest Spawn Entry but area still set to spawn something! Setting number of spawnable creatures to 0..."
-        INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\area.txt~ ~%SOURCE_FILE%%TAB%%TAB%No creatures in Rest Spawn Entry but area still set to spawn something%TAB%%TAB%Spawns zeroed (can prevent crashes on resting)~
-        END
         WRITE_SHORT ("%rest_off%" + 0x98) 0
       END
     END
@@ -702,6 +679,7 @@ BEGIN ~Creature Stuff - Inventory Unborker (removes spurious references to the i
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
     READ_LONG  0x2b8 "slot_off" ELSE 0
+    READ_LONG  0x2bc "item_off" ELSE 0
     READ_SHORT 0x2c0 "itm_num" ELSE 0
     PATCH_IF ("slot_off" > 0x2d3) THEN BEGIN
       FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
@@ -709,74 +687,63 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         PATCH_IF ("%ref%" != 0xffff) BEGIN
           PATCH_IF ((%ref% + 1) > %itm_num%) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Inventory Item Slot #%index% refers to an item outside the Item Table!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Inventory Item Slot #%index% refers to an item outside the Item Table~
-            END
-            FOR (index1 = 0; index1 < itm_num; index1 = index1 + 1) BEGIN
-                SET "found" = 0
-                SET "match" = 0
-                SET "replaced" = 0
-                FOR (index2 = 0; index2 < 36; index2 = index2 + 1) BEGIN
-                    READ_SHORT ("%slot_off%" + (0x02 * "%index2%")) "ref1" ELSE 0xffff
-                    PATCH_IF (%ref1% != 0xffff) AND (%ref1% = %index1%) BEGIN
-                        SET "found" = 1
-                    END
+            SET "replaced" = 0
+            FOR (index1 = 0; (index1 < itm_num); index1 = index1 + 1) BEGIN
+              SET "found" = 0
+              SET "match" = 0
+              FOR (index2 = 0; index2 < 36; index2 = index2 + 1) BEGIN
+                READ_SHORT ("%slot_off%" + (0x02 * "%index2%")) "ref1" ELSE 0xffff
+                PATCH_IF (%ref1% != 0xffff) AND (%ref1% = %index1%) BEGIN
+                  SET "found" = 1
                 END
-                PATCH_IF (%found% = 0) BEGIN
-                    READ_ASCII ("%item_off%" + (0x14 * "%index1%")) "itmname"
-                    INNER_PATCH_FILE ~%itmname%.itm~ BEGIN
-                        READ_SHORT 0x1c "type"
-                    END
-                    PATCH_IF ((%index% = 0) AND ("%type%" = 7)) OR
-                             ((%index% = 1) AND ("%type%" = 2)) OR
-                             ((%index% = 2) AND ("%type%" = 12)) OR
-                             ((%index% = 3) AND ("%type%" = 6)) OR
-                             ((%index% = 4) AND ("%type%" = 10)) OR
-                             ((%index% = 5) AND ("%type%" = 10)) OR
-                             ((%index% = 6) AND ("%type%" = 1)) OR
-                             ((%index% = 7) AND ("%type%" = 3)) OR
-                             ((%index% = 8) AND ("%type%" = 4)) OR
-                             ((%index% = 9) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
-                             ((%index% = 10) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
-                             ((%index% = 11) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
-                             ((%index% = 12) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
-                             ((%index% = 13) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
-                             ((%index% = 14) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
-                             ((%index% = 15) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
-                             ((%index% = 16) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
-                             ((%index% = 17) AND ("%type%" = 32)) BEGIN
-                        SET "match" = 1
-                    END
-                    PATCH_IF (%match% = 1) BEGIN
-                        PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED! Changing index..."
-                        INNER_ACTION BEGIN
-                          APPEND_OUTER ~lolfixer\creature.txt~ ~  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED! Changing index...~
-                        END
-                        WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
-                        SET "replaced" = 1
-                    END ELSE
-                    PATCH_IF (%match% = 0) AND (%replaced% = 0) BEGIN
-                        PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - Changing index..."
-                        INNER_ACTION BEGIN
-                          APPEND_OUTER ~lolfixer\creature.txt~ ~  Possible change => #%index1% (%itmname%.ITM) - Changing index...~
-                        END
-                        WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
-                        SET "replaced" = 1
-                    END ELSE
-                    BEGIN
-                        PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM)"
-                        INNER_ACTION BEGIN
-                          APPEND_OUTER ~lolfixer\creature.txt~ ~  Possible change => #%index1% (%itmname%.ITM)~
-                        END
-                    END
+              END
+              PATCH_IF (%found% = 0) BEGIN
+                READ_ASCII ("%item_off%" + (0x14 * "%index1%")) "itmname"
+                INNER_PATCH_FILE ~%itmname%.itm~ BEGIN
+                  READ_SHORT 0x1c "type"
+                  READ_BYTE  0x18 "flags"
+                END
+                PATCH_IF ((%index% = 0) AND ("%type%" = 7)) OR
+                         ((%index% = 1) AND ("%type%" = 2)) OR
+                         ((%index% = 2) AND ("%type%" = 12)) OR
+                         ((%index% = 3) AND ("%type%" = 6)) OR
+                         ((%index% = 4) AND ("%type%" = 10)) OR
+                         ((%index% = 5) AND ("%type%" = 10)) OR
+                         ((%index% = 6) AND ("%type%" = 1)) OR
+                         ((%index% = 7) AND ("%type%" = 3)) OR
+                         ((%index% = 8) AND ("%type%" = 4)) OR
+                         ((%index% = 9) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
+                         ((%index% = 10) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
+                         ((%index% = 11) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
+                         ((%index% = 12) AND (("%type%" = 15) OR (("%type%" = 16) OR ("%type%" = 17) OR ("%type%" = 18) OR ("%type%" = 19) OR ("%type%" = 20) OR ("%type%" = 21) OR "%type%" = 22) OR ("%type%" = 23) OR ("%type%" = 24) OR ("%type%" = 25) OR ("%type%" = 26) OR ("%type%" = 27) OR ("%type%" = 28) OR ("%type%" = 29) OR ("%type%" = 30) OR ("%type%" = 44))) OR
+                         ((%index% = 13) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
+                         ((%index% = 14) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
+                         ((%index% = 15) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
+                         ((%index% = 16) AND (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14))) OR
+                         ((%index% = 17) AND ("%type%" = 32)) BEGIN
+                  SET "match" = 1
+                END
+                PATCH_IF (%match% = 1) AND (%replaced% = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                  PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED! Changing index..."
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
+                  SET "replaced" = 1
                 END ELSE
-                BEGIN
-                    PATCH_PRINT "  No specific replaceable item found in item table! Setting to -1..."
-                    INNER_ACTION BEGIN
-                      APPEND_OUTER ~lolfixer\creature.txt~ ~  No specific replaceable item found in item table! Setting to -1...~
-                    END
-                    WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                PATCH_IF (%match% = 0) AND (%replaced% = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                  PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - Changing index..."
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
+                  SET "replaced" = 1
+                END ELSE
+                PATCH_IF (%match% = 1) AND (%replaced% = 1) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                  PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED!"
+                END ELSE
+                PATCH_IF (%replaced% = 1) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                  PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM)"
                 END
+              END
+            END
+            PATCH_IF (%replaced% = 0) BEGIN
+              PATCH_PRINT "  No specific replaceable item found in item table! Setting to -1..."
+              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
             END
           END
         END
@@ -800,463 +767,294 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_AROW02") AND (FILE_EXISTS_IN_GAME ~AROW02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_AROW07") AND (FILE_EXISTS_IN_GAME ~AROW07.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW07" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW01") AND (FILE_EXISTS_IN_GAME ~BOW01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW03") AND (FILE_EXISTS_IN_GAME ~BOW03.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW08") AND (FILE_EXISTS_IN_GAME ~BOW08.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_BLUN02") AND (FILE_EXISTS_IN_GAME ~BLUN02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_BULL02") AND (FILE_EXISTS_IN_GAME ~BULL02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN04") AND (FILE_EXISTS_IN_GAME ~CHAN04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN05") AND (FILE_EXISTS_IN_GAME ~CHAN05.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG01") AND (FILE_EXISTS_IN_GAME ~DAGG01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG03") AND (FILE_EXISTS_IN_GAME ~DAGG03.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG05") AND (FILE_EXISTS_IN_GAME ~DAGG05.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_DART01") AND (FILE_EXISTS_IN_GAME ~DART01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_DART02") AND (FILE_EXISTS_IN_GAME ~DART02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM01") AND (FILE_EXISTS_IN_GAME ~HELM01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM09") AND (FILE_EXISTS_IN_GAME ~HELM09.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM11") AND (FILE_EXISTS_IN_GAME ~HELM11.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_JELLGR1") AND (FILE_EXISTS_IN_GAME ~JELLGR1.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT01") AND (FILE_EXISTS_IN_GAME ~LEAT01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT02") AND (FILE_EXISTS_IN_GAME ~LEAT02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT04") AND (FILE_EXISTS_IN_GAME ~LEAT04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE01") AND (FILE_EXISTS_IN_GAME ~MAGE02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE02") AND (FILE_EXISTS_IN_GAME ~MAGE02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE05") AND (FILE_EXISTS_IN_GAME ~MAGE05.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_AGEBRAC") AND (FILE_EXISTS_IN_GAME ~MAGEBRAC.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_MISC33") AND (FILE_EXISTS_IN_GAME ~MISC33.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_PLAT01") AND (FILE_EXISTS_IN_GAME ~PLAT01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_PLAT04") AND (FILE_EXISTS_IN_GAME ~PLAT04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN08") AND (FILE_EXISTS_IN_GAME ~POTN08.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN08" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN20") AND (FILE_EXISTS_IN_GAME ~POTN20.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN21") AND (FILE_EXISTS_IN_GAME ~POTN21.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN36") AND (FILE_EXISTS_IN_GAME ~POTN36.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN37") AND (FILE_EXISTS_IN_GAME ~POTN37.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN45") AND (FILE_EXISTS_IN_GAME ~POTN45.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_RING95") AND (FILE_EXISTS_IN_GAME ~RING95.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SCRL96") AND (FILE_EXISTS_IN_GAME ~SCRL96.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SHLD01") AND (FILE_EXISTS_IN_GAME ~SHLD01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SHLD08") AND (FILE_EXISTS_IN_GAME ~SHLD08.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SLNG02") AND (FILE_EXISTS_IN_GAME ~SLNG02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SPER01") AND (FILE_EXISTS_IN_GAME ~SPER01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SPER02") AND (FILE_EXISTS_IN_GAME ~SPER02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF01") AND (FILE_EXISTS_IN_GAME ~STAF01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF02") AND (FILE_EXISTS_IN_GAME ~STAF02.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF07") AND (FILE_EXISTS_IN_GAME ~STAF07.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H01") AND (FILE_EXISTS_IN_GAME ~SW1H01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H04") AND (FILE_EXISTS_IN_GAME ~SW1H04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H07") AND (FILE_EXISTS_IN_GAME ~SW1H07.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H08") AND (FILE_EXISTS_IN_GAME ~SW1H08.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H24") AND (FILE_EXISTS_IN_GAME ~SW1H24.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW2H01") AND (FILE_EXISTS_IN_GAME ~SW2H01.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) AND (FILE_EXISTS_IN_GAME ~MISC1A.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) AND (FILE_EXISTS_IN_GAME ~SD_HRZR.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~IOUNX6~) AND (FILE_EXISTS_IN_GAME ~IOUNX8.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "IOUNX8" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~MIN1HP~) AND (FILE_EXISTS_IN_GAME ~MINHP1.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MINHP1" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) AND (FILE_EXISTS_IN_GAME ~RINGDEMN.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
+          END ELSE
+          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~SCRL1R~) AND (FILE_EXISTS_IN_GAME ~U!SCRL03.itm~)) BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "U!SCRL03" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
           PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~SLING04~) AND (FILE_EXISTS_IN_GAME ~SLNG04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Replaced with %item1%.itm~
-            END
           END ELSE
           BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\creature.txt~ ~%SOURCE_FILE%%TAB%%TAB%Non-existent item (%item%.itm) in inventory%TAB%%TAB%Removed item - no suitable replacement found~
-            END
             REMOVE_CRE_ITEM ~%item%~
             SET "index" = "index" - 1
             SET "itm_num" = "itm_num" - 1
@@ -1326,7 +1124,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           PATCH_IF ((FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
             INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_SHORT 0x1c "type"
-              READ_BYTE 0x18 "flags"
+              READ_BYTE  0x18 "flags"
             END
             PATCH_IF ("%index%" = 0) BEGIN // helm slot
               SET "helm" = 1
@@ -1938,31 +1736,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       PATCH_IF ("%target%" != 1) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
         WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
-        INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Global Effect #%index% (opcode %opcode%) has an incorrect target%TAB%%TAB%Target self~
-        END
       END
       PATCH_IF ("%timing%" != 2) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
         WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
-        INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Global Effect #%index% (opcode %opcode%) has an incorrect timing mode%TAB%%TAB%Activate on equip~
-        END
       END
       PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making undispellable..."
         WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
-        INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Global Effect #%index% (opcode %opcode%) can be dispelled%TAB%%TAB%Cannot dispel~
-        END
       END
       PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect occur at 100% probability..."
         WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
         WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
-        INNER_ACTION BEGIN
-          APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Global Effect #%index% (opcode %opcode%) is not always applied%TAB%%TAB%100% probability~
-        END
       END
     END
   END
@@ -1993,23 +1779,14 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           PATCH_IF ("%is_arrow%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be an ARROW!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is NOT supposed to be an ARROW%TAB%%TAB%Missile flag zeroed (may prevent crashes when using item)~
-            END
           END
           PATCH_IF ("%is_bolt%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BOLT!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is NOT supposed to be an BOLT%TAB%%TAB%Missile flag zeroed (may prevent crashes when using item)~
-            END
           END
           PATCH_IF ("%is_bullet%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x35 + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BULLET!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is NOT supposed to be an BULLET%TAB%%TAB%Missile flag zeroed (may prevent crashes when using item)~
-            END
           END
           PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") < 100) BEGIN
             SET "perfection" = 0
@@ -2044,12 +1821,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             PATCH_PRINT "  Overhand Swing: %anim_overhand_old% -> %anim_overhand%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand_old% -> %anim_backhand%"
             PATCH_PRINT "  Thrust        : %anim_thrust_old% -> %anim_thrust%"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Ranged Ability Animations have wrong probabilities~
-              APPEND_OUTER ~lolfixer\item.txt~ ~  Overhand Swing: %anim_overhand_old% -> %anim_overhand%~
-              APPEND_OUTER ~lolfixer\item.txt~ ~  Backhand Swing: %anim_backhand_old% -> %anim_backhand%~
-              APPEND_OUTER ~lolfixer\item.txt~ ~  Thrust        : %anim_thrust_old% -> %anim_thrust%~
-            END
           END
         END
       END
@@ -2079,44 +1850,26 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           PATCH_IF ("%anim_overhand%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Overhand NULLed!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Ranged Ability Animations have wrong probabilities! Overhand NULLed!~
-            END
           END
           PATCH_IF ("%anim_backhand%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Backhand NULLed!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Ranged Ability Animations have wrong probabilities! Backhand NULLed!~
-            END
           END
           PATCH_IF ("%anim_thrust%" > 0) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Thrust NULLed!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Ranged Ability Animations have wrong probabilities! Thrust NULLed!~
-            END
           END
           PATCH_IF (("%type%" = 15) AND ("%is_arrow%" = 0)) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 1
             PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is supposed to fire ARROWS!~
-            END
           END
           PATCH_IF (("%type%" = 18) AND ("%is_bullet%" = 0)) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
             PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is supposed to fire BULLETS!~
-            END
           END
           PATCH_IF (("%type%" = 27) AND ("%is_bolt%" = 0)) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
             PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
-            INNER_ACTION BEGIN
-              APPEND_OUTER ~lolfixer\item.txt~ ~%SOURCE_FILE%%TAB%%TAB%Item is supposed to fire BOLTS!~
-            END
           END
         END
       END
@@ -2169,11 +1922,39 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     READ_LONG  0x34 spell_level
     READ_SHORT 0x1c spell_type
     PATCH_IF ((%spell_type% = 4) AND (%spell_level% != 1)) BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is not Level 1! Setting level to 1..."
-      INNER_ACTION BEGIN
-        APPEND_OUTER ~lolfixer\spell.txt~ ~%SOURCE_FILE%%TAB%%TAB%Innate Spell is not Level 1%TAB%%TAB%Level set to 1~
+      PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) AND (%spell_level% != 2)) OR // INQUIS_TRUE_SIGHT
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) AND (%spell_level% != 4)) OR // SET_SPECIAL_SNARE_TRAP
+                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) AND (%spell_level% != 5)) OR // HELM_RITUAL_SCROLL
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) AND (%spell_level% != 5)) OR // ODREN_RITUAL_SCROLL
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) AND (%spell_level% != 6)) OR // ZOMBIE_LEVEL_DRAIN
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL732~) AND (%spell_level% != 7)) OR // HELM_TRUE_SIGHT
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) AND (%spell_level% != 9)) OR // ROGUE_SET_SPIKE_TRAP
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) AND (%spell_level% != 9)) OR // ROGUE_SET_EXPLODING_TRAP
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) AND (%spell_level% != 9))) BEGIN // ROGUE_SET_TIME_TRAP
+        PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is referenced by CastSpellInnate() and has mismatched index with SPELL.IDS! Correcting..."PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) BEGIN
+          WRITE_LONG 0x34 ~2~
+        END ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) BEGIN
+          WRITE_LONG 0x34 ~4~
+        END ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) BEGIN
+          WRITE_LONG 0x34 ~5~
+        END ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) BEGIN
+          WRITE_LONG 0x34 ~6~
+        END ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) BEGIN
+          WRITE_LONG 0x34 ~9~
+        END
+      END ELSE BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is not Level 1! Setting level to 1..."
+        WRITE_LONG 0x34 ~1~
       END
-      WRITE_LONG 0x34 ~1~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
