@@ -803,6 +803,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
+          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BRAC04") AND (FILE_EXISTS_IN_GAME ~BRAC04.itm~)) BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BRAC04" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN04") AND (FILE_EXISTS_IN_GAME ~CHAN04.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
@@ -810,6 +815,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           END ELSE
           PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN05") AND (FILE_EXISTS_IN_GAME ~CHAN05.itm~)) BEGIN
             WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
+            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
+            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
+          END ELSE
+          PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN07") AND (FILE_EXISTS_IN_GAME ~CHAN07.itm~)) BEGIN
+            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN07" #8
             READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
