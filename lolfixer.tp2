@@ -2,157 +2,6 @@ BACKUP ~lolfixer/backup~
 AUTHOR ~Lollorian~
 VERSION ~0.1A~
 
-/* BEGIN ~Area Stuff - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Area Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_LONG  0x54 "actor_off"
-    READ_SHORT 0x58 "actor_num"
-    READ_SHORT 0x5a "info_num"
-    READ_LONG  0x5c "info_off"
-    READ_LONG  0x60 "spawn_off"
-    READ_LONG  0x64 "spawn_num"
-    READ_LONG  0x68 "ent_off"
-    READ_LONG  0x6c "ent_num"
-    READ_LONG  0x70 "cont_off"
-    READ_SHORT 0x74 "cont_num"
-    READ_SHORT 0x76 "item_num"
-    READ_LONG  0x78 "item_off"
-    READ_LONG  0x7c "vert_off"
-    READ_SHORT 0x80 "vert_num"
-    READ_SHORT 0x82 "amb_num"
-    READ_LONG  0x84 "amb_off"
-    READ_LONG  0x88 "var_off"
-    READ_LONG  0x8c "var_num"
-    READ_ASCII 0x94 "script"
-    READ_LONG  0x9c "bmp_size"
-    READ_LONG  0xa0 "bmp_off"
-    READ_LONG  0xa4 "door_num"
-    READ_LONG  0xa8 "door_off"
-    READ_LONG  0xac "anim_num"
-    READ_LONG  0xb0 "anim_off"
-    READ_LONG  0xb4 "tiled_num"
-    READ_LONG  0xb8 "tiled_off"
-    READ_LONG  0xbc "song_off"
-    READ_LONG  0xc0 "rest_off"
-    READ_LONG  0xc4 "note_off"
-    READ_LONG  0xc8 "note_num"
-    SET "running_offset" = 0x11c
-
-    // check actors
-    PATCH_IF ("%running_offset%" != "%actor_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Actor offset is incorrect! Correcting..."
-      WRITE_LONG  0x54 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%actor_num%" * 0x110))
-    // check info points
-    PATCH_IF ("%running_offset%" != "%info_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Info Point offset is incorrect! Correcting..."
-      WRITE_LONG  0x5c "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%info_num%" * 0xc4))
-    // check spawn points
-    PATCH_IF ("%running_offset%" != "%spawn_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Spawn Point offset is incorrect! Correcting..."
-      WRITE_LONG  0x60 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%spawn_num%" * 0xc8))
-    // check entrance points
-    PATCH_IF ("%running_offset%" != "%ent_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Entrances offset is incorrect! Correcting..."
-      WRITE_LONG  0x68 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%ent_num%" * 0x68))
-    // check containers
-    PATCH_IF ("%running_offset%" != "%cont_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Containers offset is incorrect! Correcting..."
-      WRITE_LONG  0x70 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%cont_num%" * 0xc0))
-    // check items
-    PATCH_IF ("%running_offset%" != "%item_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Items offset is incorrect! Correcting..."
-      WRITE_LONG  0x78 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%item_num%" * 0x14))
-    // check ambients
-    PATCH_IF ("%running_offset%" != "%amb_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Ambients offset is incorrect! Correcting..."
-      WRITE_LONG  0x84 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%amb_num%" * 0xd4))
-    // check variables
-    PATCH_IF ("%running_offset%" != "%var_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Variables offset is incorrect! Correcting..."
-      WRITE_LONG  0x88 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%var_num%" * 0x54))
-    // check doors
-    PATCH_IF ("%running_offset%" != "%door_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Door offset is incorrect! Correcting..."
-      WRITE_LONG  0xa8 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%door_num%" * 0xc8))
-    // check tiled objects
-    PATCH_IF ("%running_offset%" != "%tiled_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Tiled Objects offset is incorrect! Correcting..."
-      WRITE_LONG  0xb8 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%tiled_num%" * 0x6c))
-    // check vertices
-    PATCH_IF ("%running_offset%" != "%vert_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Vertices offset is incorrect! Correcting..."
-      WRITE_LONG  0x7c "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%vert_num%" * 0x04))
-    // check animations
-    PATCH_IF ("%running_offset%" != "%anim_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Animations offset is incorrect! Correcting..."
-      WRITE_LONG  0xb0 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%anim_num%" * 0x4c))
-    // check bitmap
-    PATCH_IF ("%running_offset%" != "%bmp_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Bitmap offset is incorrect! Correcting..."
-      WRITE_LONG  0xa0 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + "%bmp_size%")
-    // check songs block
-    PATCH_IF ("%running_offset%" != "%song_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Songs offset is incorrect! Correcting..."
-      WRITE_LONG  0xbc "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + 0x90)
-    // check rest spawn block
-    PATCH_IF ("%running_offset%" != "%rest_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Rest Spawn offset is incorrect! Correcting..."
-      WRITE_LONG  0xc0 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + 0xe4)
-    // check map notes
-    PATCH_IF ("%running_offset%" != "%note_off%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Map Notes offset is incorrect! Correcting..."
-      WRITE_LONG  0xc4 "running_offset"
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES */
-
 BEGIN ~Area Stuff - Script Assigner (assigns missing/unassigned scripts to areas)~
   GROUP ~Area Stuff~
 
@@ -381,225 +230,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
-BEGIN ~Area Stuff - Vertex Indexer (fixes mismatching vertex indices in Infopaths, Containers and Doors)~
-  GROUP ~Area Stuff~
 
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_SHORT 0x5a "info_num"
-    READ_LONG  0x5c "info_off"
-    READ_LONG  0x70 "cont_off"
-    READ_SHORT 0x74 "cont_num"
-    READ_LONG  0xa4 "door_num"
-    READ_LONG  0xa8 "door_off"
-    SET "vert_running_index" = 0
-    PATCH_IF (info_off > 0x11b) THEN BEGIN
-      FOR (index = 0 ; index < info_num ; index = index + 1) BEGIN
-        // vertex count
-        READ_SHORT ("%info_off%" + 0x2a + ("%index%" * 0xc4)) "vert_run_num"
-        READ_LONG  ("%info_off%" + 0x2c + ("%index%" * 0xc4)) "vert_run_idx"
-        PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Info Point #%index% has vertex index error (should be %vert_running_index%)"
-          WRITE_LONG  ("%info_off%" + 0x2c + ("%index%" * 0xc4)) "vert_running_index"
-        END
-        SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
-      END
-    END
-    PATCH_IF (cont_off > 0x11b) THEN BEGIN
-      FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN // check indices
-        // vertex count
-        READ_LONG  ("%cont_off%" + 0x50 + ("%index%" * 0xc0)) "vert_run_idx"
-        READ_SHORT ("%cont_off%" + 0x54 + ("%index%" * 0xc0)) "vert_run_num"
-        PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Container #%index% has vertex index error (should be %vert_running_index%)"
-          WRITE_LONG  ("%cont_off%" + 0x50 + ("%index%" * 0xc0)) "vert_running_index"
-        END
-        SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
-      END
-    END
-    PATCH_IF (door_off > 0x11b) THEN BEGIN
-      FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
-        // vertex count
-        FOR (index2 = 0 ; index2 < 4 ; index2 = index2 + 1) BEGIN
-          PATCH_IF ("%index2%" = 0) BEGIN
-            SET "idx_off" = 0x2c
-            SET "num_off" = 0x30
-          END ELSE
-          PATCH_IF ("%index2%" = 1) BEGIN
-            SET "idx_off" = 0x34
-            SET "num_off" = 0x32
-          END ELSE
-          PATCH_IF ("%index2%" = 2) BEGIN
-            SET "idx_off" = 0x48
-            SET "num_off" = 0x4c
-          END ELSE BEGIN
-            SET "idx_off" = 0x50
-            SET "num_off" = 0x4e
-          END
-          READ_LONG  ("%door_off%" + "%idx_off%" + ("%index%" * 0xc8)) "vert_run_idx"
-          READ_SHORT ("%door_off%" + "%num_off%" + ("%index%" * 0xc8)) "vert_run_num"
-          PATCH_IF ("%vert_run_idx%" != "%vert_running_index%") BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has vertex index error (should be %vert_running_index%)"
-            WRITE_LONG  ("%door_off%" + "%idx_off%" + ("%index%" * 0xc8)) "vert_running_index"
-          END
-          SET "vert_running_index" = ("%vert_running_index%" + "%vert_run_num%")
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Area Stuff - Trap Unflagger (remove trap flag if trap is undetectable, undisarmable and has no script)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_LONG  0x70 "cont_off" ELSE 0
-    READ_SHORT 0x74 "cont_num" ELSE 0
-
-    // BGFixpack: Super Happy modder Pack - if trap is undetectable, undisarmable, and has no script, remove trapped flag
-    FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN
-      READ_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) "trap_detect"
-      READ_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) "trap_remove"
-      READ_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) "trapped"
-      READ_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) "script"
-      PATCH_IF ((("%script%" STRING_EQUAL_CASE "") OR ("%script%" STRING_EQUAL_CASE "None")) AND
-                 ("%trapped%" = 1) AND ("%trap_detect%" > 99) AND ("%trap_remove%" > 99)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
-        WRITE_SHORT ("%cont_off%" + 0x2c + ("%index%" * 0xc0)) 0
-        WRITE_SHORT ("%cont_off%" + 0x2e + ("%index%" * 0xc0)) 0
-        WRITE_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) 0
-        WRITE_ASCII ("%cont_off%" + 0x48 + ("%index%" * 0xc0)) ~~ #8
-      END ELSE
-      PATCH_IF (("%trap_detect%" > 99) AND ("%trapped%" = 1)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Spurious Trap flag removed"
-        WRITE_SHORT ("%cont_off%" + 0x2C + ("%index%" * 0xc0)) 0
-        WRITE_SHORT ("%cont_off%" + 0x30 + ("%index%" * 0xc0)) 0
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Area Stuff - Door Unpicker (makes doors that need keys but were pickable - unpickable)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_LONG  0xa4 "door_num" ELSE 0
-    READ_LONG  0xa8 "door_off" ELSE 0
-
-    // G3 Debugging Suite - make keyed doors unpickable
-    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
-      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
-        READ_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) "lockdiff"
-        PATCH_IF (("%lockdiff%" < 100) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Door #%index% has key (%resref%.itm) but could be picked! Made unpickable"
-          WRITE_LONG ("%door_off%" + 0x8c + ("%index%" * 0xc8)) 100
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Area Stuff - Door Lock Debugger (finds doors that need keys but were unlocked)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_LONG  0xa4 "door_num" ELSE 0
-    READ_LONG  0xa8 "door_off" ELSE 0
-    SPRINT area ~%SOURCE_FILE%~
-    FOR (index = 0 ; index < door_num ; index = index + 1) BEGIN
-      READ_ASCII ("%door_off%" +        ("%index%" * 0xc8)) "door_name" (32) NULL
-      READ_ASCII ("%door_off%" + 0x78 + ("%index%" * 0xc8)) "resref"
-      PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "") OR ("%resref%" STRING_EQUAL_CASE "none")) BEGIN // legit key entry
-        READ_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) "flags"
-        PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND (FILE_EXISTS_IN_GAME ~%resref%.itm~)) BEGIN
-          PATCH_PRINT "%area% error: Door #%index% (%door_name%) has key (%resref%.itm) but was not locked! Checking..."
-//        WRITE_BYTE ("%door_off%" + 0x28 + ("%index%" * 0xc8)) ("%flags%" BOR 0b00000010)
-          INNER_ACTION BEGIN
-            APPEND_OUTER ~lolfixer/check.txt~ ~%area% %door_name% %resref%~
-          END
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
-  INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
-    COUNT_2DA_ROWS 1 num_lines
-  END
-  SPRINT file ~%SOURCE_FILE%~
-  SET ld=99999
-  DECOMPILE_AND_PATCH BEGIN
-    FOR (i = 0 ; i < num_lines ; i = i + 1) BEGIN
-      INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
-        READ_2DA_ENTRY i 1 1 "door_name"
-      END
-      COUNT_REGEXP_INSTANCES CASE_SENSITIVE ~Lock("%door_name%")~ ld
-      INNER_ACTION BEGIN
-        ACTION_IF (%ld%>0) AND !(%ld%=99999) THEN BEGIN
-          PRINT ~SCRIPT: %file% uses Lock("%door_name%")~
-          APPEND_OUTER ~lolfixer/check1.txt~  ~SCRIPT: %file% uses Lock("%door_name%")~
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
-  INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
-    COUNT_2DA_ROWS 1 num_lines
-  END
-  SPRINT file ~%SOURCE_FILE%~
-  SET ld=99999
-  DECOMPILE_AND_PATCH BEGIN
-    FOR (i = 0 ; i < num_lines ; i = i + 1) BEGIN
-      INNER_PATCH_FILE ~lolfixer/check.txt~ BEGIN
-        READ_2DA_ENTRY i 1 1 "door_name"
-      END
-      COUNT_REGEXP_INSTANCES CASE_SENSITIVE ~Lock("%door_name%")~ ld
-      INNER_ACTION BEGIN
-        ACTION_IF (%ld%>0) AND !(%ld%=99999) THEN BEGIN
-          PRINT ~SCRIPT: %file% uses Lock("%door_name%")~
-          APPEND_OUTER ~lolfixer/check1.txt~  ~DIALOGUE: %file% uses Lock("%door_name%")~
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/
 BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
 
@@ -609,70 +240,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
     INT_VAR do_message = 1
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
-BEGIN ~Creature Stuff - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Creature Stuff~
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
-    READ_BYTE  0x33  "fx_type"
-    READ_LONG  0x2a0 "known_off"
-    READ_LONG  0x2a4 "known_num"
-    READ_LONG  0x2a8 "meminfo_off"
-    READ_LONG  0x2ac "meminfo_num"
-    READ_LONG  0x2b0 "mem_off"
-    READ_LONG  0x2b4 "mem_num"
-    READ_LONG  0x2b8 "slot_off"
-    READ_LONG  0x2bc "item_off"
-    READ_LONG  0x2c0 "item_num"
-    READ_LONG  0x2c4 "fx_off"
-    READ_LONG  0x2c8 "fx_num"
-    SET "running_offset" = 0x2d4
-    SET "running_spl_idx" = 0
-
-    // check known spells
-    PATCH_IF ("%known_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Known Spells offset is incorrect! Correcting..."
-      WRITE_LONG  0x2a0 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%known_num%" * 0x0c))
-    // check spell memorization info
-    PATCH_IF ("%meminfo_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Memorization Info offset is incorrect! Correcting..."
-      WRITE_LONG  0x2a8 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%meminfo_num%" * 0x10))
-    // check memorized spells
-    PATCH_IF ("%mem_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Memorized Spells offset is incorrect! Correcting..."
-      WRITE_LONG  0x2b0 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%mem_num%" * 0x0c))
-    // check effects
-    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Effects offset is incorrect! Correcting..."
-      WRITE_LONG  0x2c4 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%fx_num%" * (0x30 + ("%fx_type%" * 0xd8))))
-    // check items
-    PATCH_IF ("%item_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Item offset is incorrect! Correcting..."
-      WRITE_LONG  0x2bc "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%item_num%" * 0x14))
-    // check slot offset
-    PATCH_IF ("%slot_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Item Slot offset is incorrect! Correcting..."
-      WRITE_LONG  0x2b8 "running_offset"
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/
 BEGIN ~Creature Stuff - Inventory Unborker (removes spurious references to the item table)~
   GROUP ~Creature Stuff~
 
@@ -1686,6 +1254,75 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Creature Stuff - MAJESTIC Creature Fixer~
+  GROUP ~Creature Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
+    READ_LONG  0x2a0 "known_off"
+    READ_LONG  0x2a4 "known_num"
+    READ_ASCII 0x2cc "dialog"
+    FOR (index = 0 ; index < 5 ; index = index + 1) BEGIN
+      READ_ASCII (0x248 + (0x08 * "%index%")) "script"
+      PATCH_IF NOT (("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) BEGIN
+        SET exists = 0
+        INNER_PATCH_FILE ~%script%.bcs~ BEGIN
+          SET exists = 1
+        END
+        PATCH_IF ("%exists%" = 0) BEGIN
+          PATCH_PRINT "%SOURCE_FILE%: Non-existent script (%script%.BCS) nulled..."
+          WRITE_ASCII (0x248 + (0x08 * "%index%")) ~~ #8
+        END
+      END
+    END
+    PATCH_IF NOT (("%dialog%" STRING_EQUAL_CASE "NONE") OR ("%dialog%" STRING_EQUAL_CASE "")) BEGIN
+      SET exists = 0
+      INNER_PATCH_FILE ~%dialog%.dlg~ BEGIN
+        SET exists = 1
+      END
+      PATCH_IF ("%exists%" = 0) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Non-existent dialogue (%dialog%.DLG) nulled..."
+        WRITE_ASCII 0x2cc ~~ #8
+      END
+    END
+    FOR (index = 0 ; index < known_num ; index = index + 1) BEGIN
+      READ_ASCII ("%known_off%" +        ("%index%" * 0x0c)) "resref"
+      SET exists = 0
+      INNER_PATCH_FILE ~%resref%.spl~ BEGIN
+        READ_SHORT 0x1c "spl_type"
+        READ_LONG  0x34 "spl_level"
+        SET exists = 1
+      END
+      PATCH_IF ("%exists%" = 1) BEGIN
+        READ_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) "olevel"
+        READ_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) "type"
+        SET level = %olevel% + 1
+        PATCH_IF (("%level%" != "%spl_level%") AND ("%spl_level%" > 0) AND (("%spl_type%" = 1) OR ("%spl_type%" = 2))) BEGIN
+          SET nlevel = %spl_level% - 1
+          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
+          WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) %nlevel%
+        END
+        PATCH_IF (("%spl_type%" = 2) AND ("%type%" != 0)) BEGIN // priest
+          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
+          WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 0
+        END
+        PATCH_IF (("%spl_type%" = 1) AND ("%type%" != 1)) BEGIN // mage
+          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is a MAGE spell (was %type%)..."
+          WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 1
+        END
+        PATCH_IF (("%spl_type%" = 4) AND ("%type%" != 2)) BEGIN // innate
+          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is an INNATE spell (was %type%)..."
+          WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 2
+        END
+      END ELSE
+      BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Known spell does not exist (%resref%.SPL)! Removing..."
+        REMOVE_KNOWN_SPELL ~%resref%~
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Item Stuff - Item Resource Fixer (res_fixer for ALL ITEMS)~
   GROUP ~Item Stuff~
 
@@ -1695,66 +1332,23 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
-BEGIN ~Item Stuff - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Item Stuff~
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-    SET "running_offset" = 0x72
-
-    // check abilities/extended header
-    PATCH_IF ("%abil_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Abilities offset is incorrect! Correcting..."
-      WRITE_LONG  0x64 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%abil_num%" * 0x38))
-    // check features/equipped effects
-    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Equipped Effect offset is incorrect! Correcting..."
-      WRITE_LONG  0x6a "running_offset"
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/ /*
-BEGIN ~Item Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
-  GROUP ~Item Stuff~
-
-//G3Debugging Suite - Permanent effects with non-zero duration
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-
-    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-      READ_SHORT ("%abil_off%" + 0x1e + (0x38 * "%index%")) "abil_fx_num"
-      READ_SHORT ("%abil_off%" + 0x20 + (0x38 * "%index%")) "abil_fx_idx"
-      FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
-        READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
-        READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
-        READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
-        PATCH_IF ((("%timing%" = 1) OR ("%timing%" = 9)) AND ("%duration%" > 0)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE%: Ability #%index% has a permanent effect with non-zero duration (effect #%index2%, opcode %opcode%)! Nulling duration..."
-          WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/
-BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
+BEGIN ~Item Stuff - MAJESTIC Item Fixer~
+// BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_BYTE  0x18 "flags"
+    READ_LONG  0x60 "enchantment"
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
     READ_LONG  0x6a "fx_off"
     READ_SHORT 0x70 "fx_num"
+    PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
+      PATCH_PRINT "%SOURCE_FILE%: Item is enchanted but not magical! Setting magical flag..."
+      WRITE_BYTE 0x18 ("%flags%" BOR 0b01000000)
+    END
     FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
@@ -1762,22 +1356,29 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
       READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
       READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-      PATCH_IF ("%target%" != 1) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect target! Targeting self..."
+      PATCH_IF (("%target%" != 1) AND ("%target%" != 3) AND ("%target%" != 5)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has an incorrect target (%target%)! Targeting self..."
         WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
       END
       PATCH_IF ("%timing%" != 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) has an incorrect timing mode! Making effect active when equipped..."
+        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has an incorrect timing mode (%timing%)! Making effect active when equipped..."
         WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
       END
       PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) can be dispelled! Making undispellable..."
+        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) can be dispelled (%dispel%)! Making undispellable..."
         WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
       END
-      PATCH_IF (("%prob1%" != 100) AND ("%prob2%" != 0)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Global Effect #%index% (opcode %opcode%) is not always applied! Making effect occur at 100% probability..."
-        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
-        WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+    END
+    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+      READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "type"
+      READ_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) "slot"
+      PATCH_IF ((("%type%" = 1) OR ("%type%" = 2) OR ("%type%" = 4)) AND ("%slot%" != 1)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to WEAPON slot (was %slot%)..."
+        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 1
+      END
+      PATCH_IF (("%type%" = 3) AND ("%slot%" != 3)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
+        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 3
       END
     END
   END
@@ -1906,6 +1507,27 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Item Stuff - MAJESTIC Item Checker~
+// BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+    FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
+      PATCH_IF ((%prob1% + %prob2%) != 100) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
+    //  WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
+    //  WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
   GROUP ~Spell Stuff~
 
@@ -1915,33 +1537,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
-BEGIN ~Spell Stuff - Offset Checker (fixes incorrect offsets)~
-  GROUP ~Spell Stuff~
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x72) BEGIN
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
-    SET "running_offset" = 0x72
-
-    // check abilities/extended header
-    PATCH_IF ("%abil_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Abilities offset is incorrect! Correcting..."
-      WRITE_LONG  0x64 "running_offset"
-    END
-
-    SET "running_offset" = ("%running_offset%" + ("%abil_num%" * 0x28))
-    // check features/equipped effects
-    PATCH_IF ("%fx_off%" != "%running_offset%") BEGIN
-      PATCH_PRINT "%SOURCE_FILE% error: Casting Effect offset is incorrect! Correcting..."
-      WRITE_LONG  0x6a "running_offset"
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-*/
 BEGIN ~Spell Stuff - Innate Fixer (makes Innate spells level 1)~
   GROUP ~Spell Stuff~
 
@@ -1954,7 +1550,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
       PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) AND (%spell_level% != 2)) OR // INQUIS_TRUE_SIGHT
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) AND (%spell_level% != 4)) OR // SET_SPECIAL_SNARE_TRAP
-                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) AND (%spell_level% != 5)) OR // HELM_RITUAL_SCROLL
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) AND (%spell_level% != 5)) OR // HELM_RITUAL_SCROLL
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) AND (%spell_level% != 5)) OR // ODREN_RITUAL_SCROLL
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) AND (%spell_level% != 6)) OR // ZOMBIE_LEVEL_DRAIN
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL732~) AND (%spell_level% != 7)) OR // HELM_TRUE_SIGHT
@@ -1987,30 +1583,25 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-/*
-BEGIN ~Spell Stuff - Permanent Effect Duration Nuller (sets duration for permanent effects to 0)~
+
+BEGIN ~Spell Stuff - MAJESTIC Spell Fixer~
   GROUP ~Spell Stuff~
 
-//G3 Debugging Suite
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_SHORT 0x1c "spell_type"
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-      READ_SHORT ("%abil_off%" + 0x1e + (0x28 * "%index%")) "abil_fx_num"
-      READ_SHORT ("%abil_off%" + 0x20 + (0x28 * "%index%")) "abil_fx_idx"
-      FOR (index2 = 0 ; index2 < abil_fx_num ; index2 = index2 + 1) BEGIN
-        READ_SHORT ("%fx_off%" +        (("%index2%" + "%abil_fx_idx%") * 0x30)) "opcode"
-        READ_BYTE  ("%fx_off%" + 0x0c + (("%index2%" + "%abil_fx_idx%") * 0x30)) "timing"
-        READ_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) "duration"
-        PATCH_IF ((("%timing%" = 1) OR ("%timing%" = 9)) AND ("%duration%" > 0)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE%: Ability #%index% has a permanent effect with non-zero duration (effect #%index2%, opcode %opcode%)! Nulling duration..."
-          WRITE_LONG  ("%fx_off%" + 0x0e + (("%index2%" + "%abil_fx_idx%") * 0x30)) 0
-        END
+      READ_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) "slot"
+      PATCH_IF (("%spell_type%"  = 4) AND ("%slot%" != 4)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to INNATE slot (was %slot%)..."
+        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 4
+      END
+      PATCH_IF (("%spell_type%" != 4) AND ("%slot%" != 2)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to SPELL slot (was %slot%)..."
+        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 2
       END
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-*/
