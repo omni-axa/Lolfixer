@@ -2,7 +2,7 @@ BACKUP ~lolfixer/backup~
 AUTHOR ~Lollorian~
 VERSION ~0.1A~
 
-BEGIN ~Area Stuff - Script Assigner (assigns missing/unassigned scripts to areas)~
+BEGIN ~Area Stuff - MAJESTIC Area Fixer~
   GROUP ~Area Stuff~
 
 ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
@@ -14,6 +14,8 @@ END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
+
+    // Script Assigner
     READ_ASCII 0x94 "script"
 
     SET "exists" = 0
@@ -55,23 +57,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         WRITE_ASCIIE 0x94 ~%SOURCE_RES%~ #8
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Area Stuff - Missing Ambient Remover (removes ambients that don't have their WAV present)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
+    // Missing Ambient Remover
     READ_SHORT 0x82 "amb_num"
     READ_LONG  0x84 "amb_off"
+
     PATCH_IF (amb_off > 0x11b) THEN BEGIN
       FOR (index = 0 ; index < amb_num ; index = index + 1) BEGIN
         FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
@@ -89,23 +79,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         END
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Area Stuff - Missing Actor Remover (removes actors that don't have their CRE present)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF ((SOURCE_SIZE > 0x11b)) THEN BEGIN
+    // Missing Actor Remover
     READ_LONG  0x54 "actor_off"
     READ_SHORT 0x58 "actor_num"
+
     PATCH_IF (actor_off > 0x11b) THEN BEGIN
       FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
         READ_BYTE  ("%actor_off%" + 0x28 + (0x110 * "%index%")) "flags"  // flags first byte
@@ -131,23 +109,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         END
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Area Stuff - Missing Spawn Remover (nulls spawn entries that don't have their CRE present)~
-  GROUP ~Area Stuff~
-
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
+    // Missing Spawn Remover
     READ_LONG  0x60 "spawn_off"
     READ_LONG  0x64 "spawn_num"
+
     PATCH_IF (spawn_off > 0x11b) THEN BEGIN
       FOR (index = 0 ; index < spawn_num ; index = index + 1) BEGIN
         FOR (index2 = 0 ; index2 < 10 ; index2 = index2 + 1) BEGIN
@@ -183,22 +149,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         END
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Area Stuff - Missing Rest Spawn Remover (nulls rest spawn entries that don't have their CRE present)~
-  GROUP ~Area Stuff~
+    // Missing Rest Spawn Remover
+    READ_LONG  0xc0 "rest_off"
 
-ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2400.are~
-END
-ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
-  COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
-END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x11b) THEN BEGIN
-    READ_LONG  0xc0 "rest_off" ELSE 0
     PATCH_IF (rest_off > 0x11b) THEN BEGIN
       FOR (index = 0 ; index < 10 ; index = index + 1) BEGIN
         READ_ASCII ("%rest_off%" + 0x48 + ("%index%" * 0x08)) "resref"
@@ -234,7 +188,6 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)~
   GROUP ~Creature Stuff~
 
-//ResFixer - Basic fixing
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   LPF FJ_CRE_VALIDITY
     INT_VAR do_message = 1
@@ -249,6 +202,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
     READ_LONG  0x2b8 "slot_off" ELSE 0
     READ_LONG  0x2bc "item_off" ELSE 0
     READ_SHORT 0x2c0 "itm_num" ELSE 0
+
     PATCH_IF ("slot_off" > 0x2d3) THEN BEGIN
       FOR (index = 0 ; index < 36 ; index = index + 1) BEGIN
         READ_SHORT ("%slot_off%" + (0x02 * "%index%")) "ref" ELSE 0xffff
@@ -327,6 +281,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF ((SOURCE_SIZE > 0x2d3)) THEN BEGIN
     READ_LONG  0x2bc "itm_off" ELSE 0
     READ_LONG  0x2c0 "itm_num" ELSE 0
+
     PATCH_IF ("itm_off" > 0x2d3) THEN BEGIN
       FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
@@ -1259,9 +1214,8 @@ BEGIN ~Creature Stuff - MAJESTIC Creature Fixer~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
-    READ_LONG  0x2a0 "known_off"
-    READ_LONG  0x2a4 "known_num"
-    READ_ASCII 0x2cc "dialog"
+
+    // Missing Script Remover
     FOR (index = 0 ; index < 5 ; index = index + 1) BEGIN
       READ_ASCII (0x248 + (0x08 * "%index%")) "script"
       PATCH_IF NOT (("%script%" STRING_EQUAL_CASE "NONE") OR ("%script%" STRING_EQUAL_CASE "")) BEGIN
@@ -1275,6 +1229,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         END
       END
     END
+
+    // Missing Dialogue Remover
+    READ_ASCII 0x2cc "dialog"
+
     PATCH_IF NOT (("%dialog%" STRING_EQUAL_CASE "NONE") OR ("%dialog%" STRING_EQUAL_CASE "")) BEGIN
       SET exists = 0
       INNER_PATCH_FILE ~%dialog%.dlg~ BEGIN
@@ -1285,6 +1243,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         WRITE_ASCII 0x2cc ~~ #8
       END
     END
+
+    // Spell Slot Fixer
+    READ_LONG  0x2a0 "known_off"
+    READ_LONG  0x2a4 "known_num"
+
     FOR (index = 0 ; index < known_num ; index = index + 1) BEGIN
       READ_ASCII ("%known_off%" +        ("%index%" * 0x0c)) "resref"
       SET exists = 0
@@ -1326,7 +1289,6 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Item Stuff - Item Resource Fixer (res_fixer for ALL ITEMS)~
   GROUP ~Item Stuff~
 
-//ResFixer - Basic Fixing
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
@@ -1334,21 +1296,27 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Item Stuff - MAJESTIC Item Fixer~
-// BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
-    READ_LONG  0x60 "enchantment"
+    READ_SHORT 0x1c "type"
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x70 "fx_num"
+
+    // Enchantment Fixer
+    READ_LONG  0x60 "enchantment"
+
     PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
       PATCH_PRINT "%SOURCE_FILE%: Item is enchanted but not magical! Setting magical flag..."
       WRITE_BYTE 0x18 ("%flags%" BOR 0b01000000)
     END
+
+    // Equipped Effect Fixer
+    READ_LONG  0x6a "fx_off"
+    READ_SHORT 0x70 "fx_num"
+
     FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
@@ -1369,146 +1337,278 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
       END
     END
+
+    // Ability Slot Fixer
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
+
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-      READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "type"
+      READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "abil_type"
       READ_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) "slot"
-      PATCH_IF ((("%type%" = 1) OR ("%type%" = 2) OR ("%type%" = 4)) AND ("%slot%" != 1)) BEGIN
+      PATCH_IF ((("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ("%slot%" != 1)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to WEAPON slot (was %slot%)..."
         WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 1
       END
-      PATCH_IF (("%type%" = 3) AND ("%slot%" != 3)) BEGIN
+      PATCH_IF (("%abil_type%" = 3) AND ("%slot%" != 3)) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
         WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 3
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Item Stuff - Melee/Ranged Item Equalizer (finds inconsistencies in AXES and DAGGERS that can attack in range and fixes them)~
-  GROUP ~Item Stuff~
+    // Animation and Ranged Ability Flag Fixer
+    READ_LONG  0x64 "abil_off"
+    READ_SHORT 0x68 "abil_num"
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_SHORT 0x1c "type"
-
-    PATCH_IF (("%type%" = 16) OR ("%type%" = 25)) BEGIN
-      READ_LONG  0x64 "abil_off"
-      READ_SHORT 0x68 "abil_num"
-      FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-        READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
-        PATCH_IF ("%abil_type%" = 2) BEGIN
-          READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand_old"
-          READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand_old"
-          READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust_old"
-          READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
-          READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
-          READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
-          SET "anim_overhand" = "anim_overhand_old"
-          SET "anim_backhand" = "anim_backhand_old"
-          SET "anim_thrust" = "anim_thrust_old"
-          PATCH_IF ("%is_arrow%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be an ARROW!"
-          END
-          PATCH_IF ("%is_bolt%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BOLT!"
-          END
-          PATCH_IF ("%is_bullet%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x35 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is NOT supposed to be a BULLET!"
-          END
-          PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") < 100) BEGIN
-            SET "perfection" = 0
-            PATCH_IF (("%anim_overhand%" > 0) AND ("%perfection%" = 0)) BEGIN
-              SET "anim_overhand" = 100 - ("anim_backhand" + "anim_thrust")
-              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
-                SET "perfection" = 1
-              END
-            END
-            PATCH_IF (("%anim_backhand%" > 0) AND ("%perfection%" = 0)) BEGIN
-              SET "anim_backhand" = 100 - ("anim_overhand" + "anim_thrust")
-              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
-                SET "perfection" = 1
-              END
-            END
-            PATCH_IF (("%anim_thrust%" > 0) AND ("%perfection%" = 0)) BEGIN
-              SET "anim_thrust" = 100 - ("anim_overhand" + "anim_backhand")
-              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
-                SET "perfection" = 1
-              END
-            END
-            PATCH_IF ("%perfection%" = 0) BEGIN
-              SET "anim_overhand" = 100 - ("anim_backhand" + "anim_thrust")
-              PATCH_IF (("%anim_overhand%" + "%anim_backhand%" + "%anim_thrust%") = 100) BEGIN
-                SET "perfection" = 1
-              END
-            END
-            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
-            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
-            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! %perfection% Corrections achieved..."
-            PATCH_PRINT "  Overhand Swing: %anim_overhand_old% -> %anim_overhand%"
-            PATCH_PRINT "  Backhand Swing: %anim_backhand_old% -> %anim_backhand%"
-            PATCH_PRINT "  Thrust        : %anim_thrust_old% -> %anim_thrust%"
-          END
+    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+      READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
+      READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
+      READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
+      READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
+      READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
+      READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
+      READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
+      PATCH_IF ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 0) AND
+               ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN
+        WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+        WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+        WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+        PATCH_PRINT "%SOURCE_FILE% error: Improper Swing Probabilities! Setting to 0%"
+        PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
+        PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
+        PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
+      END
+      PATCH_IF (("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ((%type% < 15) OR (%type% > 30)) BEGIN
+        WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+        WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+        WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+        PATCH_PRINT "%SOURCE_FILE% error: Non weapon has animations!"
+        PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
+        PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
+        PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
+      END
+      PATCH_IF ("%abil_type%" = 1) BEGIN // Melee Ability
+        PATCH_IF (("%type%" = 16)) AND // dagger
+                 (("%anim_overhand%" != 0) OR
+                  ("%anim_backhand%" != 20) OR
+                  ("%anim_thrust%" != 80)) BEGIN
+          SET "anim_overhand_new" = 0
+          SET "anim_backhand_new" = 20
+          SET "anim_thrust_new" = 80
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 20
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 80
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 19)) AND // short sword
+                 (("%anim_overhand%" != 10) OR
+                  ("%anim_backhand%" != 25) OR
+                  ("%anim_thrust%" != 65)) BEGIN
+          SET "anim_overhand_new" = 10
+          SET "anim_backhand_new" = 25
+          SET "anim_thrust_new" = 65
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 25
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 17) OR // maces
+                  ("%type%" = 18) OR // sling
+                  ("%type%" = 20) OR // swords
+                  ("%type%" = 21) OR // hammer
+                  ("%type%" = 22) OR // morning stars
+                  ("%type%" = 23) OR // flail
+                  ("%type%" = 25) OR // axe
+                  ("%type%" = 28)) AND // hand to hand
+                 (("%flags%" BAND 0b00000010) != 0b00000010) AND // 1-handed
+                 (("%anim_overhand%" != 50) OR
+                  ("%anim_backhand%" != 50) OR
+                  ("%anim_thrust%" != 0)) BEGIN
+          SET "anim_overhand_new" = 50
+          SET "anim_backhand_new" = 50
+          SET "anim_thrust_new" = 0
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 50
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 50
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 17) OR // maces
+                  ("%type%" = 18) OR // sling
+                  ("%type%" = 20) OR // swords
+                  ("%type%" = 21) OR // hammer
+                  ("%type%" = 22) OR // morning stars
+                  ("%type%" = 23) OR // flail
+                  ("%type%" = 25) OR // axe
+                  ("%type%" = 28)) AND // hand to hand
+                 (("%flags%" BAND 0b00000010) = 0b00000010) AND // 2-handed
+                 (("%anim_overhand%" != 60) OR
+                  ("%anim_backhand%" != 40) OR
+                  ("%anim_thrust%" != 0)) BEGIN
+          SET "anim_overhand_new" = 60
+          SET "anim_backhand_new" = 40
+          SET "anim_thrust_new" = 0
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 60
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 40
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 30)) AND // halberd
+                 (("%anim_overhand%" != 0) OR
+                  ("%anim_backhand%" != 35) OR
+                  ("%anim_thrust%" != 65)) BEGIN
+          SET "anim_overhand_new" = 0
+          SET "anim_backhand_new" = 25
+          SET "anim_thrust_new" = 65
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 35
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 29)) AND // spear
+                 (("%anim_overhand%" != 0) OR
+                  ("%anim_backhand%" != 0) OR
+                  ("%anim_thrust%" != 100)) BEGIN
+          SET "anim_overhand_new" = 0
+          SET "anim_backhand_new" = 0
+          SET "anim_thrust_new" = 100
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 100
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+        END
+        PATCH_IF (("%type%" = 26)) AND // staff
+                 (("%anim_overhand%" != 10) OR
+                  ("%anim_backhand%" != 70) OR
+                  ("%anim_thrust%" != 20)) BEGIN
+          SET "anim_overhand_new" = 10
+          SET "anim_backhand_new" = 70
+          SET "anim_thrust_new" = 20
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 70
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 20
+          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
         END
       END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES
-
-BEGIN ~Item Stuff - Ranged Swing Fixer (finds inconsistencies in BOWS and XBOWS and nulls swing probabilities for RANGED effect headers)~
-  GROUP ~Item Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_SHORT 0x1c "type"
-
-    PATCH_IF (("%type%" = 15) OR ("%type%" = 18) OR ("%type%" = 27)) BEGIN
-      READ_LONG  0x64 "abil_off"
-      READ_SHORT 0x68 "abil_num"
-      FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-        READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
-        PATCH_IF ("%abil_type%" = 2) BEGIN
-          READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
-          READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
-          READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
-          READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
-          READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
-          READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
-          PATCH_IF ("%anim_overhand%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Overhand NULLed!"
-          END
-          PATCH_IF ("%anim_backhand%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Backhand NULLed!"
-          END
-          PATCH_IF ("%anim_thrust%" > 0) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Ability Animations have wrong probabilities! Thrust NULLed!"
-          END
-          PATCH_IF (("%type%" = 15) AND ("%is_arrow%" = 0)) BEGIN
+      PATCH_IF ("%abil_type%" = 2) BEGIN // Ranged Ability (No ammunition or ammunition itself)
+        PATCH_IF (("%type%" = 15) OR // bow
+                  ("%type%" = 27)) AND // xbow
+                 (("%anim_overhand%" != 0) OR
+                  ("%anim_backhand%" != 0) OR
+                  ("%anim_thrust%" != 0)) BEGIN
+          SET "anim_overhand_new" = 0
+          SET "anim_backhand_new" = 0
+          SET "anim_thrust_new" = 0
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          PATCH_IF (("%type%" = 15) AND (("%is_arrow%" = 0) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
             WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 1
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
             PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
           END
-          PATCH_IF (("%type%" = 18) AND ("%is_bullet%" = 0)) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
-            PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
-          END
-          PATCH_IF (("%type%" = 27) AND ("%is_bolt%" = 0)) BEGIN
+          PATCH_IF (("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0))) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
             PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
           END
         END
+        PATCH_IF (("%type%" = 16) OR // dagger
+                  ("%type%" = 17) OR // maces
+                  ("%type%" = 18) OR // sling
+                  ("%type%" = 19) OR // short sword
+                  ("%type%" = 20) OR // swords
+                  ("%type%" = 21) OR // hammer
+                  ("%type%" = 22) OR // morning stars
+                  ("%type%" = 23) OR // flail
+                  ("%type%" = 24) OR // darts
+                  ("%type%" = 25) OR // axe
+                  ("%type%" = 26) OR // staff
+                  ("%type%" = 28) OR // hand to hand
+                  ("%type%" = 29) OR // Spear
+                  ("%type%" = 30)) AND // halberd
+                 (("%anim_overhand%" != 100) OR
+                  ("%anim_backhand%" != 0) OR
+                  ("%anim_thrust%" != 0)) BEGIN
+          SET "anim_overhand_new" = 100
+          SET "anim_backhand_new" = 0
+          SET "anim_thrust_new" = 0
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 100
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
+            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
+          END ELSE
+          PATCH_IF (("%type%" != 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item is not a BOW/SLING/XBOW!"
+          END
+        END
+      END
+      PATCH_IF ("%abil_type%" = 4) BEGIN // Launcher Ability
+        PATCH_IF (("%type%" = 15) OR // bow
+                  ("%type%" = 27)) AND // xbow
+                 (("%anim_overhand%" != 0) OR
+                  ("%anim_backhand%" != 0) OR
+                  ("%anim_thrust%" != 0)) BEGIN
+          SET "anim_overhand_new" = 0
+          SET "anim_backhand_new" = 0
+          SET "anim_thrust_new" = 0
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          PATCH_IF (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1)) BEGIN
+            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Item requires ammunition!"
+          END
+        END
       END
     END
+
   END
 BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Item Stuff - MAJESTIC Item Checker~
-// BEGIN ~Item Stuff - Equipped Effect Checker (makes item equipped effects target self, active while equipped, undispellable)~
   GROUP ~Item Stuff~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
@@ -1517,9 +1617,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     READ_SHORT 0x70 "fx_num"
     FOR (index = 0 ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
       READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
       READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-      PATCH_IF ((%prob1% + %prob2%) != 100) BEGIN
+      PATCH_IF ((%prob1% + %prob2%) != 100) AND ("%timing%" = 2) BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
     //  WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
     //  WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
@@ -1531,21 +1632,22 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)~
   GROUP ~Spell Stuff~
 
-//ResFixer
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Spell Stuff - Innate Fixer (makes Innate spells level 1)~
+BEGIN ~Spell Stuff - MAJESTIC Spell Fixer~
   GROUP ~Spell Stuff~
 
-//Innate Fixer
 COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x34 spell_level
-    READ_SHORT 0x1c spell_type
+
+    // Innate Fixer
+    READ_SHORT 0x1c "spell_type"
+    READ_LONG  0x34 "spell_level"
+
     PATCH_IF ((%spell_type% = 4) AND (%spell_level% != 1)) BEGIN
       PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) AND (%spell_level% != 2)) OR // INQUIS_TRUE_SIGHT
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
@@ -1581,17 +1683,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
         WRITE_LONG 0x34 ~1~
       END
     END
-  END
-BUT_ONLY_IF_IT_CHANGES
 
-BEGIN ~Spell Stuff - MAJESTIC Spell Fixer~
-  GROUP ~Spell Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_SHORT 0x1c "spell_type"
+    // Spell Slot Fixer
     READ_LONG  0x64 "abil_off"
     READ_SHORT 0x68 "abil_num"
+
     FOR (index = 0; index < abil_num; index = index + 1) BEGIN
       READ_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) "slot"
       PATCH_IF (("%spell_type%"  = 4) AND ("%slot%" != 4)) BEGIN
