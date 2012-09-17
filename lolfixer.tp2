@@ -1714,7 +1714,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     READ_SHORT 0x1c "spell_type"
     READ_LONG  0x34 "spell_level"
 
-    PATCH_IF ((%spell_type% = 4) AND (%spell_level% != 1)) BEGIN
+    PATCH_IF (%spell_type% = 4) BEGIN
       PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) AND (%spell_level% != 2)) OR // INQUIS_TRUE_SIGHT
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) AND (%spell_level% != 4)) OR // SET_SPECIAL_SNARE_TRAP
@@ -1725,7 +1725,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) AND (%spell_level% != 9)) OR // ROGUE_SET_SPIKE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) AND (%spell_level% != 9)) OR // ROGUE_SET_EXPLODING_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) AND (%spell_level% != 9))) BEGIN // ROGUE_SET_TIME_TRAP
-        PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is referenced by CastSpellInnate() and has mismatched index with SPELL.IDS! Correcting..."PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is referenced by CastSpellInnate() and has mismatched index with SPELL.IDS! Correcting..."
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) BEGIN
           WRITE_LONG 0x34 ~2~
         END ELSE
         PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) OR
@@ -1744,7 +1745,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
                  (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) BEGIN
           WRITE_LONG 0x34 ~9~
         END
-      END ELSE BEGIN
+      END ELSE
+      PATCH_IF (%spell_level% != 1) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is not Level 1! Setting level to 1..."
         WRITE_LONG 0x34 ~1~
       END
