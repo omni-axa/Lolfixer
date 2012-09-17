@@ -671,7 +671,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "helm" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 1) BEGIN // armor slot
@@ -686,7 +686,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "armor" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
@@ -701,7 +701,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "offhand" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END ELSE
               PATCH_IF (("%type%" != 12) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // if not shield, check for valid melee abilities
                 SET "legit_offhand" = 0
@@ -725,7 +725,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   SET "index3" = "index3" - 1
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                   SET "offhand" = 0
-                  SET "index" = 0
+                  SET "index" = 0 - 1
                 END
               END ELSE
               PATCH_IF ("%type%" = 12) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
@@ -791,7 +791,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   SET "index3" = "index3" - 1
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                   SET "offhand" = 0
-                  SET "index" = 0
+                  SET "index" = 0 - 1
                 END
               END
             END
@@ -807,7 +807,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "gloves" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 4) BEGIN // left ring slot
@@ -822,7 +822,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "lring" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 5) BEGIN // right ring slot
@@ -837,7 +837,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "rring" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 6) BEGIN // amulet slot
@@ -852,7 +852,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "amulet" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 7) BEGIN // belt slot
@@ -867,7 +867,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "belt" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 8) BEGIN // boot slot
@@ -882,7 +882,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "boots" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
@@ -912,7 +912,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "weapon1" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 10) BEGIN // second weapon slot
@@ -942,7 +942,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "weapon2" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 11) BEGIN // third weapon slot
@@ -972,7 +972,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "weapon3" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 12) BEGIN // fourth weapon slot
@@ -1002,7 +1002,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "weapon4" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
@@ -1017,7 +1017,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "quiver1" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
@@ -1032,7 +1032,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "quiver2" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
@@ -1047,7 +1047,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "quiver3" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
@@ -1062,7 +1062,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "quiver4" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ("%index%" = 17) BEGIN // cloak
@@ -1077,7 +1077,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index3" = "index3" - 1
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
                 SET "cloak" = 0
-                SET "index" = 0
+                SET "index" = 0 - 1
               END
             END
             PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
