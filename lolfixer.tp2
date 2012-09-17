@@ -103,8 +103,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
               INT_VAR fj_delete_mode    = "%index%"
               STR_VAR fj_structure_type = actor
             END
-            SET "index" = "index" - 1
-            SET "actor_num" = "actor_num" - 1
+            SET "index" = 0 - 1
+            READ_SHORT 0x58 "actor_num"
           END
         END
       END
@@ -144,8 +144,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             INT_VAR fj_delete_mode    = "%index%"
             STR_VAR fj_structure_type = spawn
           END
-          SET "index" = "index" - 1
-          SET "spawn_num" = "spawn_num" - 1
+          SET "index" = 0 - 1
+          READ_LONG  0x64 "spawn_num"
         END
       END
     END
@@ -589,8 +589,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
             REMOVE_CRE_ITEM ~%item%~
-            SET "index" = "index" - 1
-            SET "itm_num" = "itm_num" - 1
+            SET "index" = 0 - 1
+            READ_LONG  0x2c0 "itm_num"
           END
         END
       END
@@ -691,7 +691,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
               SET "offhand" = 1
-              PATCH_IF ((("%flags%" BAND 0b00000010) = 0b00000010) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // 2h check
+              PATCH_IF ((("%flags%" BAND 0b00000110) = 0b00000110) AND ("%ignore%" = 0)) BEGIN // 2h and droppable check
                 PATCH_PRINT ~%SOURCE_FILE%: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -710,13 +710,79 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   READ_SHORT 0x68 "abil_num"
                   FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                     READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                    PATCH_IF ("%ability%" = 1) BEGIN // only melee allowed in offhand
+                    PATCH_IF ("%ability%" = 1) AND (%type% > 15) AND (%type% < 31) BEGIN // only melee weapons allowed in offhand
                       SET "legit_offhand" = 1
                     END
                   END
                 END
                 PATCH_IF ("%legit_offhand%" = 0) BEGIN
                   PATCH_PRINT ~%SOURCE_FILE%: Invalid OFFHAND: %item%.itm! Moving to inventory~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  SET "ref2" = 1
+                  FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                    READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
+                   END
+                  SET "index3" = "index3" - 1
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "offhand" = 0
+                  SET "index" = 0
+                END
+              END ELSE
+              PATCH_IF ("%type%" = 12) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                READ_SHORT ("%slot_off%" + (0x02 * 9))  "refa"
+                READ_SHORT ("%slot_off%" + (0x02 * 10)) "refb"
+                READ_SHORT ("%slot_off%" + (0x02 * 11)) "refc"
+                READ_SHORT ("%slot_off%" + (0x02 * 12)) "refd"
+                PATCH_IF ("%refa%" != 0xffff) BEGIN
+                  READ_ASCII ("%itm_off%" + (0x14 * "%refa%")) "item1"
+                  PATCH_IF ((FILE_EXISTS_IN_GAME ~%item1%.itm~)) THEN BEGIN
+                    INNER_PATCH_FILE ~%item1%.itm~ BEGIN
+                      READ_SHORT 0x1c "type1"
+                      READ_BYTE  0x18 "flags1"
+                      PATCH_IF (("%flags1%" BAND 0b00000010) = 0b00000010) AND ((%type1% > 14) AND (%type1% < 31)) THEN BEGIN
+                        SET "2handedequip" = 1
+                      END
+                    END
+                  END
+                END
+                PATCH_IF ("%refb%" != 0xffff) BEGIN
+                  READ_ASCII ("%itm_off%" + (0x14 * "%refb%")) "item2"
+                  PATCH_IF ((FILE_EXISTS_IN_GAME ~%item2%.itm~)) THEN BEGIN
+                    INNER_PATCH_FILE ~%item2%.itm~ BEGIN
+                      READ_SHORT 0x1c "type2"
+                      READ_BYTE  0x18 "flags2"
+                      PATCH_IF (("%flags2%" BAND 0b00000010) = 0b00000010) AND ((%type2% > 14) AND (%type2% < 31)) THEN BEGIN
+                        SET "2handedequip" = 1
+                      END
+                    END
+                  END
+                END
+                PATCH_IF ("%refc%" != 0xffff) BEGIN
+                  READ_ASCII ("%itm_off%" + (0x14 * "%refc%")) "item3"
+                  PATCH_IF ((FILE_EXISTS_IN_GAME ~%item3%.itm~)) THEN BEGIN
+                    INNER_PATCH_FILE ~%item3%.itm~ BEGIN
+                      READ_SHORT 0x1c "type3"
+                      READ_BYTE  0x18 "flags3"
+                      PATCH_IF (("%flags3%" BAND 0b00000010) = 0b00000010) AND ((%type3% > 14) AND (%type3% < 31)) THEN BEGIN
+                        SET "2handedequip" = 1
+                      END
+                    END
+                  END
+                END
+                PATCH_IF ("%refd%" != 0xffff) BEGIN
+                  READ_ASCII ("%itm_off%" + (0x14 * "%refd%")) "item4"
+                  PATCH_IF ((FILE_EXISTS_IN_GAME ~%item4%.itm~)) THEN BEGIN
+                    INNER_PATCH_FILE ~%item4%.itm~ BEGIN
+                      READ_SHORT 0x1c "type4"
+                      READ_BYTE  0x18 "flags4"
+                      PATCH_IF (("%flags4%" BAND 0b00000010) = 0b00000010) AND ((%type4% > 14) AND (%type4% < 31)) THEN BEGIN
+                        SET "2handedequip" = 1
+                      END
+                    END
+                  END
+                END
+                PATCH_IF ("%2handedequip%" = 1) BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE%: OFFHAND with 2-HAND: %item%.itm! Moving to inventory~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   SET "ref2" = 1
                   FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -744,7 +810,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 4) BEGIN
+            PATCH_IF ("%index%" = 4) BEGIN // left ring slot
               SET "lring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid LRING: %item%.itm! Moving to inventory~
@@ -759,7 +825,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 5) BEGIN
+            PATCH_IF ("%index%" = 5) BEGIN // right ring slot
               SET "rring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid RRING: %item%.itm! Moving to inventory~
@@ -828,7 +894,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 READ_SHORT 0x68 "abil_num"
                 FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                   READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) AND ("%type%" > 14) AND ("%type%" < 31) BEGIN // melee, ranged, or launcher
                     SET "legit_weapon" = 1
                   END
                 END
@@ -849,7 +915,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 10) BEGIN // first weapon slot
+            PATCH_IF ("%index%" = 10) BEGIN // second weapon slot
               SET "weapon2" = 1
               SET "legit_weapon" = 0
               INNER_PATCH_FILE ~%item%.itm~ BEGIN
@@ -858,7 +924,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 READ_SHORT 0x68 "abil_num"
                 FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                   READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) AND ("%type%" > 14) AND ("%type%" < 31) BEGIN // melee, ranged, or launcher
                     SET "legit_weapon" = 1
                   END
                 END
@@ -879,7 +945,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 11) BEGIN // first weapon slot
+            PATCH_IF ("%index%" = 11) BEGIN // third weapon slot
               SET "weapon3" = 1
               SET "legit_weapon" = 0
               INNER_PATCH_FILE ~%item%.itm~ BEGIN
@@ -888,7 +954,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 READ_SHORT 0x68 "abil_num"
                 FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                   READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) AND ("%type%" > 14) AND ("%type%" < 31) BEGIN // melee, ranged, or launcher
                     SET "legit_weapon" = 1
                   END
                 END
@@ -909,7 +975,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 12) BEGIN // first weapon slot
+            PATCH_IF ("%index%" = 12) BEGIN // fourth weapon slot
               SET "weapon4" = 1
               SET "legit_weapon" = 0
               INNER_PATCH_FILE ~%item%.itm~ BEGIN
@@ -918,7 +984,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 READ_SHORT 0x68 "abil_num"
                 FOR (index3 = 0 ; index3 < abil_num ; index3 = index3 + 1) BEGIN
                   READ_BYTE ("%abil_off%" + (0x38 * "%index3%")) "ability"
-                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) BEGIN // melee, ranged, or launcher
+                  PATCH_IF (("%ability%" = 1) OR ("%ability%" = 2) OR ("%ability%" = 4)) AND ("%type%" > 14) AND ("%type%" < 31) BEGIN // melee, ranged, or launcher
                     SET "legit_weapon" = 1
                   END
                 END
@@ -954,7 +1020,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 14) BEGIN // first quiver slot
+            PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
               SET "quiver2" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER2: %item%.itm! Moving to inventory~
@@ -969,7 +1035,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 15) BEGIN // first quiver slot
+            PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
               SET "quiver3" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER3: %item%.itm! Moving to inventory~
@@ -984,7 +1050,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0
               END
             END
-            PATCH_IF ("%index%" = 16) BEGIN // first quiver slot
+            PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
               SET "quiver4" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER4: %item%.itm! Moving to inventory~
