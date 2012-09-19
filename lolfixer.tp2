@@ -1724,7 +1724,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) AND (%spell_level% != 5)) OR // ODREN_RITUAL_SCROLL
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN642~) AND (%spell_level% != 6)) OR // POISONOUS_CLOUD - eSeries
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) AND (%spell_level% != 6)) OR // ZOMBIE_LEVEL_DRAIN
-                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL732~) AND (%spell_level% != 7)) OR // HELM_TRUE_SIGHT
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) AND (%spell_level% != 9)) OR // ROGUE_SET_SPIKE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) AND (%spell_level% != 9)) OR // ROGUE_SET_EXPLODING_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) AND (%spell_level% != 9)) OR // ROGUE_SET_TIME_TRAP
