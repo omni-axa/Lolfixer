@@ -587,7 +587,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
           BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
+            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% of %itm_num% (%item%.itm) does not exist! Removing item..."
             REMOVE_CRE_ITEM ~%item%~
             SET "index" = 0 - 1
             READ_LONG  0x2c0 "itm_num"
@@ -1718,20 +1718,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     READ_LONG  0x34 "spell_level"
 
     PATCH_IF (%spell_type% = 4) BEGIN
-      PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) AND (%spell_level% != 2)) OR // INQUIS_TRUE_SIGHT
-                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
+      PATCH_IF (((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) AND (%spell_level% != 4)) OR // SET_SNARE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) AND (%spell_level% != 4)) OR // SET_SPECIAL_SNARE_TRAP
-                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) AND (%spell_level% != 5)) OR // HELM_RITUAL_SCROLL
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN592~) AND (%spell_level% != 5)) OR // HELM_RITUAL_SCROLL - TOD
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) AND (%spell_level% != 5)) OR // ODREN_RITUAL_SCROLL
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN642~) AND (%spell_level% != 6)) OR // POISONOUS_CLOUD - eSeries
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) AND (%spell_level% != 6)) OR // ZOMBIE_LEVEL_DRAIN
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL732~) AND (%spell_level% != 7)) OR // HELM_TRUE_SIGHT
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) AND (%spell_level% != 9)) OR // ROGUE_SET_SPIKE_TRAP
                 ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) AND (%spell_level% != 9)) OR // ROGUE_SET_EXPLODING_TRAP
-                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) AND (%spell_level% != 9))) BEGIN // ROGUE_SET_TIME_TRAP
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) AND (%spell_level% != 9)) OR // ROGUE_SET_TIME_TRAP
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN940~) AND (%spell_level% != 9)) OR // MEPHIT_STINKING_CLOUD - eSeries
+                ((~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN979~) AND (%spell_level% != 9))) BEGIN // GOLEM_GASCLOUD - eSeries
         PATCH_PRINT "%SOURCE_FILE% error: Innate Spell is referenced by CastSpellInnate() and has mismatched index with SPELL.IDS! Correcting..."
-        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL232~) BEGIN
-          WRITE_LONG 0x34 ~2~
-        END ELSE
         PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL412~) OR
                  (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL414~) BEGIN
           WRITE_LONG 0x34 ~4~
@@ -1740,12 +1739,15 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
                  (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN593~) BEGIN
           WRITE_LONG 0x34 ~5~
         END ELSE
-        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) BEGIN
+        PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN642~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN666~) BEGIN
           WRITE_LONG 0x34 ~6~
         END ELSE
         PATCH_IF (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL910~) OR
                  (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL911~) OR
-                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) BEGIN
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPCL912~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN940~) OR
+                 (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SPIN979~) BEGIN
           WRITE_LONG 0x34 ~9~
         END
       END ELSE
