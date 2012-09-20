@@ -1331,6 +1331,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
           WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) %nlevel%
         END
+        PATCH_IF ("%olevel%" > 0) AND ("%spl_type%" = 4) BEGIN
+          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is INNATE with non-zero level (%olevel%)! Setting to 0 to avoid crash..."
+          WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) 0
+        END
         PATCH_IF (("%spl_type%" = 2) AND ("%type%" != 0)) BEGIN // priest
           PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
           WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 0
@@ -1349,6 +1353,24 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         REMOVE_KNOWN_SPELL ~%resref%~
         SET "index" = 0 - 1
         READ_LONG  0x2a4 "known_num"
+      END
+    END
+
+    // Missing Memorized Spell Remover
+    READ_LONG  0x2b0 "mem_off"
+    READ_LONG  0x2b4 "mem_num"
+
+    FOR (index = 0 ; index < mem_num ; index = index + 1) BEGIN
+      READ_ASCII ("%mem_off%" +        ("%index%" * 0x0c)) "resref"
+      SET exists = 0
+      INNER_PATCH_FILE ~%resref%.spl~ BEGIN
+        SET exists = 1
+      END
+      PATCH_IF ("%exists%" = 0) BEGIN
+        PATCH_PRINT "%SOURCE_FILE%: Memorized spell does not exist (%resref%.SPL)! Removing..."
+        REMOVE_MEMORIZED_SPELL ~%resref%~
+        SET "index" = 0 - 1
+        READ_LONG  0x2b4 "mem_num"
       END
     END
   END
