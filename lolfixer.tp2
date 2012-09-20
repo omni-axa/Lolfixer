@@ -1347,6 +1347,8 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       BEGIN
         PATCH_PRINT "%SOURCE_FILE%: Known spell does not exist (%resref%.SPL)! Removing..."
         REMOVE_KNOWN_SPELL ~%resref%~
+        SET "index" = 0 - 1
+        READ_LONG  0x2a4 "known_num"
       END
     END
   END
