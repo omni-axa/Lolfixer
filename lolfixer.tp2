@@ -587,7 +587,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
           END ELSE
           BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% of %itm_num% (%item%.itm) does not exist! Removing item..."
+            PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
             REMOVE_CRE_ITEM ~%item%~
             SET "index" = 0 - 1
             READ_LONG  0x2c0 "itm_num"
@@ -662,7 +662,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 0) BEGIN // helm slot
               SET "helm" = 1
               PATCH_IF (("%type%" != 7) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // helm
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid HELM: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -677,7 +677,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 1) BEGIN // armor slot
               SET "armor" = 1
               PATCH_IF (("%type%" != 2) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // armor
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid ARMOR: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -692,7 +692,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
               SET "offhand" = 1
               PATCH_IF ((("%flags%" BAND 0b00000110) = 0b00000110) AND ("%ignore%" = 0)) BEGIN // 2h and droppable check
-                PATCH_PRINT ~%SOURCE_FILE%: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -716,7 +716,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   END
                 END
                 PATCH_IF ("%legit_offhand%" = 0) BEGIN
-                  PATCH_PRINT ~%SOURCE_FILE%: Invalid OFFHAND: %item%.itm! Moving to inventory~
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid OFFHAND: %item%.itm! Moving to inventory~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   SET "ref2" = 1
                   FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -782,7 +782,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   END
                 END
                 PATCH_IF ("%2handedequip%" = 1) BEGIN
-                  PATCH_PRINT ~%SOURCE_FILE%: OFFHAND with 2-HAND: %item%.itm! Moving to inventory~
+                  PATCH_PRINT ~%SOURCE_FILE% error: OFFHAND with 2-HAND: %item%.itm! Moving to inventory~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   SET "ref2" = 1
                   FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -798,7 +798,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 3) BEGIN // glove slot
               SET "gloves" = 1
               PATCH_IF (("%type%" != 6) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // gloves
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid GLOVES: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -813,7 +813,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 4) BEGIN // left ring slot
               SET "lring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid LRING: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -828,7 +828,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 5) BEGIN // right ring slot
               SET "rring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid RRING: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -843,7 +843,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 6) BEGIN // amulet slot
               SET "amulet" = 1
               PATCH_IF (("%type%" != 1) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // amulet
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid AMULET: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -858,7 +858,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 7) BEGIN // belt slot
               SET "belt" = 1
               PATCH_IF (("%type%" != 3) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // belt
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid BELT: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -873,7 +873,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 8) BEGIN // boot slot
               SET "boots" = 1
               PATCH_IF (("%type%" != 4) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // boot
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid BOOTS: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -903,7 +903,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON1: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -933,7 +933,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON2: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -963,7 +963,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON3: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -993,7 +993,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid WEAPON4: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1008,7 +1008,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
               SET "quiver1" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER1: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1023,7 +1023,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
               SET "quiver2" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER2: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1038,7 +1038,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
               SET "quiver3" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER3: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1053,7 +1053,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
               SET "quiver4" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid QUIVER4: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1068,7 +1068,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 17) BEGIN // cloak
               SET "cloak" = 1
               PATCH_IF (("%type%" != 32) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // cloak
-                PATCH_PRINT ~%SOURCE_FILE%: Invalid CLOAK: %item%.itm! Moving to inventory~
+                PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
@@ -1081,25 +1081,25 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
               END
             END
             PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping AMULET~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping AMULET~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 6))         "ref"
               SET "amulet" = 1
             END ELSE
             PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping ARMOR~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping ARMOR~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02))             "ref"
               SET "armor" = 1
             END ELSE
             PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BELT~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping BELT~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 7))         "ref"
               SET "belt" = 1
             END ELSE
             PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping BOOTS~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping BOOTS~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 8))         "ref"
               SET "boots" = 1
@@ -1107,7 +1107,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
                         ("%type%" = 31)) AND ("%quiver1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 13))        "ref"
               SET "quiver1" = 1
@@ -1115,7 +1115,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
                         ("%type%" = 31)) AND ("%quiver2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 14))        "ref"
               SET "quiver2" = 1
@@ -1123,7 +1123,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
                         ("%type%" = 31)) AND ("%quiver3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 15))        "ref"
               SET "quiver3" = 1
@@ -1131,31 +1131,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
                         ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 16))        "ref"
               SET "quiver4" = 1
             END ELSE
             PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping GLOVES~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping GLOVES~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 3))         "ref"
               SET "gloves" = 1
             END ELSE
             PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping HELM~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping HELM~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%")                      "ref"
               SET "helm" = 1
             END ELSE
             PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping LRING~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping LRING~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 4))         "ref"
               SET "lring" = 1
             END ELSE
             PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping RRING~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping RRING~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 5))         "ref"
               SET "rring" = 1
@@ -1178,7 +1178,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 30) OR // halberd
                         ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
+                PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 9))         "ref"
                 SET "weapon1" = 1
@@ -1202,7 +1202,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 30) OR // halberd
                         ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
+                PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 10))        "ref"
                 SET "weapon2" = 1
@@ -1226,7 +1226,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 30) OR // halberd
                         ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
+                PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 11))        "ref"
                 SET "weapon3" = 1
@@ -1250,20 +1250,20 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 30) OR // halberd
                         ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
+                PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 WRITE_SHORT ("%slot_off%" + (0x02 * 12))        "ref"
                 SET "weapon4" = 1
               END
             END ELSE
             PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping SHIELD~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping SHIELD~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 2))         "ref"
               SET "offhand" = 1
             END ELSE
             PATCH_IF ((("%type%" = 32) AND ("%cloak%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE%: Equippable items in inventory: %item%.itm! Equipping CLOAK~
+              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping CLOAK~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 17))        "ref"
               SET "cloak" = 1
@@ -1290,7 +1290,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           SET exists = 1
         END
         PATCH_IF ("%exists%" = 0) BEGIN
-          PATCH_PRINT "%SOURCE_FILE%: Non-existent script (%script%.BCS) nulled..."
+          PATCH_PRINT "%SOURCE_FILE% error: Non-existent script (%script%.BCS) nulled..."
           WRITE_ASCII (0x248 + (0x08 * "%index%")) ~~ #8
         END
       END
@@ -1305,7 +1305,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         SET exists = 1
       END
       PATCH_IF ("%exists%" = 0) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Non-existent dialogue (%dialog%.DLG) nulled..."
+        PATCH_PRINT "%SOURCE_FILE% error: Non-existent dialogue (%dialog%.DLG) nulled..."
         WRITE_ASCII 0x2cc ~~ #8
       END
     END
@@ -1328,28 +1328,28 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         SET level = %olevel% + 1
         PATCH_IF (("%level%" != "%spl_level%") AND ("%spl_level%" > 0) AND (("%spl_type%" = 1) OR ("%spl_type%" = 2))) BEGIN
           SET nlevel = %spl_level% - 1
-          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
+          PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
           WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) %nlevel%
         END
         PATCH_IF ("%olevel%" > 0) AND ("%spl_type%" = 4) BEGIN
-          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is INNATE with non-zero level (%olevel%)! Setting to 0 to avoid crash..."
+          PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is INNATE with non-zero level (%olevel%)! Setting to 0 to avoid crash..."
           WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) 0
         END
         PATCH_IF (("%spl_type%" = 2) AND ("%type%" != 0)) BEGIN // priest
-          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
+          PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
           WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 0
         END
         PATCH_IF (("%spl_type%" = 1) AND ("%type%" != 1)) BEGIN // mage
-          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is a MAGE spell (was %type%)..."
+          PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a MAGE spell (was %type%)..."
           WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 1
         END
         PATCH_IF (("%spl_type%" = 4) AND ("%type%" != 2)) BEGIN // innate
-          PATCH_PRINT "%SOURCE_FILE%: Known spell (%resref%.SPL) is an INNATE spell (was %type%)..."
+          PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is an INNATE spell (was %type%)..."
           WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 2
         END
       END ELSE
       BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Known spell does not exist (%resref%.SPL)! Removing..."
+        PATCH_PRINT "%SOURCE_FILE% error: Known spell does not exist (%resref%.SPL)! Removing..."
         REMOVE_KNOWN_SPELL ~%resref%~
         SET "index" = 0 - 1
         READ_LONG  0x2a4 "known_num"
@@ -1367,7 +1367,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         SET exists = 1
       END
       PATCH_IF ("%exists%" = 0) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Memorized spell does not exist (%resref%.SPL)! Removing..."
+        PATCH_PRINT "%SOURCE_FILE% error: Memorized spell does not exist (%resref%.SPL)! Removing..."
         REMOVE_MEMORIZED_SPELL ~%resref%~
         SET "index" = 0 - 1
         READ_LONG  0x2b4 "mem_num"
@@ -1392,305 +1392,305 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
     READ_SHORT 0x1c "type"
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
 
     // Enchantment Fixer
     READ_LONG  0x60 "enchantment"
 
-    PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
-      PATCH_PRINT "%SOURCE_FILE%: Item is enchanted but not magical! Setting magical flag..."
-      WRITE_BYTE 0x18 ("%flags%" BOR 0b01000000)
-    END
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+      PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Item is enchanted but not magical! Setting magical flag..."
+        WRITE_BYTE 0x18 ("%flags%" BOR 0b01000000)
+      END
 
-    // Equipped Effect Fixer
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x6e "fx_idx"
-    READ_SHORT 0x70 "fx_num"
+      // Equipped Effect Fixer
+      READ_LONG  0x6a "fx_off"
+      READ_SHORT 0x6e "fx_idx"
+      READ_SHORT 0x70 "fx_num"
 
-    FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
-      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
-      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
-      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
-      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-      PATCH_IF (("%target%" != 1) AND ("%target%" != 3) AND ("%target%" != 5)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has an incorrect target (%target%)! Targeting self..."
-        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
+      FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+        READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+        READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
+        READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
+        READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
+        READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+        READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
+        PATCH_IF (("%target%" != 1) AND ("%target%" != 3) AND ("%target%" != 5)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) has an incorrect target (%target%)! Targeting self..."
+          WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
+        END
+        PATCH_IF ("%timing%" != 2) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) has an incorrect timing mode (%timing%)! Making effect active when equipped..."
+          WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
+        END
+        PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) can be dispelled (%dispel%)! Making undispellable..."
+          WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
+        END
       END
-      PATCH_IF ("%timing%" != 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has an incorrect timing mode (%timing%)! Making effect active when equipped..."
-        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) 2
-      END
-      PATCH_IF (("%dispel%" != 0) AND ("%dispel%" != 2)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) can be dispelled (%dispel%)! Making undispellable..."
-        WRITE_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) 2
-      END
-    END
 
-    // Ability Slot Fixer
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
+      // Ability Slot Fixer
+      READ_LONG  0x64 "abil_off"
+      READ_SHORT 0x68 "abil_num"
 
-    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-      READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "abil_type"
-      READ_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) "slot"
-      PATCH_IF ((("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ("%slot%" != 1)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to WEAPON slot (was %slot%)..."
-        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 1
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+        READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "abil_type"
+        READ_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) "slot"
+        PATCH_IF ((("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ("%slot%" != 1)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was %slot%)..."
+          WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 1
+        END
+        PATCH_IF (("%abil_type%" = 3) AND ("%slot%" != 3)) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
+          WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 3
+        END
       END
-      PATCH_IF (("%abil_type%" = 3) AND ("%slot%" != 3)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
-        WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 3
-      END
-    END
 
-    // Animation and Ranged Ability Flag Fixer
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
+      // Animation and Ranged Ability Flag Fixer
+      READ_LONG  0x64 "abil_off"
+      READ_SHORT 0x68 "abil_num"
 
-    FOR (index = 0; index < abil_num; index = index + 1) BEGIN
-      READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
-      READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
-      READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
-      READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
-      READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
-      READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
-      READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
-      PATCH_IF ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 0) AND
-               ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN
-        WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-        WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-        WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-        PATCH_PRINT "%SOURCE_FILE% error: Improper Swing Probabilities! Setting to 0%"
-        PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
-        PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
-        PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
-      END
-      PATCH_IF (("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ((%type% < 15) OR (%type% > 30)) BEGIN
-        WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-        WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-        WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-        PATCH_PRINT "%SOURCE_FILE% error: Non weapon has animations!"
-        PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
-        PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
-        PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
-      END
-      PATCH_IF ("%abil_type%" = 1) BEGIN // Melee Ability
-        PATCH_IF (("%type%" = 16)) AND // dagger
-                 (("%anim_overhand%" != 0) OR
-                  ("%anim_backhand%" != 20) OR
-                  ("%anim_thrust%" != 80)) BEGIN
-          SET "anim_overhand_new" = 0
-          SET "anim_backhand_new" = 20
-          SET "anim_thrust_new" = 80
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 20
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 80
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 19)) AND // short sword
-                 (("%anim_overhand%" != 10) OR
-                  ("%anim_backhand%" != 25) OR
-                  ("%anim_thrust%" != 65)) BEGIN
-          SET "anim_overhand_new" = 10
-          SET "anim_backhand_new" = 25
-          SET "anim_thrust_new" = 65
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 25
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 17) OR // maces
-                  ("%type%" = 18) OR // sling
-                  ("%type%" = 20) OR // swords
-                  ("%type%" = 21) OR // hammer
-                  ("%type%" = 22) OR // morning stars
-                  ("%type%" = 23) OR // flail
-                  ("%type%" = 25) OR // axe
-                  ("%type%" = 28)) AND // hand to hand
-                 (("%flags%" BAND 0b00000010) != 0b00000010) AND // 1-handed
-                 (("%anim_overhand%" != 50) OR
-                  ("%anim_backhand%" != 50) OR
-                  ("%anim_thrust%" != 0)) BEGIN
-          SET "anim_overhand_new" = 50
-          SET "anim_backhand_new" = 50
-          SET "anim_thrust_new" = 0
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 50
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 50
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 17) OR // maces
-                  ("%type%" = 18) OR // sling
-                  ("%type%" = 20) OR // swords
-                  ("%type%" = 21) OR // hammer
-                  ("%type%" = 22) OR // morning stars
-                  ("%type%" = 23) OR // flail
-                  ("%type%" = 25) OR // axe
-                  ("%type%" = 28)) AND // hand to hand
-                 (("%flags%" BAND 0b00000010) = 0b00000010) AND // 2-handed
-                 (("%anim_overhand%" != 60) OR
-                  ("%anim_backhand%" != 40) OR
-                  ("%anim_thrust%" != 0)) BEGIN
-          SET "anim_overhand_new" = 60
-          SET "anim_backhand_new" = 40
-          SET "anim_thrust_new" = 0
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 60
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 40
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 30)) AND // halberd
-                 (("%anim_overhand%" != 0) OR
-                  ("%anim_backhand%" != 35) OR
-                  ("%anim_thrust%" != 65)) BEGIN
-          SET "anim_overhand_new" = 0
-          SET "anim_backhand_new" = 25
-          SET "anim_thrust_new" = 65
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 35
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 29)) AND // spear
-                 (("%anim_overhand%" != 0) OR
-                  ("%anim_backhand%" != 0) OR
-                  ("%anim_thrust%" != 100)) BEGIN
-          SET "anim_overhand_new" = 0
-          SET "anim_backhand_new" = 0
-          SET "anim_thrust_new" = 100
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 100
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-        PATCH_IF (("%type%" = 26)) AND // staff
-                 (("%anim_overhand%" != 10) OR
-                  ("%anim_backhand%" != 70) OR
-                  ("%anim_thrust%" != 20)) BEGIN
-          SET "anim_overhand_new" = 10
-          SET "anim_backhand_new" = 70
-          SET "anim_thrust_new" = 20
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 70
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 20
-          PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-        END
-      END
-      PATCH_IF ("%abil_type%" = 2) BEGIN // Ranged Ability (No ammunition or ammunition itself)
-        PATCH_IF (("%type%" = 15) OR // bow
-                  ("%type%" = 27)) AND // xbow
-                 (("%anim_overhand%" != 0) OR
-                  ("%anim_backhand%" != 0) OR
-                  ("%anim_thrust%" != 0)) BEGIN
-          SET "anim_overhand_new" = 0
-          SET "anim_backhand_new" = 0
-          SET "anim_thrust_new" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+        READ_SHORT ("%abil_off%" +        (0x38 * "%index%")) "abil_type"
+        READ_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) "anim_overhand"
+        READ_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) "anim_backhand"
+        READ_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) "anim_thrust"
+        READ_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) "is_arrow"
+        READ_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) "is_bolt"
+        READ_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) "is_bullet"
+        PATCH_IF ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 0) AND
+                 ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN
           WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
           WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
           WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-          PATCH_IF (("%type%" = 15) AND (("%is_arrow%" = 0) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 1
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
+          PATCH_PRINT "%SOURCE_FILE% error: Improper Swing Probabilities! Setting to 0%"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
+        END
+        PATCH_IF (("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ((%type% < 15) OR (%type% > 30)) BEGIN
+          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+          PATCH_PRINT "%SOURCE_FILE% error: Non weapon has animations!"
+          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> 0"
+          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
+          PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
+        END
+        PATCH_IF ("%abil_type%" = 1) BEGIN // Melee Ability
+          PATCH_IF (("%type%" = 16)) AND // dagger
+                   (("%anim_overhand%" != 0) OR
+                    ("%anim_backhand%" != 20) OR
+                    ("%anim_thrust%" != 80)) BEGIN
+            SET "anim_overhand_new" = 0
+            SET "anim_backhand_new" = 20
+            SET "anim_thrust_new" = 80
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 20
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 80
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
           END
-          PATCH_IF (("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0))) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
-            PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
+          PATCH_IF (("%type%" = 19)) AND // short sword
+                   (("%anim_overhand%" != 10) OR
+                    ("%anim_backhand%" != 25) OR
+                    ("%anim_thrust%" != 65)) BEGIN
+            SET "anim_overhand_new" = 10
+            SET "anim_backhand_new" = 25
+            SET "anim_thrust_new" = 65
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 25
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          END
+          PATCH_IF (("%type%" = 17) OR // maces
+                    ("%type%" = 18) OR // sling
+                    ("%type%" = 20) OR // swords
+                    ("%type%" = 21) OR // hammer
+                    ("%type%" = 22) OR // morning stars
+                    ("%type%" = 23) OR // flail
+                    ("%type%" = 25) OR // axe
+                    ("%type%" = 28)) AND // hand to hand
+                   (("%flags%" BAND 0b00000010) != 0b00000010) AND // 1-handed
+                   (("%anim_overhand%" != 50) OR
+                    ("%anim_backhand%" != 50) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 50
+            SET "anim_backhand_new" = 50
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 50
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 50
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          END
+          PATCH_IF (("%type%" = 17) OR // maces
+                    ("%type%" = 18) OR // sling
+                    ("%type%" = 20) OR // swords
+                    ("%type%" = 21) OR // hammer
+                    ("%type%" = 22) OR // morning stars
+                    ("%type%" = 23) OR // flail
+                    ("%type%" = 25) OR // axe
+                    ("%type%" = 28)) AND // hand to hand
+                   (("%flags%" BAND 0b00000010) = 0b00000010) AND // 2-handed
+                   (("%anim_overhand%" != 60) OR
+                    ("%anim_backhand%" != 40) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 60
+            SET "anim_backhand_new" = 40
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 60
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 40
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          END
+          PATCH_IF (("%type%" = 30)) AND // halberd
+                   (("%anim_overhand%" != 0) OR
+                    ("%anim_backhand%" != 35) OR
+                    ("%anim_thrust%" != 65)) BEGIN
+            SET "anim_overhand_new" = 0
+            SET "anim_backhand_new" = 25
+            SET "anim_thrust_new" = 65
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 35
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          END
+          PATCH_IF (("%type%" = 29)) AND // spear
+                   (("%anim_overhand%" != 0) OR
+                    ("%anim_backhand%" != 0) OR
+                    ("%anim_thrust%" != 100)) BEGIN
+            SET "anim_overhand_new" = 0
+            SET "anim_backhand_new" = 0
+            SET "anim_thrust_new" = 100
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 100
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+          END
+          PATCH_IF (("%type%" = 26)) AND // staff
+                   (("%anim_overhand%" != 10) OR
+                    ("%anim_backhand%" != 70) OR
+                    ("%anim_thrust%" != 20)) BEGIN
+            SET "anim_overhand_new" = 10
+            SET "anim_backhand_new" = 70
+            SET "anim_thrust_new" = 20
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 70
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 20
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
           END
         END
-        PATCH_IF (("%type%" = 16) OR // dagger
-                  ("%type%" = 17) OR // maces
-                  ("%type%" = 18) OR // sling
-                  ("%type%" = 19) OR // short sword
-                  ("%type%" = 20) OR // swords
-                  ("%type%" = 21) OR // hammer
-                  ("%type%" = 22) OR // morning stars
-                  ("%type%" = 23) OR // flail
-                  ("%type%" = 24) OR // darts
-                  ("%type%" = 25) OR // axe
-                  ("%type%" = 26) OR // staff
-                  ("%type%" = 28) OR // hand to hand
-                  ("%type%" = 29) OR // Spear
-                  ("%type%" = 30)) AND // halberd
-                 (("%anim_overhand%" != 100) OR
-                  ("%anim_backhand%" != 0) OR
-                  ("%anim_thrust%" != 0)) BEGIN
-          SET "anim_overhand_new" = 100
-          SET "anim_backhand_new" = 0
-          SET "anim_thrust_new" = 0
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 100
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-          PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
-            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
-          END ELSE
-          PATCH_IF (("%type%" != 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item is not a BOW/SLING/XBOW!"
+        PATCH_IF ("%abil_type%" = 2) BEGIN // Ranged Ability (No ammunition or ammunition itself)
+          PATCH_IF (("%type%" = 15) OR // bow
+                    ("%type%" = 27)) AND // xbow
+                   (("%anim_overhand%" != 0) OR
+                    ("%anim_backhand%" != 0) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 0
+            SET "anim_backhand_new" = 0
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+            PATCH_IF (("%type%" = 15) AND (("%is_arrow%" = 0) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 1
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
+            END
+            PATCH_IF (("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
+            END
+          END
+          PATCH_IF (("%type%" = 16) OR // dagger
+                    ("%type%" = 17) OR // maces
+                    ("%type%" = 18) OR // sling
+                    ("%type%" = 19) OR // short sword
+                    ("%type%" = 20) OR // swords
+                    ("%type%" = 21) OR // hammer
+                    ("%type%" = 22) OR // morning stars
+                    ("%type%" = 23) OR // flail
+                    ("%type%" = 24) OR // darts
+                    ("%type%" = 25) OR // axe
+                    ("%type%" = 26) OR // staff
+                    ("%type%" = 28) OR // hand to hand
+                    ("%type%" = 29) OR // Spear
+                    ("%type%" = 30)) AND // halberd
+                   (("%anim_overhand%" != 100) OR
+                    ("%anim_backhand%" != 0) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 100
+            SET "anim_backhand_new" = 0
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 100
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+            PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
+            END ELSE
+            PATCH_IF (("%type%" != 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item is not a BOW/SLING/XBOW!"
+            END
           END
         END
-      END
-      PATCH_IF ("%abil_type%" = 4) BEGIN // Launcher Ability
-        PATCH_IF (("%type%" = 15) OR // bow
-                  ("%type%" = 27)) AND // xbow
-                 (("%anim_overhand%" != 0) OR
-                  ("%anim_backhand%" != 0) OR
-                  ("%anim_thrust%" != 0)) BEGIN
-          SET "anim_overhand_new" = 0
-          SET "anim_backhand_new" = 0
-          SET "anim_thrust_new" = 0
-          WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
-          WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-          PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
-          PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
-          PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
-          PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-          PATCH_IF (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1)) BEGIN
-            WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
-            WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Item requires ammunition!"
+        PATCH_IF ("%abil_type%" = 4) BEGIN // Launcher Ability
+          PATCH_IF (("%type%" = 15) OR // bow
+                    ("%type%" = 27)) AND // xbow
+                   (("%anim_overhand%" != 0) OR
+                    ("%anim_backhand%" != 0) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 0
+            SET "anim_backhand_new" = 0
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+            PATCH_IF (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1)) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item requires ammunition!"
+            END
           END
         END
       END
@@ -1714,7 +1714,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
       READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
       PATCH_IF ((%prob1% + %prob2%) != 100) AND ("%timing%" = 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
+        PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
     //  WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
     //  WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
       END
@@ -1789,17 +1789,17 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
 
       // Ability Target Fixer
       PATCH_IF (("%target%"  = 2) OR ("%target%" = 6)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% target may crash! (was %target%) Setting to self..."
+        PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% target may crash! (was %target%) Setting to self..."
         WRITE_BYTE  ("%abil_off%" + 0x0c + (0x28 * "%index%")) 1
       END
 
       // Spell Slot Fixer
       PATCH_IF (("%spell_type%"  = 4) AND ("%slot%" != 4)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to INNATE slot (was %slot%)..."
+        PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was %slot%)..."
         WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 4
       END
       PATCH_IF (("%spell_type%" != 4) AND ("%slot%" != 2)) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Ability #%index% assigned to SPELL slot (was %slot%)..."
+        PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was %slot%)..."
         WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 2
       END
     END
@@ -1813,7 +1813,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
       READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
       READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
       PATCH_IF ("%target%" = 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE%: Casting Effect #%index% (opcode %opcode%) targets preset target! Targetting self..."
+        PATCH_PRINT "%SOURCE_FILE% error: Casting Effect #%index% (opcode %opcode%) targets preset target! Targetting self..."
         WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
       END
     END
