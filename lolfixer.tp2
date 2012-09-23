@@ -1405,12 +1405,103 @@ BEGIN ~Item Stuff - MAJESTIC Item Fixer~
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
-    READ_SHORT 0x1c "type"
-
-    // Enchantment Fixer
-    READ_LONG  0x60 "enchantment"
 
     PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+
+      // Type Fixer
+      READ_SHORT 0x1c "type"
+
+      PATCH_IF ("%type%" = 39) OR ("%type%" = 40) OR ("%type%" = 42) OR ("%type%" = 50) OR ("%type%" = 55) OR ("%type%" = 59) BEGIN
+        WRITE_SHORT 0x1c 0
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Misc type..."
+      END
+      PATCH_IF ("%type%" = 41) OR ("%type%" = 47) OR ("%type%" = 49) OR ("%type%" = 53) BEGIN
+        WRITE_SHORT 0x1c 12
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Shield type..."
+      END
+      PATCH_IF ("%type%" = 44) BEGIN
+        WRITE_SHORT 0x1c 17
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Mace type..."
+      END
+      PATCH_IF ("%type%" = 56) OR ("%type%" = 71) BEGIN
+        WRITE_SHORT 0x1c 9
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Potion type..."
+      END
+      PATCH_IF ("%type%" = 57) OR ("%type%" = 69) BEGIN
+        WRITE_SHORT 0x1c 20
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Large Sword type..."
+      END
+      PATCH_IF ("%type%" = 58) BEGIN
+        WRITE_SHORT 0x1c 36
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Container type..."
+      END
+      PATCH_IF ("%type%" = 60) OR ("%type%" = 61) OR ("%type%" = 62) OR ("%type%" = 63) OR ("%type%" = 64) OR ("%type%" = 65) OR ("%type%" = 66) OR ("%type%" = 67) BEGIN
+        WRITE_SHORT 0x1c 2
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Armor type..."
+      END
+      PATCH_IF ("%type%" = 70) BEGIN
+        WRITE_SHORT 0x1c 32
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Cloak type..."
+      END
+      PATCH_IF ("%type%" = 72) BEGIN
+        WRITE_SHORT 0x1c 7
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Headgear type..."
+      END
+      PATCH_IF ("%type%" = 73) BEGIN
+        WRITE_SHORT 0x1c 6
+        PATCH_PRINT "%SOURCE_FILE% error: Invalid Item Type (%type%)! Setting to Gauntlet type..."
+      END
+
+      // Placeholder Icon Assigner
+      READ_SHORT 0x1c "type"
+      READ_ASCII 0x3a "inv_icon"
+      READ_ASCII 0x44 "gnd_icon"
+      READ_ASCII 0x58 "desc_icon"
+      SET "inv_exists" = 0
+      SET "gnd_exists" = 0
+      SET "desc_exists" = 0
+
+      INNER_PATCH_FILE ~%inv_icon%.bam~ BEGIN
+        SET "inv_exists" = 1
+      END
+      INNER_PATCH_FILE ~%gnd_icon%.bam~ BEGIN
+        SET "gnd_exists" = 1
+      END
+      INNER_PATCH_FILE ~%desc_icon%.bam~ BEGIN
+        SET "desc_exists" = 1
+      END
+
+      PATCH_IF ("%inv_exists%" = 0) BEGIN
+        PATCH_IF ("%inv_icon%" STRING_EQUAL_CASE "none") OR ("%inv_icon%" STRING_EQUAL_CASE "") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Unassigned Inventory Icon! Assigning placeholder icon..."
+        END ELSE
+        BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Non-existent Inventory Icon (%inv_icon%.BAM)! Assigning placeholder icon..."
+        END
+        WRITE_ASCII 0x3a ~IMISC6V~ #8
+      END
+      PATCH_IF ("%gnd_exists%" = 0) BEGIN
+        PATCH_IF ("%gnd_icon%" STRING_EQUAL_CASE "none") OR ("%gnd_icon%" STRING_EQUAL_CASE "") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Unassigned Ground Icon! Assigning placeholder icon..."
+        END ELSE
+        BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Non-existent Ground Icon (%gnd_icon%.BAM)! Assigning placeholder icon..."
+        END
+        WRITE_ASCII 0x3a ~GCRATE01~ #8
+      END
+      PATCH_IF ("%desc_exists%" = 0) BEGIN
+        PATCH_IF ("%desc_icon%" STRING_EQUAL_CASE "none") OR ("%desc_icon%" STRING_EQUAL_CASE "") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Unassigned Description Icon! Assigning placeholder icon..."
+        END ELSE
+        BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Non-existent Description Icon (%desc_icon%.BAM)! Assigning placeholder icon..."
+        END
+        WRITE_ASCII 0x3a ~CMISC6V~ #8
+      END
+
+      // Enchantment Fixer
+      READ_LONG  0x60 "enchantment"
+
       PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Item is enchanted but not magical! Setting magical flag..."
         WRITE_BYTE 0x18 ("%flags%" BOR 0b01000000)
@@ -1481,7 +1572,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
           PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
         END
-        PATCH_IF (("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ((%type% < 15) OR (%type% > 30)) BEGIN
+        PATCH_IF ((%anim_overhand% + %anim_backhand% + %anim_thrust%) > 0) AND (("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ((%type% < 15) OR (%type% > 30)) BEGIN
           WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
           WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
           WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
@@ -1718,19 +1809,23 @@ BEGIN ~Item Stuff - MAJESTIC Item Checker~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x6e "fx_idx"
-    READ_SHORT 0x70 "fx_num"
+    READ_BYTE  0x18 "flags"
 
-    FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
-      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
-      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-      PATCH_IF ((%prob1% + %prob2%) != 100) AND ("%timing%" = 2) BEGIN
-        PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
-    //  WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
-    //  WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+      READ_LONG  0x6a "fx_off"
+      READ_SHORT 0x6e "fx_idx"
+      READ_SHORT 0x70 "fx_num"
+
+      FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+        READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+        READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
+        READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
+        READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
+        PATCH_IF ((%prob1% + %prob2%) != 100) AND ("%timing%" = 2) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (opcode %opcode%) has strange probabilities (%prob1% and %prob2%)"
+      //  WRITE_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) 100
+      //  WRITE_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) 0
+        END
       END
     END
   END
