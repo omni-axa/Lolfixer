@@ -1325,9 +1325,17 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
 
     PATCH_IF NOT (("%dialog%" STRING_EQUAL_CASE "NONE") OR ("%dialog%" STRING_EQUAL_CASE "")) BEGIN
       SET exists = 0
+      SET dlgexists = 0
       INNER_PATCH_FILE ~%dialog%.dlg~ BEGIN
         SET exists = 1
       END
+      INNER_PATCH_FILE ~%SOURCE_RES%.dlg~ BEGIN
+        SET dlgexists = 1
+      END
+      PATCH_IF ("%exists%" = 0) AND ("%dlgexists%" = 1) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Non-existent dialogue (%dialog%.DLG) changed into %SOURCE_RES%.DLG..."
+        WRITE_ASCII 0x2cc ~%SOURCE_RES%~ #8
+      END ELSE
       PATCH_IF ("%exists%" = 0) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Non-existent dialogue (%dialog%.DLG) nulled..."
         WRITE_ASCII 0x2cc ~~ #8
