@@ -1642,7 +1642,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 20
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 80
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Dagger probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1657,7 +1657,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 25
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Short Sword probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1680,7 +1680,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 50
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 50
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Generic 1-Hander probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1703,7 +1703,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 60
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 40
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Generic 2-Hander probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1718,7 +1718,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 35
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 65
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Halberd probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1733,7 +1733,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 100
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Spear probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1748,7 +1748,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 70
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 20
-            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Stave probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1756,6 +1756,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         END
         PATCH_IF ("%abil_type%" = 2) BEGIN // Ranged Ability (No ammunition or ammunition itself)
           PATCH_IF (("%type%" = 15) OR // bow
+                    ("%type%" = 18) OR // sling
                     ("%type%" = 27)) AND // xbow
                    (("%anim_overhand%" != 0) OR
                     ("%anim_backhand%" != 0) OR
@@ -1766,7 +1767,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities! Nulling probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
@@ -1775,17 +1776,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
               PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
-            END
-            PATCH_IF (("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0))) BEGIN
+            END ELSE
+            PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
               WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
+            END ELSE
+            PATCH_IF (("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
               PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
             END
           END
           PATCH_IF (("%type%" = 16) OR // dagger
                     ("%type%" = 17) OR // maces
-                    ("%type%" = 18) OR // sling
                     ("%type%" = 19) OR // short sword
                     ("%type%" = 20) OR // swords
                     ("%type%" = 21) OR // hammer
@@ -1806,16 +1812,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 100
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities! Setting Generic Ranged probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-            PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
-              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
-              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
-              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
-            END ELSE
             PATCH_IF (("%type%" != 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
               WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
@@ -1826,6 +1826,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         END
         PATCH_IF ("%abil_type%" = 4) BEGIN // Launcher Ability
           PATCH_IF (("%type%" = 15) OR // bow
+                    ("%type%" = 18) OR // sling
                     ("%type%" = 27)) AND // xbow
                    (("%anim_overhand%" != 0) OR
                     ("%anim_backhand%" != 0) OR
@@ -1836,15 +1837,60 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
             WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
-            PATCH_PRINT "%SOURCE_FILE% error: Ranged Animations have wrong probabilities!"
+            PATCH_PRINT "%SOURCE_FILE% error: Launcher Animations have wrong probabilities! Nulling probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
-            PATCH_IF (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1)) BEGIN
+            PATCH_IF ("%type%" = 15) AND (("%is_arrow%" = 0) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1)) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 1
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire ARROWS!"
+            END ELSE
+            PATCH_IF (("%type%" = 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 0) OR ("%is_bolt%" = 1))) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 1
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BULLETS!"
+            END ELSE
+            PATCH_IF ("%type%" = 27) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 0)) BEGIN
+              WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
+              WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 1
+              WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
+              PATCH_PRINT "%SOURCE_FILE% error: Item is supposed to fire BOLTS!"
+            END
+          END ELSE
+          PATCH_IF (("%type%" = 16) OR // dagger
+                    ("%type%" = 17) OR // maces
+                    ("%type%" = 19) OR // short sword
+                    ("%type%" = 20) OR // swords
+                    ("%type%" = 21) OR // hammer
+                    ("%type%" = 22) OR // morning stars
+                    ("%type%" = 23) OR // flail
+                    ("%type%" = 24) OR // darts
+                    ("%type%" = 25) OR // axe
+                    ("%type%" = 26) OR // staff
+                    ("%type%" = 28) OR // hand to hand
+                    ("%type%" = 29) OR // Spear
+                    ("%type%" = 30)) AND // halberd
+                   (("%anim_overhand%" != 100) OR
+                    ("%anim_backhand%" != 0) OR
+                    ("%anim_thrust%" != 0)) BEGIN
+            SET "anim_overhand_new" = 100
+            SET "anim_backhand_new" = 0
+            SET "anim_thrust_new" = 0
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 100
+            WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 0
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 0
+            PATCH_PRINT "%SOURCE_FILE% error: Launcher Animations have wrong probabilities! Setting Generic Ranged probabilities..."
+            PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
+            PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
+            PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
+            PATCH_IF (("%type%" != 18) AND (("%is_arrow%" = 1) OR ("%is_bullet%" = 1) OR ("%is_bolt%" = 1))) BEGIN
               WRITE_SHORT ("%abil_off%" + 0x32 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x34 + (0x38 * "%index%")) 0
               WRITE_SHORT ("%abil_off%" + 0x36 + (0x38 * "%index%")) 0
-              PATCH_PRINT "%SOURCE_FILE% error: Item requires ammunition!"
+              PATCH_PRINT "%SOURCE_FILE% error: Item is not a BOW/SLING/XBOW!"
             END
           END
         END
@@ -1986,6 +2032,21 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         READ_BYTE  ("%fx_off%" + 0x0c + (0x30 * "%index%")) "timing"
         READ_ASCII ("%fx_off%" + 0x14 + (0x30 * "%index%")) "resref"
         SET "exists" = 0
+        PATCH_IF ("%opcode%" = 173) AND ("%param1%" < 100) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Equipped Effect #%index% Opcode (%opcode%) - Poison Resist set to %param1%"
+        END
+        PATCH_IF (("%opcode%" = 27) OR
+                  ("%opcode%" = 28) OR
+                  ("%opcode%" = 29) OR
+                  ("%opcode%" = 30) OR
+                  ("%opcode%" = 31) OR
+                  ("%opcode%" = 33) OR
+                  ("%opcode%" = 34) OR
+                  ("%opcode%" = 35) OR
+                  ("%opcode%" = 36) OR
+                  ("%opcode%" = 37)) AND ("%param2%" = 1) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Equipped Effect #%index% Opcode (%opcode%) - Value sets to %param1%"
+        END
         PATCH_IF ("%opcode%" = 67) OR
                  ("%opcode%" = 135) OR
                  ("%opcode%" = 151) OR
