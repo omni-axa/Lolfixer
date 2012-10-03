@@ -1631,7 +1631,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           PATCH_PRINT "  Backhand Swing: %anim_backhand% -> 0"
           PATCH_PRINT "  Thrust        : %anim_thrust% -> 0"
         END
-        PATCH_IF ("%abil_type%" = 1) BEGIN // Melee Ability
+        PATCH_IF ("%abil_type%" = 1) AND ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN // Melee Ability
           PATCH_IF (("%type%" = 16)) AND // dagger
                    (("%anim_overhand%" != 0) OR
                     ("%anim_backhand%" != 20) OR
@@ -1739,15 +1739,15 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
             PATCH_PRINT "  Thrust        : %anim_thrust% -> %anim_thrust_new%"
           END
           PATCH_IF (("%type%" = 26)) AND // staff
-                   (("%anim_overhand%" != 10) OR
+                   (("%anim_overhand%" != 20) OR
                     ("%anim_backhand%" != 70) OR
-                    ("%anim_thrust%" != 20)) BEGIN
-            SET "anim_overhand_new" = 10
+                    ("%anim_thrust%" != 10)) BEGIN
+            SET "anim_overhand_new" = 20
             SET "anim_backhand_new" = 70
-            SET "anim_thrust_new" = 20
-            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 10
+            SET "anim_thrust_new" = 10
+            WRITE_SHORT ("%abil_off%" + 0x2c + (0x38 * "%index%")) 20
             WRITE_SHORT ("%abil_off%" + 0x30 + (0x38 * "%index%")) 70
-            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 20
+            WRITE_SHORT ("%abil_off%" + 0x2e + (0x38 * "%index%")) 10
             PATCH_PRINT "%SOURCE_FILE% error: Melee Animations have wrong probabilities! Setting Stave probabilities..."
             PATCH_PRINT "  Overhand Swing: %anim_overhand% -> %anim_overhand_new%"
             PATCH_PRINT "  Backhand Swing: %anim_backhand% -> %anim_backhand_new%"
@@ -1803,9 +1803,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                     ("%type%" = 28) OR // hand to hand
                     ("%type%" = 29) OR // Spear
                     ("%type%" = 30)) AND // halberd
-                   (("%anim_overhand%" != 100) OR
-                    ("%anim_backhand%" != 0) OR
-                    ("%anim_thrust%" != 0)) BEGIN
+                   ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN
             SET "anim_overhand_new" = 100
             SET "anim_backhand_new" = 0
             SET "anim_thrust_new" = 0
@@ -1873,9 +1871,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                     ("%type%" = 28) OR // hand to hand
                     ("%type%" = 29) OR // Spear
                     ("%type%" = 30)) AND // halberd
-                   (("%anim_overhand%" != 100) OR
-                    ("%anim_backhand%" != 0) OR
-                    ("%anim_thrust%" != 0)) BEGIN
+                   ((%anim_overhand% + %anim_backhand% + %anim_thrust%) != 100) BEGIN
             SET "anim_overhand_new" = 100
             SET "anim_backhand_new" = 0
             SET "anim_thrust_new" = 0
