@@ -245,20 +245,20 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                          ((%index% = 17) AND ("%type%" = 32)) BEGIN
                   SET "match" = 1
                 END
-                PATCH_IF (%match% = 1) AND (%replaced% = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                PATCH_IF (%match% = 1) AND (%replaced% = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
                   PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED! Changing index..."
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
                   SET "replaced" = 1
                 END ELSE
-                PATCH_IF (%match% = 0) AND (%replaced% = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                PATCH_IF (%match% = 0) AND (%replaced% = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
                   PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - Changing index..."
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) "index1"
                   SET "replaced" = 1
                 END ELSE
-                PATCH_IF (%match% = 1) AND (%replaced% = 1) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                PATCH_IF (%match% = 1) AND (%replaced% = 1) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
                   PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM) - TYPE MATCHED!"
                 END ELSE
-                PATCH_IF (%replaced% = 1) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+                PATCH_IF (%replaced% = 1) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
                   PATCH_PRINT "  Possible change => #%index1% (%itmname%.ITM)"
                 END
               END
@@ -661,7 +661,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 0) BEGIN // helm slot
               SET "helm" = 1
-              PATCH_IF (("%type%" != 7) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // helm
+              PATCH_IF (("%type%" != 7) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // helm
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -676,7 +676,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 1) BEGIN // armor slot
               SET "armor" = 1
-              PATCH_IF (("%type%" != 2) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // armor
+              PATCH_IF (("%type%" != 2) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // armor
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -691,7 +691,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
               SET "offhand" = 1
-              PATCH_IF ((("%flags%" BAND 0b00000110) = 0b00000110) AND ("%ignore%" = 0)) BEGIN // 2h and droppable check
+              PATCH_IF ((("%flags%" BAND 0b00010110) = 0b00000110) AND ("%ignore%" = 0)) BEGIN // 2h, uncursed and droppable check
                 PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -703,7 +703,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "offhand" = 0
                 SET "index" = 0 - 1
               END ELSE
-              PATCH_IF (("%type%" != 12) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // if not shield, check for valid melee abilities
+              PATCH_IF (("%type%" != 12) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // if not shield, check for valid melee abilities
                 SET "legit_offhand" = 0
                 INNER_PATCH_FILE ~%item%.itm~ BEGIN
                   READ_LONG  0x64 "abil_off"
@@ -728,7 +728,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   SET "index" = 0 - 1
                 END
               END ELSE
-              PATCH_IF ("%type%" = 12) AND (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN
+              PATCH_IF ("%type%" = 12) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
                 READ_SHORT ("%slot_off%" + (0x02 * 9))  "refa"
                 READ_SHORT ("%slot_off%" + (0x02 * 10)) "refb"
                 READ_SHORT ("%slot_off%" + (0x02 * 11)) "refc"
@@ -797,7 +797,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 3) BEGIN // glove slot
               SET "gloves" = 1
-              PATCH_IF (("%type%" != 6) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // gloves
+              PATCH_IF (("%type%" != 6) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // gloves
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -812,7 +812,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 4) BEGIN // left ring slot
               SET "lring" = 1
-              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
+              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // rings
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -827,7 +827,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 5) BEGIN // right ring slot
               SET "rring" = 1
-              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // rings
+              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // rings
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -842,7 +842,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 6) BEGIN // amulet slot
               SET "amulet" = 1
-              PATCH_IF (("%type%" != 1) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // amulet
+              PATCH_IF (("%type%" != 1) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // amulet
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -857,7 +857,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 7) BEGIN // belt slot
               SET "belt" = 1
-              PATCH_IF (("%type%" != 3) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // belt
+              PATCH_IF (("%type%" != 3) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // belt
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -872,7 +872,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 8) BEGIN // boot slot
               SET "boots" = 1
-              PATCH_IF (("%type%" != 4) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // boot
+              PATCH_IF (("%type%" != 4) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // boot
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -902,7 +902,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -932,7 +932,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -962,7 +962,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -992,7 +992,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1007,7 +1007,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
               SET "quiver1" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1022,7 +1022,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
               SET "quiver2" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1037,7 +1037,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
               SET "quiver3" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1052,7 +1052,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
               SET "quiver4" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1067,7 +1067,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 17) BEGIN // cloak
               SET "cloak" = 1
-              PATCH_IF (("%type%" != 32) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) BEGIN // cloak
+              PATCH_IF (("%type%" != 32) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // cloak
                 PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Moving to inventory~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
@@ -1080,33 +1080,15 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "index" = 0 - 1
               END
             END
-            PATCH_IF ((("%type%" =  1) AND ("%amulet%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping AMULET~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 6))         "ref"
-              SET "amulet" = 1
-            END ELSE
-            PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping ARMOR~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02))             "ref"
               SET "armor" = 1
             END ELSE
-            PATCH_IF ((("%type%" =  3) AND ("%belt%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping BELT~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 7))         "ref"
-              SET "belt" = 1
-            END ELSE
-            PATCH_IF ((("%type%" =  4) AND ("%boots%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping BOOTS~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 8))         "ref"
-              SET "boots" = 1
-            END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 13))        "ref"
@@ -1114,7 +1096,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 14))        "ref"
@@ -1122,7 +1104,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 15))        "ref"
@@ -1130,35 +1112,17 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 16))        "ref"
               SET "quiver4" = 1
             END ELSE
-            PATCH_IF ((("%type%" =  6) AND ("%gloves%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping GLOVES~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 3))         "ref"
-              SET "gloves" = 1
-            END ELSE
-            PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping HELM~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%")                      "ref"
               SET "helm" = 1
-            END ELSE
-            PATCH_IF ((("%type%" = 10) AND ("%lring%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping LRING~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 4))         "ref"
-              SET "lring" = 1
-            END ELSE
-            PATCH_IF ((("%type%" = 10) AND ("%rring%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping RRING~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 5))         "ref"
-              SET "rring" = 1
             END ELSE
             PATCH_IF (((("%type%" = 15) OR // bow
                         ("%type%" = 16) OR // dagger
@@ -1176,7 +1140,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1200,7 +1164,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1224,7 +1188,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1248,7 +1212,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1256,17 +1220,11 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "weapon4" = 1
               END
             END ELSE
-            PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping SHIELD~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 2))         "ref"
               SET "offhand" = 1
-            END ELSE
-            PATCH_IF ((("%type%" = 32) AND ("%cloak%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00000100) = 0b00000100)) AND ("%index%" > 17) BEGIN
-              PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping CLOAK~
-              WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
-              WRITE_SHORT ("%slot_off%" + (0x02 * 17))        "ref"
-              SET "cloak" = 1
             END
           END
         END
@@ -1438,7 +1396,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
 
-    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
 
       // Type Fixer
       READ_SHORT 0x1c "type"
@@ -1903,7 +1861,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
 
-    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
       READ_LONG  0x6a "fx_off"
       READ_SHORT 0x6e "fx_idx"
       READ_SHORT 0x70 "fx_num"
