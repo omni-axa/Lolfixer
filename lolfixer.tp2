@@ -192,6 +192,27 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   LPF FJ_CRE_VALIDITY
     INT_VAR do_message = 1
   END
+  PATCH_IF ("%SOURCE_RES%" STRING_EQUAL_CASE "SENDRO03") AND (SOURCE_SIZE > 0x2d3) THEN BEGIN
+    READ_LONG  0x2a8 "meminfo_off" ELSE 0
+    READ_LONG  0x2ac "meminfo_num" ELSE 0
+    READ_LONG  0x2b0 "mem_spl_off" ELSE 0
+    READ_LONG  0x2b4 "mem_spl_num" ELSE 0
+
+    PATCH_IF ("meminfo_off" > 0x2d3) AND ("mem_spl_off" > 0x2d3) THEN BEGIN
+      READ_SHORT ("%meminfo_off%" + 0x04 + (0x10 * ("%meminfo_num%" - 1))) "spl_mem_num"
+      READ_SHORT ("%meminfo_off%" + 0x08 + (0x10 * ("%meminfo_num%" - 1))) "spl_tbl_idx"
+      READ_SHORT ("%meminfo_off%" + 0x0c + (0x10 * ("%meminfo_num%" - 1))) "spl_tbl_cnt"
+      READ_ASCII ("%mem_spl_off%" +        (0x0c * ("%spl_tbl_idx%" + "%spl_tbl_cnt%"))) "resref1" ELSE 0
+      READ_ASCII ("%mem_spl_off%" +        (0x0c * ("%spl_tbl_idx%" + "%spl_tbl_cnt%" + 1))) "resref2" ELSE 0
+      READ_ASCII ("%mem_spl_off%" +        (0x0c * ("%spl_tbl_idx%" + "%spl_tbl_cnt%" + 2))) "resref3" ELSE 0
+      READ_ASCII ("%mem_spl_off%" +        (0x0c * ("%spl_tbl_idx%" + "%spl_tbl_cnt%" + 3))) "resref4" ELSE 0
+      PATCH_IF ("%resref1%" STRING_EQUAL_CASE "SPCL900") BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Known ERROR in SENDRO03.CRE! (%resref1%, %resref2%, %resref3%, %resref4%) unaccounted for! Fixing..."
+        WRITE_SHORT ("%meminfo_off%" + 0x04 + (0x10 * ("%meminfo_num%" - 1))) 6
+        WRITE_SHORT ("%meminfo_off%" + 0x0c + (0x10 * ("%meminfo_num%" - 1))) 6
+      END
+    END
+  END
 BUT_ONLY_IF_IT_CHANGES
 
 BEGIN ~Creature Stuff - Inventory Unborker (removes spurious references to the item table)~
