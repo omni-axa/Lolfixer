@@ -1,6 +1,6 @@
 BACKUP ~lolfixer/backup~
 AUTHOR ~Lollorian~
-VERSION ~0.1B~
+VERSION ~0.1A~
 
 BEGIN ~Area Stuff - MAJESTIC Area Fixer~
   GROUP ~Area Stuff~
@@ -73,7 +73,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             END
             PATCH_IF ("%exists%" = 0) BEGIN
               PATCH_PRINT "%SOURCE_FILE% error: Ambient #%index% does not exist (%resref%.wav)! Nulling..."
-              WRITE_ASCIIE ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
+              WRITE_ASCII ("%amb_off%" + 0x30 + ("%index2%" * 0x08) + (0xd4 * "%index%")) ~NONE~ #8
             END
           END
         END
@@ -1291,7 +1291,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       END
       PATCH_IF ("%exists%" = 0) AND ("%dlgexists%" = 1) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Non-existent dialogue (%dialog%.DLG) changed into %SOURCE_RES%.DLG..."
-        WRITE_ASCII 0x2cc ~%SOURCE_RES%~ #8
+        WRITE_ASCIIE 0x2cc ~%SOURCE_RES%~ #8
       END ELSE
       PATCH_IF ("%exists%" = 0) BEGIN
         PATCH_PRINT "%SOURCE_FILE% error: Non-existent dialogue (%dialog%.DLG) nulled..."
@@ -1576,6 +1576,14 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     READ_BYTE  0x18 "flags"
 
     PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
+
+      // Used Up Item Fixer
+      READ_ASCII 0x10 "used_itm"
+
+      PATCH_IF NOT ((FILE_EXISTS_IN_GAME ~%used_itm%.itm~) OR ("%used_itm%" STRING_EQUAL_CASE "") OR ("%used_itm%" STRING_EQUAL_CASE "none")) BEGIN
+        PATCH_PRINT "%SOURCE_FILE% error: Non-existent Used Up Item (%used_itm%.ITM)! Nulling..."
+        WRITE_ASCII 0x10 ~NONE~ #8
+      END
 
       // Type Fixer
       READ_SHORT 0x1c "type"
