@@ -1,0 +1,87 @@
+[setup-lolfixer.exe] WeiDU version 23104
+This is a non-stable version. Unless you're sure about what you're doing, consider downgrading.
+[setup-lolfixer.exe] Using scripting style "BG2"
+
+Removing [Area Stuff - MAJESTIC Area Fixer] (component #0)
+Will uninstall 966 files for [LOLFIXER.TP2] component 11.
+Uninstalled    966 files for [LOLFIXER.TP2] component 11.
+Will uninstall   0 files for [LOLFIXER.TP2] component 10.
+Uninstalled      0 files for [LOLFIXER.TP2] component 10.
+Will uninstall   0 files for [LOLFIXER.TP2] component 9.
+Uninstalled      0 files for [LOLFIXER.TP2] component 9.
+Will uninstall 600 files for [LOLFIXER.TP2] component 8.
+Uninstalled    600 files for [LOLFIXER.TP2] component 8.
+Will uninstall   0 files for [LOLFIXER.TP2] component 7.
+Uninstalled      0 files for [LOLFIXER.TP2] component 7.
+Will uninstall 142 files for [LOLFIXER.TP2] component 6.
+Uninstalled    142 files for [LOLFIXER.TP2] component 6.
+Will uninstall 1362 files for [LOLFIXER.TP2] component 5.
+Uninstalled    1362 files for [LOLFIXER.TP2] component 5.
+Will uninstall 616 files for [LOLFIXER.TP2] component 4.
+Uninstalled    616 files for [LOLFIXER.TP2] component 4.
+Will uninstall  42 files for [LOLFIXER.TP2] component 3.
+Uninstalled     42 files for [LOLFIXER.TP2] component 3.
+Will uninstall 304 files for [LOLFIXER.TP2] component 2.
+Uninstalled    304 files for [LOLFIXER.TP2] component 2.
+Will uninstall  11 files for [LOLFIXER.TP2] component 1.
+Uninstalled     11 files for [LOLFIXER.TP2] component 1.
+Will uninstall  19 files for [LOLFIXER.TP2] component 0.
+Uninstalled     19 files for [LOLFIXER.TP2] component 0.
+
+
+SUCCESSFULLY REMOVED [Area Stuff - MAJESTIC Area Fixer] (component #0)
+
+Removing [Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)] (component #1)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - Creature Resource Fixer (res_fixer for ALL CREATURES)] (component #1)
+
+Removing [Creature Stuff - Inventory Unborker (removes spurious references to the item table)] (component #2)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - Inventory Unborker (removes spurious references to the item table)] (component #2)
+
+Removing [Creature Stuff - Inventory Cleaner (removes items that don't exist and converts them into already present items where applicable)] (component #3)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - Inventory Cleaner (removes items that don't exist and converts them into already present items where applicable)] (component #3)
+
+Removing [Creature Stuff - Inventory Overhauler (moves invalid but equippable items to inventory and equips anything in the inventory to a free slot)] (component #4)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - Inventory Overhauler (moves invalid but equippable items to inventory and equips anything in the inventory to a free slot)] (component #4)
+
+Removing [Creature Stuff - MAJESTIC Creature Fixer] (component #5)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - MAJESTIC Creature Fixer] (component #5)
+
+Removing [Creature Stuff - Duplicate Creature Effect Remover] (component #6)
+
+
+SUCCESSFULLY REMOVED [Creature Stuff - Duplicate Creature Effect Remover] (component #6)
+
+Removing [Item Stuff - Item Resource Fixer (res_fixer for ALL ITEMS)] (component #7)
+
+
+SUCCESSFULLY REMOVED [Item Stuff - Item Resource Fixer (res_fixer for ALL ITEMS)] (component #7)
+
+Removing [Item Stuff - MAJESTIC Item Fixer] (component #8)
+
+
+SUCCESSFULLY REMOVED [Item Stuff - MAJESTIC Item Fixer] (component #8)
+
+Removing [Item Stuff - MAJESTIC Item Checker] (component #9)
+
+
+SUCCESSFULLY REMOVED [Item Stuff - MAJESTIC Item Checker] (component #9)
+
+Removing [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #10)
+
+
+SUCCESSFULLY REMOVED [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #10)
+
+Removing [Spell Stuff - MAJESTIC Spell Fixer] (component #11)
+
+
+SUCCESSFULLY REMOVED [Spell Stuff - MAJESTIC Spell Fixer] (component #11)
