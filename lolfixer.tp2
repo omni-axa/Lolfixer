@@ -1694,6 +1694,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         WRITE_ASCII 0x58 ~CMISC6V~ #8
       END
 
+      // Ability Icon Assigner
+      READ_ASCII 0x3a "inv_icon"
+      READ_LONG  0x64 "abil_off" ELSE 0
+      READ_SHORT 0x68 "abil_num" ELSE 0
+
+      PATCH_IF (abil_off > 0x71) BEGIN
+        FOR (index = 0; index < abil_num; index = index + 1) BEGIN
+          READ_ASCII ("%abil_off%" + 0x04 + (0x38 * "%index%")) "abil_icon"
+          PATCH_IF NOT (FILE_EXISTS_IN_GAME ~%abil_icon%.bam~) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% has a non-existent icon (%abil_icon%.BAM)! Assigning Inventory Icon (%inv_icon%.BAM)..."
+            WRITE_ASCIIE ("%abil_off%" + 0x04 + (0x38 * "%index%")) ~%inv_icon%~ #8
+          END
+        END
+      END
+
+      PATCH_IF ("%inv_exists%" = 0) BEGIN
+        PATCH_IF ("%inv_icon%" STRING_EQUAL_CASE "none") OR ("%inv_icon%" STRING_EQUAL_CASE "") BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Unassigned Inventory Icon! Assigning placeholder icon..."
+        END ELSE
+        BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Non-existent Inventory Icon (%inv_icon%.BAM)! Assigning placeholder icon..."
+        END
+        WRITE_ASCII 0x3a ~IMISC6V~ #8
+      END
+
       // Enchantment Fixer
       READ_LONG  0x60 "enchantment"
 
