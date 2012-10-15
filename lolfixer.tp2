@@ -2068,7 +2068,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
 
-    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
 
       // Equipped Effect Fixer
       READ_LONG  0x6a "fx_off" ELSE 0
@@ -2076,6 +2076,28 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       READ_SHORT 0x70 "fx_num" ELSE 0
 
       PATCH_IF (fx_off > 0x71) BEGIN
+        PATCH_IF (("%flags%" BAND 0b00010000) = 0b00010000) BEGIN  // cursed
+          SET "found" = 0
+          FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+            READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "eff_opcode"
+            READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "eff_param2"
+            PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 35) BEGIN
+              SET "found" = 1
+            END
+          END
+          PATCH_IF ("%found%" = 0) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Adding Cursed Portrait..."
+            LPF ADD_ITEM_EQEFFECT
+              INT_VAR
+                opcode     = 142
+                target     = 1
+                timing     = 2
+                parameter2 = 35
+            END
+            READ_SHORT 0x70 "fx_num"
+          END
+        END
+
         FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
           READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
           READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "param1"
@@ -2244,6 +2266,54 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   target     = 1
                   timing     = 2
                   parameter2 = 28
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 48) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 103) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Vocalize Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 103
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 63) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 114) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Infravision Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 114
               END
               READ_SHORT 0x70 "fx_num"
             END
