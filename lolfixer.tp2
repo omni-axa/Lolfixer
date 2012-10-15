@@ -2081,15 +2081,63 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "param1"
           READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "param2"
 
+          PATCH_IF ("%opcode%" = 22) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" < 0)) OR (("%param2%" = 2) AND ("%param1%" < 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 33) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Bad Luck Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 33
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 22) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 32) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Good Luck Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 32
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
           PATCH_IF ("%opcode%" = 27) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
             SET "found" = 0
             FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 24) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 24) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2101,6 +2149,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 24
               END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2110,9 +2159,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 25) OR ("%eff_param2%" = 26)) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 25) OR ("%eff_param2%" = 26)) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2124,6 +2173,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 25
               END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2133,9 +2183,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 27) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 27) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2147,6 +2197,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 27
               END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2156,9 +2207,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 16) OR ("%eff_param2%" = 26)) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 16) OR ("%eff_param2%" = 26)) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2170,6 +2221,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 16
               END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2179,9 +2231,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 28) OR ("%eff_param2%" = 63)) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 28) OR ("%eff_param2%" = 63)) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2193,6 +2245,55 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 28
               END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 69) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 31) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Non-detection Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 31
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 98) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 42) OR ("%eff_param2%" = 56) OR ("%eff_param2%" = 87)) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Regeneration Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 56
+              END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2202,9 +2303,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 52) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 52) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2216,6 +2317,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 52
               END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 163) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 19) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Free Action Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 19
+              END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
@@ -2225,9 +2351,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
-                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 30) BEGIN
-                    SET "found" = 1
-                  END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 30) BEGIN
+                  SET "found" = 1
+                END
               END
             END
             PATCH_IF ("%found%" = 0) BEGIN
@@ -2239,6 +2365,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
                   timing     = 2
                   parameter2 = 30
               END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 176) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 38) BEGIN
+                  SET "found" = 1
+                END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Haste Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 38
+              END
+              READ_SHORT 0x70 "fx_num"
             END
           END
 
