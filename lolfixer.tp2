@@ -1709,16 +1709,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         END
       END
 
-      PATCH_IF ("%inv_exists%" = 0) BEGIN
-        PATCH_IF ("%inv_icon%" STRING_EQUAL_CASE "none") OR ("%inv_icon%" STRING_EQUAL_CASE "") BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Unassigned Inventory Icon! Assigning placeholder icon..."
-        END ELSE
-        BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Non-existent Inventory Icon (%inv_icon%.BAM)! Assigning placeholder icon..."
-        END
-        WRITE_ASCII 0x3a ~IMISC6V~ #8
-      END
-
       // Enchantment Fixer
       READ_LONG  0x60 "enchantment"
 
@@ -2071,6 +2061,193 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Item Stuff - Portrait Icon Assigner~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_BYTE  0x18 "flags"
+
+    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
+
+      // Equipped Effect Fixer
+      READ_LONG  0x6a "fx_off" ELSE 0
+      READ_SHORT 0x6e "fx_idx" ELSE 0
+      READ_SHORT 0x70 "fx_num" ELSE 0
+
+      PATCH_IF (fx_off > 0x71) BEGIN
+        FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+          READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+          READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "param1"
+          READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "param2"
+
+          PATCH_IF ("%opcode%" = 27) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 24) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Acid Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 24
+              END
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 28) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 25) OR ("%eff_param2%" = 26)) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Cold Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 25
+              END
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 29) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 27) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Electricity Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 27
+              END
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 30) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 16) OR ("%eff_param2%" = 26)) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Fire Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 16
+              END
+            END
+          END
+
+          PATCH_IF (("%opcode%" = 31) OR ("%opcode%" = 166)) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 28) OR ("%eff_param2%" = 63)) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Magic Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 28
+              END
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 101) AND ("%param2%" = 5) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 52) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Mind Shield Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 52
+              END
+            END
+          END
+
+          PATCH_IF ("%opcode%" = 173) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              PATCH_IF ("%index1%" != "%index%") BEGIN
+                READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+                  PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 30) BEGIN
+                    SET "found" = 1
+                  END
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Poison Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 30
+              END
+            END
+          END
+
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Item Stuff - MAJESTIC Item Checker~
   GROUP ~Item Stuff~
 
@@ -2410,79 +2587,3 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
     END
   END
 BUT_ONLY_IF_IT_CHANGES
-
-/* BEGIN ~Item Stuff - Duplicate Item Effect Remover~
-  GROUP ~Item Stuff~
-
-COPY_EXISTING_REGEXP GLOB ~SW2H10.itm~ ~override~
-// COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-  PATCH_IF (SOURCE_SIZE > 0x2d3) THEN BEGIN
-    READ_LONG  0x64 "abil_off"
-    READ_SHORT 0x68 "abil_num"
-    READ_LONG  0x6a "fx_off"
-    READ_SHORT 0x6e "fx_idx"
-    READ_SHORT 0x70 "fx_num"
-
-    FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN
-      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
-      READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "target"
-      READ_BYTE  ("%fx_off%" + 0x03 + ("%index%" * 0x30)) "power"
-      READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "param1"
-      READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "param2"
-      READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "timing"
-      READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "dispel"
-      READ_LONG  ("%fx_off%" + 0x0e + ("%index%" * 0x30)) "duration"
-      READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "prob1"
-      READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "prob2"
-      READ_ASCII ("%fx_off%" + 0x14 + ("%index%" * 0x30)) "resref"
-      READ_LONG  ("%fx_off%" + 0x1c + ("%index%" * 0x30)) "diccnt"
-      READ_LONG  ("%fx_off%" + 0x20 + ("%index%" * 0x30)) "dicsid"
-      READ_LONG  ("%fx_off%" + 0x24 + ("%index%" * 0x30)) "savtyp"
-      READ_LONG  ("%fx_off%" + 0x28 + ("%index%" * 0x30)) "savbon"
-      FOR (index1 = 0 ; index1 < fx_num ; index1 = index1 + 1) BEGIN
-        PATCH_IF ("%index1%" != "%index%") BEGIN
-          READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "eff_opcode"
-          READ_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) "eff_target"
-          READ_BYTE  ("%fx_off%" + 0x03 + ("%index%" * 0x30)) "eff_power"
-          READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "eff_param1"
-          READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "eff_param2"
-          READ_BYTE  ("%fx_off%" + 0x0c + ("%index%" * 0x30)) "eff_timing"
-          READ_BYTE  ("%fx_off%" + 0x0d + ("%index%" * 0x30)) "eff_dispel"
-          READ_LONG  ("%fx_off%" + 0x0e + ("%index%" * 0x30)) "eff_duration"
-          READ_BYTE  ("%fx_off%" + 0x12 + ("%index%" * 0x30)) "eff_prob1"
-          READ_BYTE  ("%fx_off%" + 0x13 + ("%index%" * 0x30)) "eff_prob2"
-          READ_ASCII ("%fx_off%" + 0x14 + ("%index%" * 0x30)) "eff_resref"
-          READ_LONG  ("%fx_off%" + 0x1c + ("%index%" * 0x30)) "eff_diccnt"
-          READ_LONG  ("%fx_off%" + 0x20 + ("%index%" * 0x30)) "eff_dicsid"
-          READ_LONG  ("%fx_off%" + 0x24 + ("%index%" * 0x30)) "eff_savtyp"
-          READ_LONG  ("%fx_off%" + 0x28 + ("%index%" * 0x30)) "eff_savbon"
-          PATCH_IF ("%opcode%" = "%eff_opcode%") AND
-                   ("%target%" = "%eff_target%") AND
-                   ("%power%" = "%eff_power%") AND
-                   ("%param1%" = "%eff_param1%") AND
-                   ("%param2%" = "%eff_param2%") AND
-                   ("%timing%" = "%eff_timing%") AND
-                   ("%dispel%" = "%eff_dispel%") AND
-                   ("%duration%" = "%eff_duration%") AND
-                   ("%prob1%" = "%eff_prob1%") AND
-                   ("%prob2%" = "%eff_prob2%") AND
-                   ("%resref%" STRING_EQUAL_CASE "%eff_resref%") AND
-                   ("%diccnt%" = "%eff_diccnt%") AND
-                   ("%dicsid%" = "%eff_dicsid%") AND
-                   ("%savtyp%" = "%eff_savtyp%") AND
-                   ("%savbon%" = "%eff_savbon%") BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Effect #%index% (Opcode %opcode%) matches Effect #%index1%! Removing..."
-            DELETE_BYTES ("%eff_off%" + ("%index1%" * 0x30)) 0x30
-            SET "index1" = 0 - 1
-            SET "eff_num" = "eff_num" - 1
-            WRITE_LONG 0x2c8 %eff_num%
-            PATCH_IF ("%abil_off%" > "%fx_off%") BEGIN
-              SET "abil_off" = "abil_off" - 0x30
-              WRITE_LONG 0x2bc %abil_off%
-            END
-          END
-        END
-      END
-    END
-  END
-BUT_ONLY_IF_IT_CHANGES */
