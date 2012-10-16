@@ -1875,7 +1875,7 @@ AEMERHOB.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
 AERBOD01.CRE error: Equippable items in inventory: leat04.itm! Equipping ARMOR
 
-AGADEM01.CRE error: Invalid RRING: sw1h02.itm! Moving to inventory
+AGADEM01.CRE error: Invalid RRING: sw1h02.itm! Moving to Inventory Slot #1
 
 AGADEM01.CRE error: Equippable items in inventory: sw1h02.itm! Equipping WEAPON1
 
@@ -1897,13 +1897,13 @@ ALTHUR.CRE error: Equippable items in inventory: NEWLE01.itm! Equipping ARMOR
 
 AMCARRAS.CRE error: Equippable items in inventory: AX1H16.itm! Equipping WEAPON3
 
-AMELM01.CRE error: Invalid BOOTS: ring31.itm! Moving to inventory
+AMELM01.CRE error: Invalid BOOTS: ring31.itm! Moving to Inventory Slot #1
 
 AMMGRD04.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
-ANDRIS.CRE error: Invalid CLOAK: CLCK12.itm! Moving to inventory
+ANDRIS.CRE error: Invalid CLOAK: CLCK12.itm! Moving to Inventory Slot #12
 
-ANKHEG01.CRE error: Invalid ARMOR: MISC12.itm! Moving to inventory
+ANKHEG01.CRE error: Invalid ARMOR: MISC12.itm! Moving to Inventory Slot #2
 
 ANKHEGQ.CRE error: Equippable items in inventory: DAGG06.itm! Equipping WEAPON3
 
@@ -1911,7 +1911,7 @@ APPAR.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
 APPAR.CRE error: Equippable items in inventory: AROW08.itm! Equipping QUIVER2
 
-ARAN02.CRE error: Invalid CLOAK: D0REWAR2.itm! Moving to inventory
+ARAN02.CRE error: Invalid CLOAK: D0REWAR2.itm! Moving to Inventory Slot #1
 
 ARANOR.CRE error: Equippable items in inventory: DART01.itm! Equipping WEAPON2
 
@@ -1943,9 +1943,9 @@ AVARICEM.CRE error: Equippable items in inventory: SW1H08.itm! Equipping WEAPON3
 
 B!AIDAN.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON2
 
-B!WAEL.CRE error: Invalid CLOAK: LEAT08.itm! Moving to inventory
+B!WAEL.CRE error: Invalid CLOAK: LEAT08.itm! Moving to Inventory Slot #1
 
-B!WAEL2.CRE error: Invalid CLOAK: LEAT08.itm! Moving to inventory
+B!WAEL2.CRE error: Invalid CLOAK: LEAT08.itm! Moving to Inventory Slot #1
 
 BAERIN.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
@@ -1957,7 +1957,7 @@ BARUK.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 BATTHO.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
-BAZDRA02.CRE error: Invalid ARMOR: BAZPLO02.itm! Moving to inventory
+BAZDRA02.CRE error: Invalid ARMOR: BAZPLO02.itm! Moving to Inventory Slot #2
 
 BEYN.CRE error: Equippable items in inventory: DAGG05.itm! Equipping WEAPON3
 
@@ -2043,19 +2043,19 @@ BW05BACH.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER3
 
 BW05BACH.CRE error: Equippable items in inventory: AROW04.itm! Equipping QUIVER4
 
-BW05BL02.CRE error: Invalid AMULET: HELM08.itm! Moving to inventory
+BW05BL02.CRE error: Invalid AMULET: HELM08.itm! Moving to Inventory Slot #1
 
 BW05BL02.CRE error: Equippable items in inventory: HELM08.itm! Equipping HELM
 
 BW05CHAR.CRE error: Equippable items in inventory: DAGG02.itm! Equipping WEAPON3
 
-BW05DW02.CRE error: Invalid AMULET: HELM08.itm! Moving to inventory
+BW05DW02.CRE error: Invalid AMULET: HELM08.itm! Moving to Inventory Slot #1
 
 BW05DW02.CRE error: Equippable items in inventory: HELM08.itm! Equipping HELM
 
-BW05DW05.CRE error: Invalid WEAPON3: BOLT02.itm! Moving to inventory
+BW05DW05.CRE error: Invalid WEAPON3: BOLT02.itm! Moving to Inventory Slot #1
 
-BW05DW05.CRE error: Invalid WEAPON4: BOLT02.itm! Moving to inventory
+BW05DW05.CRE error: Invalid WEAPON4: BOLT02.itm! Moving to Inventory Slot #2
 
 BW05DW05.CRE error: Equippable items in inventory: BOLT02.itm! Equipping QUIVER1
 
@@ -2067,15 +2067,15 @@ BW05FIGU.CRE error: Equippable items in inventory: DAGG01.itm! Equipping WEAPON2
 
 BW05GRAC.CRE error: Equippable items in inventory: BW05DWHE.itm! Equipping HELM
 
-BW05HERT.CRE error: Invalid QUIVER3: POTN08.itm! Moving to inventory
+BW05HERT.CRE error: Invalid QUIVER3: POTN08.itm! Moving to Inventory Slot #1
 
 BW05PET1.CRE error: Equippable items in inventory: DAGG01.itm! Equipping WEAPON2
 
-BW05TALI.CRE error: Invalid QUIVER3: POTN08.itm! Moving to inventory
+BW05TALI.CRE error: Invalid QUIVER3: POTN08.itm! Moving to Inventory Slot #1
 
-BW05TALI.CRE error: Invalid QUIVER4: HAMM01.itm! Moving to inventory
+BW05TALI.CRE error: Invalid QUIVER4: HAMM01.itm! Moving to Inventory Slot #2
 
-BW05TALI.CRE error: Invalid CLOAK: BLUN02.itm! Moving to inventory
+BW05TALI.CRE error: Invalid CLOAK: BLUN02.itm! Moving to Inventory Slot #3
 
 BW05TALI.CRE error: Equippable items in inventory: HAMM01.itm! Equipping WEAPON2
 
@@ -2087,29 +2087,29 @@ BW05THIE.CRE error: Equippable items in inventory: LEAT05.itm! Equipping ARMOR
 
 BW05WILL.CRE error: Equippable items in inventory: CHAN04.itm! Equipping ARMOR
 
-C2KIT.CRE error: Invalid GLOVES: RING39.itm! Moving to inventory
+C2KIT.CRE error: Invalid GLOVES: RING39.itm! Moving to Inventory Slot #1
 
-C2KIT.CRE error: Invalid RRING: BOOT01.itm! Moving to inventory
+C2KIT.CRE error: Invalid RRING: BOOT01.itm! Moving to Inventory Slot #2
 
-C6DRIZZ.CRE error: Invalid HELM: SW1H15.itm! Moving to inventory
+C6DRIZZ.CRE error: Invalid HELM: SW1H15.itm! Moving to Inventory Slot #1
 
-C6DRIZZ.CRE error: Invalid GLOVES: SW1H16.itm! Moving to inventory
+C6DRIZZ.CRE error: Invalid GLOVES: SW1H16.itm! Moving to Inventory Slot #2
 
 C6DRIZZ.CRE error: Equippable items in inventory: SW1H15.itm! Equipping WEAPON2
 
 C6DRIZZ.CRE error: Equippable items in inventory: SW1H16.itm! Equipping WEAPON3
 
-C6DRIZZ2.CRE error: Invalid HELM: SW1H15.itm! Moving to inventory
+C6DRIZZ2.CRE error: Invalid HELM: SW1H15.itm! Moving to Inventory Slot #1
 
-C6DRIZZ2.CRE error: Invalid GLOVES: SW1H16.itm! Moving to inventory
+C6DRIZZ2.CRE error: Invalid GLOVES: SW1H16.itm! Moving to Inventory Slot #2
 
 C6DRIZZ2.CRE error: Equippable items in inventory: SW1H15.itm! Equipping WEAPON2
 
 C6DRIZZ2.CRE error: Equippable items in inventory: SW1H16.itm! Equipping WEAPON3
 
-C6DRIZZ3.CRE error: Invalid HELM: SW1H15.itm! Moving to inventory
+C6DRIZZ3.CRE error: Invalid HELM: SW1H15.itm! Moving to Inventory Slot #1
 
-C6DRIZZ3.CRE error: Invalid GLOVES: SW1H16.itm! Moving to inventory
+C6DRIZZ3.CRE error: Invalid GLOVES: SW1H16.itm! Moving to Inventory Slot #2
 
 C6DRIZZ3.CRE error: Equippable items in inventory: SW1H15.itm! Equipping WEAPON2
 
@@ -2131,11 +2131,11 @@ CADDEM8.CRE error: Equippable items in inventory: NewFl01.itm! Equipping WEAPON2
 
 CAILAN.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
-CAMBION1.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+CAMBION1.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 CAMBION1.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
-CAMBION2.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+CAMBION2.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 CAMBION2.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -2155,7 +2155,7 @@ CB230BDA.CRE error: Equippable items in inventory: SW1H07.itm! Equipping WEAPON3
 
 CB232RNA.CRE error: Equippable items in inventory: SW1H07.itm! Equipping WEAPON3
 
-CB285FT4.CRE error: Invalid ARMOR: SHLD05.itm! Moving to inventory
+CB285FT4.CRE error: Invalid ARMOR: SHLD05.itm! Moving to Inventory Slot #3
 
 CB285FT4.CRE error: Equippable items in inventory: CHAN04.itm! Equipping ARMOR
 
@@ -2251,57 +2251,57 @@ CBC8CTD3.CRE error: Equippable items in inventory: DART04.itm! Equipping WEAPON3
 
 CBC8CTD3.CRE error: Equippable items in inventory: AROW07.itm! Equipping QUIVER4
 
-CBC8CTZL.CRE error: Invalid HELM: WAND18.itm! Moving to inventory
+CBC8CTZL.CRE error: Invalid HELM: WAND18.itm! Moving to Inventory Slot #1
 
-CBDDDRGE.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDDDRGE.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #1
 
-CBDDDRGE.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDDDRGE.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #2
 
-CBDDDRGE.CRE error: Invalid BELT: RING09.itm! Moving to inventory
+CBDDDRGE.CRE error: Invalid BELT: RING09.itm! Moving to Inventory Slot #3
 
-CBDDDRGE.CRE error: Invalid BOOTS: RING31.itm! Moving to inventory
+CBDDDRGE.CRE error: Invalid BOOTS: RING31.itm! Moving to Inventory Slot #4
 
-CBDDHMNE.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDDHMNE.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #2
 
-CBDDHMNE.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDDHMNE.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #3
 
-CBDDSNKE.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDDSNKE.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #1
 
-CBDDSNKE.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDDSNKE.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #2
 
-CBDDSNKE.CRE error: Invalid BELT: RING09.itm! Moving to inventory
+CBDDSNKE.CRE error: Invalid BELT: RING09.itm! Moving to Inventory Slot #3
 
-CBDRAGDP.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDRAGDP.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #1
 
-CBDRAGDP.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDRAGDP.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #2
 
-CBDRAGDP.CRE error: Invalid BELT: RING09.itm! Moving to inventory
+CBDRAGDP.CRE error: Invalid BELT: RING09.itm! Moving to Inventory Slot #3
 
-CBDRAGDP.CRE error: Invalid BOOTS: RING31.itm! Moving to inventory
+CBDRAGDP.CRE error: Invalid BOOTS: RING31.itm! Moving to Inventory Slot #4
 
-CBDRGDPH.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDRGDPH.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #2
 
-CBDRGDPH.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDRGDPH.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #3
 
-CBDRGDPS.CRE error: Invalid GLOVES: RING21.itm! Moving to inventory
+CBDRGDPS.CRE error: Invalid GLOVES: RING21.itm! Moving to Inventory Slot #1
 
-CBDRGDPS.CRE error: Invalid AMULET: RING31.itm! Moving to inventory
+CBDRGDPS.CRE error: Invalid AMULET: RING31.itm! Moving to Inventory Slot #2
 
-CBDRGDPS.CRE error: Invalid BELT: RING09.itm! Moving to inventory
+CBDRGDPS.CRE error: Invalid BELT: RING09.itm! Moving to Inventory Slot #3
 
-CBDRWFM1.CRE error: Invalid QUIVER1: RNDTRE01.itm! Moving to inventory
+CBDRWFM1.CRE error: Invalid QUIVER1: RNDTRE01.itm! Moving to Inventory Slot #1
 
-CBDRWFM2.CRE error: Invalid OFFHAND: RNDTRE01.itm! Moving to inventory
+CBDRWFM2.CRE error: Invalid OFFHAND: RNDTRE01.itm! Moving to Inventory Slot #1
 
-CBDRWFM3.CRE error: Invalid QUIVER1: RNDTRE01.itm! Moving to inventory
+CBDRWFM3.CRE error: Invalid QUIVER1: RNDTRE01.itm! Moving to Inventory Slot #1
 
-CBDRWFR2.CRE error: Invalid HELM: DWCHAN02.itm! Moving to inventory
+CBDRWFR2.CRE error: Invalid HELM: DWCHAN02.itm! Moving to Inventory Slot #1
 
-CBDRWFR2.CRE error: Invalid RRING: DWBOLT02.itm! Moving to inventory
+CBDRWFR2.CRE error: Invalid RRING: DWBOLT02.itm! Moving to Inventory Slot #2
 
-CBDRWFR2.CRE error: Invalid BELT: DWBOLT03.itm! Moving to inventory
+CBDRWFR2.CRE error: Invalid BELT: DWBOLT03.itm! Moving to Inventory Slot #3
 
-CBDRWFR2.CRE error: Invalid QUIVER4: DWXBOW01.itm! Moving to inventory
+CBDRWFR2.CRE error: Invalid QUIVER4: DWXBOW01.itm! Moving to Inventory Slot #4
 
 CBDRWFR2.CRE error: Equippable items in inventory: helm01.itm! Equipping HELM
 
@@ -2313,13 +2313,13 @@ CBDRWFR2.CRE error: Equippable items in inventory: DWBOLT02.itm! Equipping QUIVE
 
 CBDRWFR2.CRE error: Equippable items in inventory: DWBOLT03.itm! Equipping QUIVER2
 
-CBDRWFR3.CRE error: Invalid HELM: DWCHAN02.itm! Moving to inventory
+CBDRWFR3.CRE error: Invalid HELM: DWCHAN02.itm! Moving to Inventory Slot #1
 
-CBDRWFR3.CRE error: Invalid RRING: DWBOLT02.itm! Moving to inventory
+CBDRWFR3.CRE error: Invalid RRING: DWBOLT02.itm! Moving to Inventory Slot #2
 
-CBDRWFR3.CRE error: Invalid BELT: DWBOLT03.itm! Moving to inventory
+CBDRWFR3.CRE error: Invalid BELT: DWBOLT03.itm! Moving to Inventory Slot #3
 
-CBDRWFR3.CRE error: Invalid QUIVER4: DWXBOW01.itm! Moving to inventory
+CBDRWFR3.CRE error: Invalid QUIVER4: DWXBOW01.itm! Moving to Inventory Slot #4
 
 CBDRWFR3.CRE error: Equippable items in inventory: helm01.itm! Equipping HELM
 
@@ -2331,15 +2331,15 @@ CBDRWFR3.CRE error: Equippable items in inventory: DWBOLT02.itm! Equipping QUIVE
 
 CBDRWFR3.CRE error: Equippable items in inventory: DWBOLT03.itm! Equipping QUIVER2
 
-CBDRWW23.CRE error: Invalid QUIVER4: POTN02.itm! Moving to inventory
+CBDRWW23.CRE error: Invalid QUIVER4: POTN02.itm! Moving to Inventory Slot #7
 
 CBHREDWN.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
 CBHREDWN.CRE error: Equippable items in inventory: CBSTRARW.itm! Equipping QUIVER2
 
-CBISSON1.CRE error: Invalid CLOAK: CLCK14.itm! Moving to inventory
+CBISSON1.CRE error: Invalid CLOAK: CLCK14.itm! Moving to Inventory Slot #1
 
-CBISSON2.CRE error: Invalid CLOAK: clck14.itm! Moving to inventory
+CBISSON2.CRE error: Invalid CLOAK: clck14.itm! Moving to Inventory Slot #1
 
 CBLSLNDA.CRE error: Equippable items in inventory: CBGEMSEE.itm! Equipping HELM
 
@@ -2353,7 +2353,7 @@ CBMANARB.CRE error: Equippable items in inventory: DAGG01.itm! Equipping WEAPON4
 
 CBMINTO.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
-CBMMOUTH.CRE error: Invalid AMULET: MAHARPER.itm! Moving to inventory
+CBMMOUTH.CRE error: Invalid AMULET: MAHARPER.itm! Moving to Inventory Slot #1
 
 CBMONDRP.CRE error: Equippable items in inventory: CBSTRARW.itm! Equipping QUIVER1
 
@@ -2473,15 +2473,15 @@ CBTBGMER.CRE error: Equippable items in inventory: LEAT04.itm! Equipping ARMOR
 
 CBTBGMR1.CRE error: Equippable items in inventory: LEAT04.itm! Equipping ARMOR
 
-CBTBGPOT.CRE error: Invalid RRING: SW1H74.itm! Moving to inventory
+CBTBGPOT.CRE error: Invalid RRING: SW1H74.itm! Moving to Inventory Slot #3
 
-CBTBGPOT.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to inventory
+CBTBGPOT.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to Inventory Slot #4
 
-CBTBGPOT.CRE error: Invalid WEAPON2: AROW02.itm! Moving to inventory
+CBTBGPOT.CRE error: Invalid WEAPON2: AROW02.itm! Moving to Inventory Slot #5
 
-CBTBGPOT.CRE error: Invalid QUIVER1: BOW18.itm! Moving to inventory
+CBTBGPOT.CRE error: Invalid QUIVER1: BOW18.itm! Moving to Inventory Slot #6
 
-CBTBGPOT.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to inventory
+CBTBGPOT.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to Inventory Slot #7
 
 CBTBGPOT.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
@@ -2491,15 +2491,15 @@ CBTBGPOT.CRE error: Equippable items in inventory: CLCK14.itm! Equipping ARMOR
 
 CBTBGPOT.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER3
 
-CBTBGPT1.CRE error: Invalid RRING: SW1H74.itm! Moving to inventory
+CBTBGPT1.CRE error: Invalid RRING: SW1H74.itm! Moving to Inventory Slot #3
 
-CBTBGPT1.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to inventory
+CBTBGPT1.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to Inventory Slot #4
 
-CBTBGPT1.CRE error: Invalid WEAPON2: AROW02.itm! Moving to inventory
+CBTBGPT1.CRE error: Invalid WEAPON2: AROW02.itm! Moving to Inventory Slot #5
 
-CBTBGPT1.CRE error: Invalid QUIVER1: BOW18.itm! Moving to inventory
+CBTBGPT1.CRE error: Invalid QUIVER1: BOW18.itm! Moving to Inventory Slot #6
 
-CBTBGPT1.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to inventory
+CBTBGPT1.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to Inventory Slot #7
 
 CBTBGPT1.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
@@ -2509,15 +2509,15 @@ CBTBGPT1.CRE error: Equippable items in inventory: CLCK14.itm! Equipping ARMOR
 
 CBTBGPT1.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER3
 
-CBTBGTD1.CRE error: Invalid RRING: SW1H74.itm! Moving to inventory
+CBTBGTD1.CRE error: Invalid RRING: SW1H74.itm! Moving to Inventory Slot #3
 
-CBTBGTD1.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to inventory
+CBTBGTD1.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to Inventory Slot #4
 
-CBTBGTD1.CRE error: Invalid WEAPON2: AROW02.itm! Moving to inventory
+CBTBGTD1.CRE error: Invalid WEAPON2: AROW02.itm! Moving to Inventory Slot #5
 
-CBTBGTD1.CRE error: Invalid QUIVER1: BOW18.itm! Moving to inventory
+CBTBGTD1.CRE error: Invalid QUIVER1: BOW18.itm! Moving to Inventory Slot #6
 
-CBTBGTD1.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to inventory
+CBTBGTD1.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to Inventory Slot #7
 
 CBTBGTD1.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
@@ -2527,15 +2527,15 @@ CBTBGTD1.CRE error: Equippable items in inventory: CLCK14.itm! Equipping ARMOR
 
 CBTBGTD1.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER3
 
-CBTBGTOD.CRE error: Invalid RRING: SW1H74.itm! Moving to inventory
+CBTBGTOD.CRE error: Invalid RRING: SW1H74.itm! Moving to Inventory Slot #3
 
-CBTBGTOD.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to inventory
+CBTBGTOD.CRE error: Invalid WEAPON1: CLCK14.itm! Moving to Inventory Slot #4
 
-CBTBGTOD.CRE error: Invalid WEAPON2: AROW02.itm! Moving to inventory
+CBTBGTOD.CRE error: Invalid WEAPON2: AROW02.itm! Moving to Inventory Slot #5
 
-CBTBGTOD.CRE error: Invalid QUIVER1: BOW18.itm! Moving to inventory
+CBTBGTOD.CRE error: Invalid QUIVER1: BOW18.itm! Moving to Inventory Slot #6
 
-CBTBGTOD.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to inventory
+CBTBGTOD.CRE error: Invalid QUIVER3: LEAT12.itm! Moving to Inventory Slot #7
 
 CBTBGTOD.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER1
 
@@ -2561,23 +2561,23 @@ CLAIRD.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
 CLAIRD.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON3
 
-CLERVAMP.CRE error: Invalid BOOTS: POTN33.itm! Moving to inventory
+CLERVAMP.CRE error: Invalid BOOTS: POTN33.itm! Moving to Inventory Slot #1
 
 CLFCLA.CRE error: Equippable items in inventory: DART02.itm! Equipping WEAPON3
 
 CLFMOX.CRE error: Equippable items in inventory: DART02.itm! Equipping WEAPON3
 
-CLFSUNEC.CRE error: Invalid ARMOR: MISC16.itm! Moving to inventory
+CLFSUNEC.CRE error: Invalid ARMOR: MISC16.itm! Moving to Inventory Slot #1
 
-CLFSUNEC.CRE error: Invalid GLOVES: DAGG02.itm! Moving to inventory
+CLFSUNEC.CRE error: Invalid GLOVES: DAGG02.itm! Moving to Inventory Slot #2
 
-CLFSUNEC.CRE error: Invalid LRING: SCRL1S.itm! Moving to inventory
+CLFSUNEC.CRE error: Invalid LRING: SCRL1S.itm! Moving to Inventory Slot #3
 
-CLFSUNEC.CRE error: Invalid AMULET: RING12.itm! Moving to inventory
+CLFSUNEC.CRE error: Invalid AMULET: RING12.itm! Moving to Inventory Slot #4
 
 CLFSUNEC.CRE error: Equippable items in inventory: DAGG02.itm! Equipping WEAPON1
 
-CLTIVA01.CRE error: Invalid GLOVES: MISC7F.itm! Moving to inventory
+CLTIVA01.CRE error: Invalid GLOVES: MISC7F.itm! Moving to Inventory Slot #2
 
 CM05A514.CRE error: Equippable items in inventory: BLUN02.itm! Equipping WEAPON2
 
@@ -2585,7 +2585,7 @@ CM1800A1.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER4
 
 CM1803A1.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER4
 
-CMALISKA.CRE error: Invalid GLOVES: RING02.itm! Moving to inventory
+CMALISKA.CRE error: Invalid GLOVES: RING02.itm! Moving to Inventory Slot #1
 
 CMHAM03.CRE error: Equippable items in inventory: HAMM04.itm! Equipping WEAPON2
 
@@ -2597,7 +2597,7 @@ CMHOB03.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 CMIRONE.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER4
 
-CMNINAMY.CRE error: Invalid CLOAK: CLCK14.itm! Moving to inventory
+CMNINAMY.CRE error: Invalid CLOAK: CLCK14.itm! Moving to Inventory Slot #1
 
 CMNINAMY.CRE error: Equippable items in inventory: CLCK14.itm! Equipping ARMOR
 
@@ -2641,7 +2641,7 @@ D0BATHO.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 D0GUARD4.CRE error: Equippable items in inventory: DART01.itm! Equipping WEAPON2
 
-D0LICH01.CRE error: Invalid HELM: D0QPLIPH.itm! Moving to inventory
+D0LICH01.CRE error: Invalid HELM: D0QPLIPH.itm! Moving to Inventory Slot #1
 
 D0QPSY03.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
@@ -2691,7 +2691,7 @@ DELGOD.CRE error: Equippable items in inventory: AROW11.itm! Equipping QUIVER2
 
 DELSVIR.CRE error: Equippable items in inventory: SW1H07.itm! Equipping WEAPON3
 
-DEMDRAC.CRE error: Invalid LRING: DEMOKEY.itm! Moving to inventory
+DEMDRAC.CRE error: Invalid LRING: DEMOKEY.itm! Moving to Inventory Slot #4
 
 DEMDRAC.CRE error: Equippable items in inventory: BLUNIGHT.itm! Equipping WEAPON2
 
@@ -2699,7 +2699,7 @@ DEMDRAC.CRE error: Equippable items in inventory: MASKULL.itm! Equipping HELM
 
 DEMILICH.CRE error: Equippable items in inventory: DAGG21.itm! Equipping WEAPON2
 
-DEMOSUM4.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+DEMOSUM4.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #1
 
 DEMTYRA.CRE error: Equippable items in inventory: METCRYS.itm! Equipping WEAPON2
 
@@ -2731,9 +2731,9 @@ DRATAN.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER3
 
 DRATAN.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON3
 
-DRIZZT.CRE error: Invalid GLOVES: SW1H16.itm! Moving to inventory
+DRIZZT.CRE error: Invalid GLOVES: SW1H16.itm! Moving to Inventory Slot #3
 
-DRIZZT.CRE error: Invalid AMULET: SW1H15.itm! Moving to inventory
+DRIZZT.CRE error: Invalid AMULET: SW1H15.itm! Moving to Inventory Slot #4
 
 DRIZZT.CRE error: Equippable items in inventory: SW1H16.itm! Equipping WEAPON2
 
@@ -2743,31 +2743,31 @@ DROTH.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
 DRUSH.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
-DSBANSHE.CRE error: Invalid QUIVER1: RNDTRE03.itm! Moving to inventory
+DSBANSHE.CRE error: Invalid QUIVER1: RNDTRE03.itm! Moving to Inventory Slot #1
 
 DSBLANE.CRE error: Equippable items in inventory: BLUN04.itm! Equipping WEAPON1
 
 DSFERTH.CRE error: Equippable items in inventory: DSHAMM01.itm! Equipping WEAPON2
 
-DSFEYDO.CRE error: Invalid BELT: NTMISC13.itm! Moving to inventory
+DSFEYDO.CRE error: Invalid BELT: NTMISC13.itm! Moving to Inventory Slot #1
 
-DSHALF01.CRE error: Invalid CLOAK: POTN02.itm! Moving to inventory
+DSHALF01.CRE error: Invalid CLOAK: POTN02.itm! Moving to Inventory Slot #2
 
-DSHALF02.CRE error: Invalid CLOAK: POTN08.itm! Moving to inventory
+DSHALF02.CRE error: Invalid CLOAK: POTN08.itm! Moving to Inventory Slot #2
 
-DSHALF03.CRE error: Invalid CLOAK: POTN14.itm! Moving to inventory
+DSHALF03.CRE error: Invalid CLOAK: POTN14.itm! Moving to Inventory Slot #2
 
-DSHALF04.CRE error: Invalid CLOAK: POTN08.itm! Moving to inventory
+DSHALF04.CRE error: Invalid CLOAK: POTN08.itm! Moving to Inventory Slot #2
 
-DSHALF05.CRE error: Invalid CLOAK: SCRL06.itm! Moving to inventory
+DSHALF05.CRE error: Invalid CLOAK: SCRL06.itm! Moving to Inventory Slot #1
 
-DSHALFD2.CRE error: Invalid CLOAK: POTN08.itm! Moving to inventory
+DSHALFD2.CRE error: Invalid CLOAK: POTN08.itm! Moving to Inventory Slot #2
 
 DSOTHO.CRE error: Equippable items in inventory: DSMACE01.itm! Equipping WEAPON2
 
 DSZOMBLO.CRE error: Equippable items in inventory: LEAT13.itm! Equipping ARMOR
 
-DUBND4.CRE error: Invalid OFFHAND: POTN55.itm! Moving to inventory
+DUBND4.CRE error: Invalid OFFHAND: POTN55.itm! Moving to Inventory Slot #1
 
 DUMAD.CRE error: Equippable items in inventory: SHLD25.itm! Equipping SHIELD
 
@@ -2837,7 +2837,7 @@ E_JVAELA.CRE error: Equippable items in inventory: CLCK14.itm! Equipping ARMOR
 
 FIRAMB02.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
-FIRMAG01.CRE error: Invalid GLOVES: KEY09.itm! Moving to inventory
+FIRMAG01.CRE error: Invalid GLOVES: KEY09.itm! Moving to Inventory Slot #1
 
 FIRMON01.CRE error: Equippable items in inventory: SW1H32.itm! Equipping WEAPON2
 
@@ -2891,7 +2891,7 @@ F_ARTEMI.CRE error: Equippable items in inventory: F_ARTSWD.itm! Equipping WEAPO
 
 F_BEAROL.CRE error: Equippable items in inventory: BLUN03.itm! Equipping WEAPON2
 
-G3DEWN.CRE error: Invalid LRING: G3DRINK1.itm! Moving to inventory
+G3DEWN.CRE error: Invalid LRING: G3DRINK1.itm! Moving to Inventory Slot #1
 
 GALDOR.CRE error: Equippable items in inventory: DW#ANGAR.itm! Equipping QUIVER4
 
@@ -2931,7 +2931,7 @@ GODLICH1.CRE error: Equippable items in inventory: NEWRO02.itm! Equipping ARMOR
 
 GODRUBY.CRE error: Equippable items in inventory: NewFp03.itm! Equipping ARMOR
 
-GORCAMB.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+GORCAMB.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #5
 
 GORCHR.CRE error: Equippable items in inventory: dagg23.itm! Equipping WEAPON2
 
@@ -2959,27 +2959,27 @@ HABIB.CRE error: Equippable items in inventory: SW1H56.itm! Equipping WEAPON2
 
 HACK.CRE error: Equippable items in inventory: BLUN02.itm! Equipping WEAPON2
 
-HAFIZ.CRE error: Invalid HELM: DAGG05.itm! Moving to inventory
+HAFIZ.CRE error: Invalid HELM: DAGG05.itm! Moving to Inventory Slot #4
 
-HAFIZ.CRE error: Invalid OFFHAND: HELM01.itm! Moving to inventory
+HAFIZ.CRE error: Invalid OFFHAND: HELM01.itm! Moving to Inventory Slot #5
 
 HAFIZ.CRE error: Equippable items in inventory: SHLD13.itm! Equipping SHIELD
 
 HAFIZ.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
-HAIASS1.CRE error: Invalid BOOTS: T-BONE01.itm! Moving to inventory
+HAIASS1.CRE error: Invalid BOOTS: T-BONE01.itm! Moving to Inventory Slot #1
 
-HAIASS2.CRE error: Invalid BOOTS: T-BONE02.itm! Moving to inventory
+HAIASS2.CRE error: Invalid BOOTS: T-BONE02.itm! Moving to Inventory Slot #1
 
-HAIASS3.CRE error: Invalid BOOTS: T-BONE03.itm! Moving to inventory
+HAIASS3.CRE error: Invalid BOOTS: T-BONE03.itm! Moving to Inventory Slot #1
 
-HAIASS4.CRE error: Invalid BOOTS: T-BONE04.itm! Moving to inventory
+HAIASS4.CRE error: Invalid BOOTS: T-BONE04.itm! Moving to Inventory Slot #1
 
-HAIASS5.CRE error: Invalid BOOTS: T-BONE05.itm! Moving to inventory
+HAIASS5.CRE error: Invalid BOOTS: T-BONE05.itm! Moving to Inventory Slot #1
 
-HAIASS6.CRE error: Invalid BOOTS: T-BONE06.itm! Moving to inventory
+HAIASS6.CRE error: Invalid BOOTS: T-BONE06.itm! Moving to Inventory Slot #1
 
-HAIASS7.CRE error: Invalid BOOTS: T-BONE07.itm! Moving to inventory
+HAIASS7.CRE error: Invalid BOOTS: T-BONE07.itm! Moving to Inventory Slot #1
 
 HALACA.CRE error: Equippable items in inventory: AX1H01.itm! Equipping WEAPON3
 
@@ -3071,11 +3071,11 @@ ICEBEARD.CRE error: Equippable items in inventory: AEGISFA.itm! Equipping WEAPON
 
 ICEGL2.CRE error: Equippable items in inventory: FROSTAR.itm! Equipping ARMOR
 
-IDEMON01.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+IDEMON01.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #4
 
 IDEMON01.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
-IDEMON02.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+IDEMON02.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 IDEMON02.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -3087,17 +3087,17 @@ IHOBGOB.CRE error: Equippable items in inventory: LEAT01.itm! Equipping ARMOR
 
 IHOBGOB.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER4
 
-II0.CRE error: Invalid HELM: CLCK26.itm! Moving to inventory
+II0.CRE error: Invalid HELM: CLCK26.itm! Moving to Inventory Slot #1
 
 IKOBOLD.CRE error: Equippable items in inventory: SW1H07.itm! Equipping WEAPON3
 
 IKOBOLD.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER4
 
-ILLCAMB.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+ILLCAMB.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 ILLCAMB.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
-ILLCAMB2.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+ILLCAMB2.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #3
 
 ILLCAMB2.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -3119,15 +3119,15 @@ IXVART.CRE error: Equippable items in inventory: SW1H07.itm! Equipping WEAPON2
 
 JACIL.CRE error: Equippable items in inventory: AROW11.itm! Equipping QUIVER2
 
-JALANT.CRE error: Invalid HELM: MISC53.itm! Moving to inventory
+JALANT.CRE error: Invalid HELM: MISC53.itm! Moving to Inventory Slot #2
 
 JAMIE.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
 JAMIE.CRE error: Equippable items in inventory: HELM02.itm! Equipping HELM
 
-JARLICH.CRE error: Invalid ARMOR: MISCBG.itm! Moving to inventory
+JARLICH.CRE error: Invalid ARMOR: MISCBG.itm! Moving to Inventory Slot #2
 
-JATERMIN.CRE error: Invalid BOOTS: ring31.itm! Moving to inventory
+JATERMIN.CRE error: Invalid BOOTS: ring31.itm! Moving to Inventory Slot #1
 
 JC_OGR02.CRE error: Equippable items in inventory: BLUN06.itm! Equipping WEAPON2
 
@@ -3157,7 +3157,7 @@ KALAH2.CRE error: Equippable items in inventory: IZOBU.itm! Equipping SHIELD
 
 KCHILD1.CRE error: Equippable items in inventory: MISC4Q.itm! Equipping WEAPON2
 
-KDEMON01.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+KDEMON01.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 KDEMON01.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -3177,7 +3177,7 @@ KIRIAN.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
 KNIGHTSK.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON2
 
-KRUIN.CRE error: Invalid WEAPON2: sw2h15a.itm! Moving to inventory
+KRUIN.CRE error: Invalid WEAPON2: sw2h15a.itm! Moving to Inventory Slot #1
 
 KRYSTI.CRE error: Equippable items in inventory: DAGG04.itm! Equipping WEAPON3
 
@@ -3187,7 +3187,7 @@ KYSUS.CRE error: Equippable items in inventory: DAGG05.itm! Equipping WEAPON4
 
 LARZE.CRE error: Equippable items in inventory: BLUN06.itm! Equipping WEAPON2
 
-LAVOK02.CRE error: Invalid WEAPON1: MINTGOH.itm! Moving to inventory
+LAVOK02.CRE error: Invalid WEAPON1: MINTGOH.itm! Moving to Inventory Slot #2
 
 LINDIN.CRE error: Equippable items in inventory: HELM01.itm! Equipping HELM
 
@@ -3201,7 +3201,7 @@ MAENC01.CRE error: Equippable items in inventory: SW1H02.itm! Equipping WEAPON2
 
 MAENC02.CRE error: Equippable items in inventory: BLUN06.itm! Equipping WEAPON2
 
-MAGVAMP.CRE error: Invalid BOOTS: SCRL6L.itm! Moving to inventory
+MAGVAMP.CRE error: Invalid BOOTS: SCRL6L.itm! Moving to Inventory Slot #1
 
 MAJAN.CRE error: Equippable items in inventory: BLUN02.itm! Equipping WEAPON2
 
@@ -3215,7 +3215,7 @@ MALKAX.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 MARCEL.CRE error: Equippable items in inventory: DART01.itm! Equipping WEAPON2
 
-MARLOWE.CRE error: Invalid CLOAK: RNDTRE03.itm! Moving to inventory
+MARLOWE.CRE error: Invalid CLOAK: RNDTRE03.itm! Moving to Inventory Slot #1
 
 MAZZY15.CRE error: Equippable items in inventory: sw1h74.itm! Equipping WEAPON3
 
@@ -3269,7 +3269,7 @@ NANSTEIN.CRE error: Equippable items in inventory: SLNG05.itm! Equipping WEAPON2
 
 NANSTEIN.CRE error: Equippable items in inventory: DAGG05.itm! Equipping WEAPON3
 
-NEB.CRE error: Invalid ARMOR: MISC9H.itm! Moving to inventory
+NEB.CRE error: Invalid ARMOR: MISC9H.itm! Moving to Inventory Slot #2
 
 NORTUA.CRE error: Equippable items in inventory: LEAT01.itm! Equipping ARMOR
 
@@ -3279,11 +3279,11 @@ NTBEARPO.CRE error: Equippable items in inventory: NTARROW3.itm! Equipping QUIVE
 
 NTFOREOG.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
-NTHAEBAL.CRE error: Invalid HELM: NTKEYPB7.itm! Moving to inventory
+NTHAEBAL.CRE error: Invalid HELM: NTKEYPB7.itm! Moving to Inventory Slot #3
 
 NTHOBGOD.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
-NTKROTAN.CRE error: OFFHAND with 2-HAND: SHLD04.itm! Moving to inventory
+NTKROTAN.CRE error: OFFHAND with 2-HAND: SHLD04.itm! Moving to Inventory Slot #1
 
 NTORPEHO.CRE error: Equippable items in inventory: SLNG01.itm! Equipping WEAPON2
 
@@ -3345,9 +3345,9 @@ PMASTER.CRE error: Equippable items in inventory: IZONT.itm! Equipping WEAPON2
 
 PPMUR.CRE error: Equippable items in inventory: dagg01.itm! Equipping WEAPON2
 
-PPSAEM2.CRE error: Invalid WEAPON1: MISC8U.itm! Moving to inventory
+PPSAEM2.CRE error: Invalid WEAPON1: MISC8U.itm! Moving to Inventory Slot #1
 
-PPSAEM3.CRE error: Invalid WEAPON1: MISC8U.itm! Moving to inventory
+PPSAEM3.CRE error: Invalid WEAPON1: MISC8U.itm! Moving to Inventory Slot #1
 
 PPSIME.CRE error: Equippable items in inventory: dagg01.itm! Equipping WEAPON2
 
@@ -3361,7 +3361,7 @@ PSADV08.CRE error: Equippable items in inventory: SLNG10.itm! Equipping WEAPON2
 
 PSBAATL.CRE error: Equippable items in inventory: PSSW1H02.itm! Equipping WEAPON2
 
-PSDEMI.CRE error: Invalid LRING: PSWAND02.itm! Moving to inventory
+PSDEMI.CRE error: Invalid LRING: PSWAND02.itm! Moving to Inventory Slot #1
 
 PSDEMI.CRE error: Equippable items in inventory: PSHELM02.itm! Equipping HELM
 
@@ -3371,7 +3371,7 @@ PSHELM2.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 PSQHOSU.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
-PWARDEN.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+PWARDEN.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 QUAYLE.CRE error: Equippable items in inventory: BLUN02.itm! Equipping WEAPON2
 
@@ -3407,7 +3407,7 @@ RNGSHA04.CRE error: Equippable items in inventory: LEAT01.itm! Equipping ARMOR
 
 ROBILARD.CRE error: Equippable items in inventory: DAGG15.itm! Equipping WEAPON3
 
-RR#HSCAM.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+RR#HSCAM.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 RR#HSCAM.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -3451,7 +3451,7 @@ SHOBSL01.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
 SILKE.CRE error: Equippable items in inventory: LEAT01.itm! Equipping ARMOR
 
-SIRONARC.CRE error: Invalid QUIVER2: CHAN04.itm! Moving to inventory
+SIRONARC.CRE error: Invalid QUIVER2: CHAN04.itm! Moving to Inventory Slot #3
 
 SIRONARC.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER2
 
@@ -3477,23 +3477,23 @@ SONNER.CRE error: Equippable items in inventory: BLUN03.itm! Equipping WEAPON1
 
 STEPHA.CRE error: Equippable items in inventory: SW1H08.itm! Equipping WEAPON2
 
-SUMOON.CRE error: Invalid WEAPON1: miscb3.itm! Moving to inventory
+SUMOON.CRE error: Invalid WEAPON1: miscb3.itm! Moving to Inventory Slot #1
 
 SUNIN.CRE error: Equippable items in inventory: DART01.itm! Equipping WEAPON2
 
-T-WOLF01.CRE error: Invalid BOOTS: T-BONE01.itm! Moving to inventory
+T-WOLF01.CRE error: Invalid BOOTS: T-BONE01.itm! Moving to Inventory Slot #1
 
-T-WOLF02.CRE error: Invalid BOOTS: T-BONE02.itm! Moving to inventory
+T-WOLF02.CRE error: Invalid BOOTS: T-BONE02.itm! Moving to Inventory Slot #1
 
-T-WOLF03.CRE error: Invalid BOOTS: T-BONE03.itm! Moving to inventory
+T-WOLF03.CRE error: Invalid BOOTS: T-BONE03.itm! Moving to Inventory Slot #1
 
-T-WOLF04.CRE error: Invalid BOOTS: T-BONE04.itm! Moving to inventory
+T-WOLF04.CRE error: Invalid BOOTS: T-BONE04.itm! Moving to Inventory Slot #1
 
-T-WOLF05.CRE error: Invalid BOOTS: T-BONE05.itm! Moving to inventory
+T-WOLF05.CRE error: Invalid BOOTS: T-BONE05.itm! Moving to Inventory Slot #1
 
-T-WOLF06.CRE error: Invalid BOOTS: T-BONE06.itm! Moving to inventory
+T-WOLF06.CRE error: Invalid BOOTS: T-BONE06.itm! Moving to Inventory Slot #1
 
-T-WOLF07.CRE error: Invalid BOOTS: T-BONE07.itm! Moving to inventory
+T-WOLF07.CRE error: Invalid BOOTS: T-BONE07.itm! Moving to Inventory Slot #1
 
 TAM.CRE error: Equippable items in inventory: AROW02.itm! Equipping QUIVER3
 
@@ -3513,7 +3513,7 @@ TAXEK.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER2
 
 TAZOK2.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON2
 
-TELCAM1.CRE error: Invalid ARMOR: DWDUST.itm! Moving to inventory
+TELCAM1.CRE error: Invalid ARMOR: DWDUST.itm! Moving to Inventory Slot #2
 
 TELCAM1.CRE error: Equippable items in inventory: CHAN01.itm! Equipping ARMOR
 
@@ -3533,7 +3533,7 @@ THESHAL.CRE error: Equippable items in inventory: leat13.itm! Equipping ARMOR
 
 THRAXI.CRE error: Equippable items in inventory: BLUN02.itm! Equipping WEAPON2
 
-TOLGER2.CRE error: Invalid QUIVER2: SUMDEM.itm! Moving to inventory
+TOLGER2.CRE error: Invalid QUIVER2: SUMDEM.itm! Moving to Inventory Slot #1
 
 TRALIT.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON2
 
@@ -3545,7 +3545,7 @@ TRALIT.CRE error: Equippable items in inventory: AROW09.itm! Equipping QUIVER2
 
 TRAVMAG2.CRE error: Equippable items in inventory: SLNG01.itm! Equipping WEAPON2
 
-TRESHAM1.CRE error: Invalid GLOVES: TRESDEAD.itm! Moving to inventory
+TRESHAM1.CRE error: Invalid GLOVES: TRESDEAD.itm! Moving to Inventory Slot #2
 
 UBOGMA01.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON2
 
@@ -3613,7 +3613,7 @@ WWFGHT1.CRE error: Equippable items in inventory: SW1H05.itm! Equipping WEAPON2
 
 WWFGHT2.CRE error: Equippable items in inventory: SW1H05.itm! Equipping WEAPON2
 
-X#AMELIA.CRE error: Invalid CLOAK: CLCK12.itm! Moving to inventory
+X#AMELIA.CRE error: Invalid CLOAK: CLCK12.itm! Moving to Inventory Slot #2
 
 X#AMELIA.CRE error: Equippable items in inventory: CLCK12.itm! Equipping ARMOR
 
@@ -3621,17 +3621,17 @@ X#CHOP.CRE error: Equippable items in inventory: BLUN01.itm! Equipping WEAPON2
 
 X#CRU11.CRE error: Equippable items in inventory: BLUN01.itm! Equipping WEAPON2
 
-X#DAVID.CRE error: Invalid WEAPON1: BOLT01.itm! Moving to inventory
+X#DAVID.CRE error: Invalid WEAPON1: BOLT01.itm! Moving to Inventory Slot #1
 
-X#DAVID.CRE error: Invalid QUIVER1: DAGG01.itm! Moving to inventory
+X#DAVID.CRE error: Invalid QUIVER1: DAGG01.itm! Moving to Inventory Slot #2
 
 X#DAVID.CRE error: Equippable items in inventory: BOLT01.itm! Equipping QUIVER1
 
 X#DAVID.CRE error: Equippable items in inventory: DAGG01.itm! Equipping WEAPON1
 
-X#DRIZZT.CRE error: Invalid GLOVES: SW1H16.itm! Moving to inventory
+X#DRIZZT.CRE error: Invalid GLOVES: SW1H16.itm! Moving to Inventory Slot #3
 
-X#DRIZZT.CRE error: Invalid AMULET: SW1H15.itm! Moving to inventory
+X#DRIZZT.CRE error: Invalid AMULET: SW1H15.itm! Moving to Inventory Slot #4
 
 X#DRIZZT.CRE error: Equippable items in inventory: SW1H16.itm! Equipping WEAPON2
 
@@ -3655,7 +3655,7 @@ X#XZGU03.CRE error: Equippable items in inventory: AROW01.itm! Equipping QUIVER3
 
 YACASAS.CRE error: Equippable items in inventory: NewSwS03.itm! Equipping WEAPON2
 
-YSELM01.CRE error: Invalid BOOTS: RING31.itm! Moving to inventory
+YSELM01.CRE error: Invalid BOOTS: RING31.itm! Moving to Inventory Slot #1
 
 YSG2.CRE error: Equippable items in inventory: SW1H04.itm! Equipping WEAPON2
 
@@ -3663,19 +3663,19 @@ YSG2.CRE error: Equippable items in inventory: SW1H43.itm! Equipping WEAPON3
 
 YSG2.CRE error: Equippable items in inventory: SW1H20.itm! Equipping WEAPON4
 
-YSHLDGRD.CRE error: OFFHAND with 2-HAND: SHLD03.itm! Moving to inventory
+YSHLDGRD.CRE error: OFFHAND with 2-HAND: SHLD03.itm! Moving to Inventory Slot #1
 
-YSOENGUS.CRE error: Invalid OFFHAND: LEAT05.itm! Moving to inventory
+YSOENGUS.CRE error: Invalid OFFHAND: LEAT05.itm! Moving to Inventory Slot #1
 
 YSOENGUS.CRE error: Equippable items in inventory: LEAT05.itm! Equipping ARMOR
 
-Z#GAUNT.CRE error: Invalid CLOAK: CLCK16.itm! Moving to inventory
+Z#GAUNT.CRE error: Invalid CLOAK: CLCK16.itm! Moving to Inventory Slot #1
 
 Z#GAUNT.CRE error: Equippable items in inventory: CLCK16.itm! Equipping ARMOR
 
 Z#KHAR16.CRE error: Equippable items in inventory: CLCK16.itm! Equipping ARMOR
 
-Z#MAGE1.CRE error: Invalid CLOAK: CLCK10.itm! Moving to inventory
+Z#MAGE1.CRE error: Invalid CLOAK: CLCK10.itm! Moving to Inventory Slot #1
 
 Z#MAGE1.CRE error: Equippable items in inventory: CLCK10.itm! Equipping ARMOR
 
@@ -3683,7 +3683,7 @@ ZACARE3.CRE error: Equippable items in inventory: NewFp02.itm! Equipping ARMOR
 
 ZARGAL.CRE error: Equippable items in inventory: SW1H09.itm! Equipping WEAPON2
 
-ZCAPTAIN.CRE error: Invalid WEAPON1: misc8u.itm! Moving to inventory
+ZCAPTAIN.CRE error: Invalid WEAPON1: misc8u.itm! Moving to Inventory Slot #1
 
 ZEKAR.CRE error: Equippable items in inventory: SW1H01.itm! Equipping WEAPON3
 
@@ -3691,27 +3691,27 @@ ZOMBLO01.CRE error: Equippable items in inventory: leat13.itm! Equipping ARMOR
 
 ZORDRA.CRE error: Equippable items in inventory: DART01.itm! Equipping WEAPON2
 
-Z_2LEIB.CRE error: Invalid WEAPON2: POTN52.itm! Moving to inventory
+Z_2LEIB.CRE error: Invalid WEAPON2: POTN52.itm! Moving to Inventory Slot #2
 
-Z_2LEIB.CRE error: Invalid QUIVER1: SHLD14.itm! Moving to inventory
+Z_2LEIB.CRE error: Invalid QUIVER1: SHLD14.itm! Moving to Inventory Slot #3
 
-Z_2SLE2.CRE error: Invalid QUIVER1: BLUN31.itm! Moving to inventory
+Z_2SLE2.CRE error: Invalid QUIVER1: BLUN31.itm! Moving to Inventory Slot #2
 
-Z_2SLE5.CRE error: Invalid WEAPON2: POTN52.itm! Moving to inventory
+Z_2SLE5.CRE error: Invalid WEAPON2: POTN52.itm! Moving to Inventory Slot #2
 
-Z_2SSB.CRE error: Invalid WEAPON2: POTN52.itm! Moving to inventory
+Z_2SSB.CRE error: Invalid WEAPON2: POTN52.itm! Moving to Inventory Slot #2
 
 Z_BHAAL.CRE error: Equippable items in inventory: SHLD29.itm! Equipping SHIELD
 
-Z_DROW3.CRE error: Invalid WEAPON1: SHLD03.itm! Moving to inventory
+Z_DROW3.CRE error: Invalid WEAPON1: SHLD03.itm! Moving to Inventory Slot #2
 
 Z_ELF2.CRE error: Equippable items in inventory: SLNG04.itm! Equipping WEAPON2
 
 Z_ELF3.CRE error: Equippable items in inventory: SLNG04.itm! Equipping WEAPON2
 
-Z_FMAGE.CRE error: Invalid WEAPON1: CLCK17.itm! Moving to inventory
+Z_FMAGE.CRE error: Invalid WEAPON1: CLCK17.itm! Moving to Inventory Slot #2
 
-Z_HMAGE.CRE error: Invalid WEAPON1: CLCK17.itm! Moving to inventory
+Z_HMAGE.CRE error: Invalid WEAPON1: CLCK17.itm! Moving to Inventory Slot #1
 
 Z_MAGTER.CRE error: Equippable items in inventory: SW1H02.itm! Equipping WEAPON2
 

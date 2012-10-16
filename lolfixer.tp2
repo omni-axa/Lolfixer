@@ -246,7 +246,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
           END
         END
         PATCH_IF (%found% = 0) BEGIN
-          FOR (index1 = 21 ; index1 < 37 && "foundslot" = 0 ; index1 = index1 + 1) BEGIN
+          FOR (index1 = 21 ; index1 < 37 && foundslot = 0 ; index1 = index1 + 1) BEGIN
             READ_SHORT ("%slot_off%" + (0x02 * "%index1%")) "ref" ELSE 0xffff
             PATCH_IF ("%ref%" = 0xffff) BEGIN
               SET "foundslot" = "index1"
@@ -258,7 +258,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             WRITE_SHORT ("%slot_off%" + (0x02 * "%foundslot%")) "index"
           END ELSE
           BEGIN
-            FOR (index1 = 0 ; index1 < 22 && "foundslot" = 0 ; index1 = index1 + 1) BEGIN
+            FOR (index1 = 0 ; index1 < 22 && foundslot = 0 ; index1 = index1 + 1) BEGIN
               READ_SHORT ("%slot_off%" + (0x02 * "%index1%")) "ref" ELSE 0xffff
               PATCH_IF ("%ref%" = 0xffff) BEGIN
                 SET "foundslot" = "index1"
@@ -661,46 +661,64 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             PATCH_IF ("%index%" = 0) BEGIN // helm slot
               SET "helm" = 1
               PATCH_IF (("%type%" != 7) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // helm
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "helm" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "helm" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 1) BEGIN // armor slot
               SET "armor" = 1
               PATCH_IF (("%type%" != 2) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // armor
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "armor" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "armor" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
               SET "offhand" = 1
               PATCH_IF ((("%flags%" BAND 0b00010110) = 0b00000110) AND ("%ignore%" = 0)) BEGIN // 2h, uncursed and droppable check
-                PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "offhand" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "offhand" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Cannot move because Inventory full!~
+                END
               END ELSE
               PATCH_IF (("%type%" != 12) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // if not shield, check for valid melee abilities
                 SET "legit_offhand" = 0
@@ -715,16 +733,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   END
                 END
                 PATCH_IF ("%legit_offhand%" = 0) BEGIN
-                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid OFFHAND: %item%.itm! Moving to inventory~
-                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   SET "ref2" = 1
-                  FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                  FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                     READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
-                   END
+                  END
                   SET "index3" = "index3" - 1
-                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                  SET "offhand" = 0
-                  SET "index" = 0 - 1
+                  PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                    SET "slot" = "index3" - 20
+                    PATCH_PRINT ~%SOURCE_FILE% error: Invalid OFFHAND: %item%.itm! Moving to Inventory Slot #%slot%~
+                    WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                    WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                    SET "offhand" = 0
+                    SET "index" = 0 - 1
+                  END ELSE
+                  BEGIN
+                    PATCH_PRINT ~%SOURCE_FILE% error: Invalid OFFHAND: %item%.itm! Cannot move because Inventory full!~
+                  END
                 END
               END ELSE
               PATCH_IF ("%type%" = 12) AND (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN
@@ -781,107 +805,149 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   END
                 END
                 PATCH_IF ("%2handedequip%" = 1) BEGIN
-                  PATCH_PRINT ~%SOURCE_FILE% error: OFFHAND with 2-HAND: %item%.itm! Moving to inventory~
-                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   SET "ref2" = 1
-                  FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                  FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                     READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
-                   END
+                  END
                   SET "index3" = "index3" - 1
-                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                  SET "offhand" = 0
-                  SET "index" = 0 - 1
+                  PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                    SET "slot" = "index3" - 20
+                    PATCH_PRINT ~%SOURCE_FILE% error: OFFHAND with 2-HAND: %item%.itm! Moving to Inventory Slot #%slot%~
+                    WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                    WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                    SET "offhand" = 0
+                    SET "index" = 0 - 1
+                  END ELSE
+                  BEGIN
+                    PATCH_PRINT ~%SOURCE_FILE% error: OFFHAND with 2-HAND: %item%.itm! Cannot move because Inventory full!~
+                  END
                 END
               END
             END
             PATCH_IF ("%index%" = 3) BEGIN // glove slot
               SET "gloves" = 1
               PATCH_IF (("%type%" != 6) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // gloves
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "gloves" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "gloves" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 4) BEGIN // left ring slot
               SET "lring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // rings
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "lring" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "lring" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 5) BEGIN // right ring slot
               SET "rring" = 1
               PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // rings
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "rring" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "rring" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 6) BEGIN // amulet slot
               SET "amulet" = 1
               PATCH_IF (("%type%" != 1) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // amulet
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "amulet" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "amulet" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 7) BEGIN // belt slot
               SET "belt" = 1
               PATCH_IF (("%type%" != 3) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // belt
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "belt" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "belt" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 8) BEGIN // boot slot
               SET "boots" = 1
               PATCH_IF (("%type%" != 4) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // boot
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "boots" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "boots" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 9) BEGIN // first weapon slot
@@ -902,16 +968,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "weapon1" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "weapon1" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 10) BEGIN // second weapon slot
@@ -932,16 +1004,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "weapon2" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "weapon2" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 11) BEGIN // third weapon slot
@@ -962,16 +1040,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "weapon3" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "weapon3" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 12) BEGIN // fourth weapon slot
@@ -992,91 +1076,127 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
               PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "weapon4" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "weapon4" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
               SET "quiver1" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "quiver1" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "quiver1" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
               SET "quiver2" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "quiver2" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "quiver2" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
               SET "quiver3" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "quiver3" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "quiver3" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
               SET "quiver4" = 1
               PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "quiver4" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "quiver4" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ("%index%" = 17) BEGIN // cloak
               SET "cloak" = 1
               PATCH_IF (("%type%" != 32) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) BEGIN // cloak
-                PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Moving to inventory~
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                 SET "ref2" = 1
-                FOR (index3 = 21 ; ref2 != 0xffff ; index3 = index3 + 1) BEGIN
+                FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
                 END
                 SET "index3" = "index3" - 1
-                WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
-                SET "cloak" = 0
-                SET "index" = 0 - 1
+                PATCH_IF ("%ref2%" = 0xffff) BEGIN
+                  SET "slot" = "index3" - 20
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Moving to Inventory Slot #%slot%~
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
+                  WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  SET "cloak" = 0
+                  SET "index" = 0 - 1
+                END ELSE
+                BEGIN
+                  PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Cannot move because Inventory full!~
+                END
               END
             END
             PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
