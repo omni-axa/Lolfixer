@@ -3,6 +3,8 @@ This is a non-stable version. Unless you're sure about what you're doing, consid
 [setup-lolfixer.exe] Using scripting style "BG2"
 
 Removing [Area Stuff - MAJESTIC Area Fixer] (component #0)
+Will uninstall  26 files for [LOLFIXER.TP2] component 13.
+Uninstalled     26 files for [LOLFIXER.TP2] component 13.
 Will uninstall 966 files for [LOLFIXER.TP2] component 12.
 Uninstalled    966 files for [LOLFIXER.TP2] component 12.
 Will uninstall   0 files for [LOLFIXER.TP2] component 11.
@@ -25,8 +27,8 @@ Will uninstall  42 files for [LOLFIXER.TP2] component 3.
 Uninstalled     42 files for [LOLFIXER.TP2] component 3.
 Will uninstall 304 files for [LOLFIXER.TP2] component 2.
 Uninstalled    304 files for [LOLFIXER.TP2] component 2.
-Will uninstall  11 files for [LOLFIXER.TP2] component 1.
-Uninstalled     11 files for [LOLFIXER.TP2] component 1.
+Will uninstall   9 files for [LOLFIXER.TP2] component 1.
+Uninstalled      9 files for [LOLFIXER.TP2] component 1.
 Will uninstall  19 files for [LOLFIXER.TP2] component 0.
 Uninstalled     19 files for [LOLFIXER.TP2] component 0.
 
@@ -92,3 +94,8 @@ Removing [Spell Stuff - MAJESTIC Spell Fixer] (component #12)
 
 
 SUCCESSFULLY REMOVED [Spell Stuff - MAJESTIC Spell Fixer] (component #12)
+
+Removing [Store Stuff - MAJESTIC Store Fixer] (component #13)
+
+
+SUCCESSFULLY REMOVED [Store Stuff - MAJESTIC Store Fixer] (component #13)

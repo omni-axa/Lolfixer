@@ -1449,15 +1449,39 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
 
           // Spell Slot Fixer
           PATCH_IF (("%spl_type%" = 2) AND ("%type%" != 0)) BEGIN // priest
-            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
+            PATCH_IF ("%type%" = 1) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a PRIEST spell (was MAGE)..."
+            END ELSE
+            PATCH_IF ("%type%" = 2) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a PRIEST spell (was INNATE)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a PRIEST spell (was %type%)..."
+            END
             WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 0
           END
           PATCH_IF (("%spl_type%" = 1) AND ("%type%" != 1)) BEGIN // mage
-            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a MAGE spell (was %type%)..."
+            PATCH_IF ("%type%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a MAGE spell (was PRIEST)..."
+            END ELSE
+            PATCH_IF ("%type%" = 2) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a MAGE spell (was INNATE)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is a MAGE spell (was %type%)..."
+            END
             WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 1
           END
           PATCH_IF (("%spl_type%" = 4) AND ("%type%" != 2)) BEGIN // innate
-            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is an INNATE spell (was %type%)..."
+            PATCH_IF ("%type%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is an INNATE spell (was PRIEST)..."
+            END ELSE
+            PATCH_IF ("%type%" = 1) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is an INNATE spell (was MAGE)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is an INNATE spell (was %type%)..."
+            END
             WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 2
           END
 
@@ -1846,11 +1870,33 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
           READ_BYTE  ("%abil_off%" + 0x00 + (0x38 * "%index%")) "abil_type"
           READ_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) "slot"
           PATCH_IF ((("%abil_type%" = 1) OR ("%abil_type%" = 2) OR ("%abil_type%" = 4)) AND ("%slot%" != 1)) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was %slot%)..."
+            PATCH_IF ("%slot%" = 2) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was SPELL)..."
+            END ELSE
+            PATCH_IF ("%slot%" = 3) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was EQUIPMENT)..."
+            END ELSE
+            PATCH_IF ("%slot%" = 4) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was INNATE)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to WEAPON slot (was %slot%)..."
+            END
             WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 1
           END
           PATCH_IF (("%abil_type%" = 3) AND ("%slot%" != 3)) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
+            PATCH_IF ("%slot%" = 1) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was WEAPON)..."
+            END ELSE
+            PATCH_IF ("%slot%" = 2) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was SPELL)..."
+            END ELSE
+            PATCH_IF ("%slot%" = 4) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was INNATE)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to EQUIPMENT slot (was %slot%)..."
+            END
             WRITE_BYTE  ("%abil_off%" + 0x02 + (0x38 * "%index%")) 3
           END
         END
@@ -2858,11 +2904,33 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
 
         // Spell Slot Fixer
         PATCH_IF (("%spell_type%"  = 4) AND ("%slot%" != 4)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was %slot%)..."
+          PATCH_IF ("%slot%" = 1) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was WEAPON)..."
+          END ELSE
+          PATCH_IF ("%slot%" = 2) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was SPELL)..."
+          END ELSE
+          PATCH_IF ("%slot%" = 3) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was EQUIPMENT)..."
+          END ELSE
+          BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to INNATE slot (was %slot%)..."
+          END
           WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 4
         END
         PATCH_IF (("%spell_type%" != 4) AND ("%slot%" != 2)) BEGIN
-          PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was %slot%)..."
+          PATCH_IF ("%slot%" = 1) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was WEAPON)..."
+          END ELSE
+          PATCH_IF ("%slot%" = 3) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was EQUIPMENT)..."
+          END ELSE
+          PATCH_IF ("%slot%" = 4) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was INNATE)..."
+          END ELSE
+          BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% assigned to SPELL slot (was %slot%)..."
+          END
           WRITE_BYTE  ("%abil_off%" + 0x02 + (0x28 * "%index%")) 2
         END
       END
@@ -2880,6 +2948,81 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
         PATCH_IF ("%target%" = 2) BEGIN
           PATCH_PRINT "%SOURCE_FILE% error: Casting Effect #%index% (opcode %opcode%) targets preset target! Targetting self..."
           WRITE_BYTE  ("%fx_off%" + 0x02 + ("%index%" * 0x30)) 1
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
+BEGIN ~Store Stuff - MAJESTIC Store Fixer~
+  GROUP ~Store Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.sto$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x9b) THEN BEGIN
+
+    READ_LONG  0x08 "type"
+
+    // Sales Manager
+    READ_BYTE  0x10 "flags"
+    READ_LONG  0x30 "purch_num"
+    READ_LONG  0x38 "sales_num"
+    READ_LONG  0x50 "drink_num"
+    READ_LONG  0x74 "cures_num"
+
+    PATCH_IF (("%flags%" BAND 0b00000001) = 0b00000000) AND ("%sales_num%" > 0) AND ("%type%" = 0) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Stocked Items exist but store set to not sell! Initiating sales..."
+      WRITE_BYTE 0x10 ("%flags%" BOR 0b00000001)
+    END
+    PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000000) AND ("%purch_num%" > 0) AND ("%type%" = 0) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Purchasable Items exist but store set to not buy! Initiating sales..."
+      WRITE_BYTE 0x10 ("%flags%" BOR 0b00000010)
+    END
+    PATCH_IF (("%flags%" BAND 0b00100000) = 0b00000000) AND ("%cures_num%" > 0) AND ("%type%" = 3) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Stocked Cures exist but temple set to not sell! Initiating sales..."
+      WRITE_BYTE 0x10 ("%flags%" BOR 0b00100000)
+    END
+    PATCH_IF (("%flags%" BAND 0b01000000) = 0b00000000) AND ("%drink_num%" > 0) AND ("%type%" = 1) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Stocked Drinks exist but tavern set to not sell! Initiating sales..."
+      WRITE_BYTE 0x10 ("%flags%" BOR 0b01000000)
+    END
+    PATCH_IF (("%flags%" BAND 0b01000000) = 0b00000000) AND ("%drink_num%" > 0) AND ("%type%" = 2) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Stocked Drinks exist but inn set to not sell! Initiating sales..."
+      WRITE_BYTE 0x10 ("%flags%" BOR 0b01000000)
+    END
+
+    PATCH_IF (("%flags%" BAND 0b00000001) = 0b00000001) AND ("%sales_num%" = 0) AND ("%type%" = 0) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Store selling items but does not have any in stock! Stopping sales..."
+      WRITE_BYTE 0x10 ("%flags%" BAND 0b11111110)
+    END
+    PATCH_IF (("%flags%" BAND 0b00000010) = 0b00000010) AND ("%purch_num%" = 0) AND ("%type%" = 0) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Store buying items but cannot buy any kind! Stopping sales..."
+      WRITE_BYTE 0x10 ("%flags%" BAND 0b11111101)
+    END
+    PATCH_IF (("%flags%" BAND 0b00100000) = 0b00100000) AND ("%cures_num%" = 0) AND ("%type%" = 3) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Temple selling cures but does not have any in stock! Stopping sales..."
+      WRITE_BYTE 0x10 ("%flags%" BAND 0b11011111)
+    END
+    PATCH_IF (("%flags%" BAND 0b01000000) = 0b01000000) AND ("%drink_num%" = 0) AND ("%type%" = 1) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Tavern selling drinks but does not have any in stock! Stopping sales..."
+      WRITE_BYTE 0x10 ("%flags%" BAND 0b10111111)
+    END
+    PATCH_IF (("%flags%" BAND 0b01000000) = 0b01000000) AND ("%drink_num%" = 0) AND ("%type%" = 2) BEGIN
+      PATCH_PRINT "%SOURCE_FILE% error: Inn selling drinks but does not have any in stock! Stopping sales..."
+      WRITE_BYTE 0x10 ("%flags%" BAND 0b10111111)
+    END
+
+    // Missing Item Remover
+    READ_LONG  0x34 "sales_off" ELSE 0
+    READ_LONG  0x38 "sales_num" ELSE 0
+
+    PATCH_IF (sales_off > 0x9b) THEN BEGIN
+      FOR (index = 0 ; index < sales_num ; index = index + 1) BEGIN
+        READ_ASCII ("%sales_off%" +        (0x1c * "%index%")) "resref"
+        PATCH_IF NOT (FILE_EXISTS_IN_GAME ~%resref%.itm~) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Stocked Item #%index% does not exist (%resref%.itm)! Removing item..."
+          REMOVE_STORE_ITEM ~%resref%~
+          SET "index" = 0 - 1
+          READ_LONG  0x38 "sales_num"
         END
       END
     END
