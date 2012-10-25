@@ -2607,6 +2607,784 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   END
 BUT_ONLY_IF_IT_CHANGES
 
+BEGIN ~Item Stuff - Proper Immunity Assigner~
+  GROUP ~Item Stuff~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
+    READ_BYTE  0x18 "flags"
+
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+
+      // Equipped Effect Fixer
+      READ_LONG  0x6a "fx_off" ELSE 0
+      READ_SHORT 0x6e "fx_idx" ELSE 0
+      READ_SHORT 0x70 "fx_num" ELSE 0
+
+      PATCH_IF (fx_off > 0x71) BEGIN
+        FOR (index = fx_idx ; index < fx_num ; index = index + 1) BEGIN // check equipping effects
+          READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "opcode"
+          READ_LONG  ("%fx_off%" + 0x04 + ("%index%" * 0x30)) "param1"
+          READ_LONG  ("%fx_off%" + 0x08 + ("%index%" * 0x30)) "param2"
+          READ_ASCII ("%fx_off%" + 0x14 + ("%index%" * 0x30)) "resref"
+
+          // Charm
+          PATCH_IF (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPPR204")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPPR405")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI104")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI316")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI506")) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 5)) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 5) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Charm..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 5
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 52) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Mind Shield Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 52
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 0) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Charm Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 0
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 1) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Dire Charm Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 1
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 43) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Domination Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 43
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 8364) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Dominated' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 8364
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14672) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Charmed' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14672
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14780) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Dire Charmed' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14780
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_ASCII ("%fx_off%" + 0x14 + ("%index1%" * 0x30)) "eff_resref"
+              PATCH_IF ("%eff_opcode%" = 296) AND ("%eff_resref%" STRING_EQUAL_CASE "spnwchrm") BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Charm Animation..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 296
+                  target     = 1
+                  timing     = 2
+                STR_VAR
+                  resource   = "spnwchrm"
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          // Hold
+          PATCH_IF (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPPR208")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI306")) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 109)) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 175)) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 185)) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 109) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Hold..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 109
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 175) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Hold Creature Type 1..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 175
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 185) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Hold Creature Type 2..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 185
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 13) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Held Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 13
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14102) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Held' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14102
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_ASCII ("%fx_off%" + 0x14 + ("%index1%" * 0x30)) "eff_resref"
+              PATCH_IF ("%eff_opcode%" = 296) AND ("%eff_resref%" STRING_EQUAL_CASE "spmindat") BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Hold Animation 1..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 296
+                  target     = 1
+                  timing     = 2
+                STR_VAR
+                  resource   = "spmindat"
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_ASCII ("%fx_off%" + 0x14 + ("%index1%" * 0x30)) "eff_resref"
+              PATCH_IF ("%eff_opcode%" = 296) AND ("%eff_resref%" STRING_EQUAL_CASE "spflayer") BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Hold Animation 2..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 296
+                  target     = 1
+                  timing     = 2
+                STR_VAR
+                  resource   = "spflayer"
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          // Confusion
+          PATCH_IF (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPPR709")) OR
+                   (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI401")) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 128)) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 128) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Confusion..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 128
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 2) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Rigid Thinking Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 2
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 3) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Confused Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 3
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 47) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Chaos Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 47
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14782) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Confused' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14782
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14791) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Rigid Thinking' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14791
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_ASCII ("%fx_off%" + 0x14 + ("%index1%" * 0x30)) "eff_resref"
+              PATCH_IF ("%eff_opcode%" = 296) AND ("%eff_resref%" STRING_EQUAL_CASE "spconfus") BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Confusion Animation..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 296
+                  target     = 1
+                  timing     = 2
+                STR_VAR
+                  resource   = "spconfus"
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          // Feeblemind
+          PATCH_IF (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI509")) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 76)) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 76) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Feeblemindedness..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 76
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 48) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Feebleminded Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 48
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_ASCII ("%fx_off%" + 0x14 + ("%index1%" * 0x30)) "eff_resref"
+              PATCH_IF ("%eff_opcode%" = 296) AND ("%eff_resref%" STRING_EQUAL_CASE "spmindat") BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Feebleminded Animation..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 296
+                  target     = 1
+                  timing     = 2
+                STR_VAR
+                  resource   = "spmindat"
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+          // Horror
+          PATCH_IF (("%opcode%" = 206) AND ("%resref%" STRING_EQUAL_CASE "SPWI205")) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 23)) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 24)) OR
+                   (("%opcode%" = 101) AND ("%param2%" = 106)) BEGIN
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              PATCH_IF ("%eff_opcode%" = 23) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding effect to Reset Morale..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 23
+                  target     = 1
+                  timing     = 2
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 23) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Morale Reset..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 23
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 24) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Panic..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 24
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 101) AND ("%eff_param2%" = 106) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Immunity to Morale Break..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 101
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 106
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 37) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Resist Fear Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 37
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              PATCH_IF ("%eff_opcode%" = 161) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding effect to Remove Fear..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 161
+                  target     = 1
+                  timing     = 2
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 169) AND ("%eff_param2%" = 36) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Preventing Panic Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 169
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 36
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
+              PATCH_IF ("%eff_opcode%" = 240) AND ("%eff_param2%" = 36) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding effect to Remove Panic Icon..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 240
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 36
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 14007) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Panic' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 14007
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+
+            SET "found" = 0
+            FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
+              READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+              READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
+              PATCH_IF ("%eff_opcode%" = 267) AND ("%eff_param1%" = 17427) BEGIN
+                SET "found" = 1
+              END
+            END
+            PATCH_IF ("%found%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Disabling 'Panic' String..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 267
+                  target     = 1
+                  timing     = 2
+                  parameter1 = 17427
+              END
+              READ_SHORT 0x70 "fx_num"
+            END
+          END
+
+        END
+      END
+    END
+  END
+BUT_ONLY_IF_IT_CHANGES
+
 BEGIN ~Item Stuff - MAJESTIC Item Checker~
   GROUP ~Item Stuff~
 

@@ -3,14 +3,16 @@ This is a non-stable version. Unless you're sure about what you're doing, consid
 [setup-lolfixer.exe] Using scripting style "BG2"
 
 Removing [Area Stuff - MAJESTIC Area Fixer] (component #0)
-Will uninstall  26 files for [LOLFIXER.TP2] component 13.
-Uninstalled     26 files for [LOLFIXER.TP2] component 13.
-Will uninstall 966 files for [LOLFIXER.TP2] component 12.
-Uninstalled    966 files for [LOLFIXER.TP2] component 12.
+Will uninstall  25 files for [LOLFIXER.TP2] component 14.
+Uninstalled     25 files for [LOLFIXER.TP2] component 14.
+Will uninstall 966 files for [LOLFIXER.TP2] component 13.
+Uninstalled    966 files for [LOLFIXER.TP2] component 13.
+Will uninstall   1 files for [LOLFIXER.TP2] component 12.
+Uninstalled      1 files for [LOLFIXER.TP2] component 12.
 Will uninstall   0 files for [LOLFIXER.TP2] component 11.
 Uninstalled      0 files for [LOLFIXER.TP2] component 11.
-Will uninstall   0 files for [LOLFIXER.TP2] component 10.
-Uninstalled      0 files for [LOLFIXER.TP2] component 10.
+Will uninstall 143 files for [LOLFIXER.TP2] component 10.
+Uninstalled    143 files for [LOLFIXER.TP2] component 10.
 Will uninstall 295 files for [LOLFIXER.TP2] component 9.
 Uninstalled    295 files for [LOLFIXER.TP2] component 9.
 Will uninstall 573 files for [LOLFIXER.TP2] component 8.
@@ -19,8 +21,8 @@ Will uninstall   0 files for [LOLFIXER.TP2] component 7.
 Uninstalled      0 files for [LOLFIXER.TP2] component 7.
 Will uninstall 142 files for [LOLFIXER.TP2] component 6.
 Uninstalled    142 files for [LOLFIXER.TP2] component 6.
-Will uninstall 1362 files for [LOLFIXER.TP2] component 5.
-Uninstalled    1362 files for [LOLFIXER.TP2] component 5.
+Will uninstall 1361 files for [LOLFIXER.TP2] component 5.
+Uninstalled    1361 files for [LOLFIXER.TP2] component 5.
 Will uninstall 616 files for [LOLFIXER.TP2] component 4.
 Uninstalled    616 files for [LOLFIXER.TP2] component 4.
 Will uninstall  42 files for [LOLFIXER.TP2] component 3.
@@ -80,22 +82,27 @@ Removing [Item Stuff - Portrait Icon Assigner] (component #9)
 
 SUCCESSFULLY REMOVED [Item Stuff - Portrait Icon Assigner] (component #9)
 
-Removing [Item Stuff - MAJESTIC Item Checker] (component #10)
+Removing [Item Stuff - Proper Immunity Assigner] (component #10)
 
 
-SUCCESSFULLY REMOVED [Item Stuff - MAJESTIC Item Checker] (component #10)
+SUCCESSFULLY REMOVED [Item Stuff - Proper Immunity Assigner] (component #10)
 
-Removing [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #11)
-
-
-SUCCESSFULLY REMOVED [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #11)
-
-Removing [Spell Stuff - MAJESTIC Spell Fixer] (component #12)
+Removing [Item Stuff - MAJESTIC Item Checker] (component #11)
 
 
-SUCCESSFULLY REMOVED [Spell Stuff - MAJESTIC Spell Fixer] (component #12)
+SUCCESSFULLY REMOVED [Item Stuff - MAJESTIC Item Checker] (component #11)
 
-Removing [Store Stuff - MAJESTIC Store Fixer] (component #13)
+Removing [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #12)
 
 
-SUCCESSFULLY REMOVED [Store Stuff - MAJESTIC Store Fixer] (component #13)
+SUCCESSFULLY REMOVED [Spell Stuff - Spell Resource Fixer (res_fixer for ALL THE SPELLS)] (component #12)
+
+Removing [Spell Stuff - MAJESTIC Spell Fixer] (component #13)
+
+
+SUCCESSFULLY REMOVED [Spell Stuff - MAJESTIC Spell Fixer] (component #13)
+
+Removing [Store Stuff - MAJESTIC Store Fixer] (component #14)
+
+
+SUCCESSFULLY REMOVED [Store Stuff - MAJESTIC Store Fixer] (component #14)
