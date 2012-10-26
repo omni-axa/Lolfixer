@@ -2315,15 +2315,35 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 
           PATCH_IF ("%opcode%" = 28) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
             SET "found" = 0
+            SET "foundfireeffect" = 0
+            SET "foundfireicon" = 0
             FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
                 PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 25) OR ("%eff_param2%" = 26)) BEGIN
                   SET "found" = 1
                 END
+                PATCH_IF ("%eff_opcode%" = 30) AND (((("%eff_param2%" = 0) OR ("%eff_param2%" = 1)) AND ("%eff_param1%" > 0)) OR (("%eff_param2%" = 2) AND ("%eff_param1%" > 100))) BEGIN
+                  SET "foundfireeffect" = 1
+                END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 16) BEGIN
+                  SET "foundfireicon" = 1
+                END
               END
             END
+            PATCH_IF ("%found%" = 0) AND ("%foundfireeffect%" = 1) AND ("%foundfireicon%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Resist Fire/Cold Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 26
+              END
+              READ_SHORT 0x70 "fx_num"
+            END ELSE
             PATCH_IF ("%found%" = 0) BEGIN
               PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Cold Portrait..."
               LPF ADD_ITEM_EQEFFECT
@@ -2363,15 +2383,35 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 
           PATCH_IF ("%opcode%" = 30) AND (((("%param2%" = 0) OR ("%param2%" = 1)) AND ("%param1%" > 0)) OR (("%param2%" = 2) AND ("%param1%" > 100))) BEGIN
             SET "found" = 0
+            SET "foundcoldeffect" = 0
+            SET "foundcoldicon" = 0
             FOR (index1 = fx_idx ; index1 < fx_num ; index1 = index1 + 1) BEGIN // check equipping effects
               PATCH_IF ("%index1%" != "%index%") BEGIN
                 READ_SHORT ("%fx_off%" +        ("%index1%" * 0x30)) "eff_opcode"
+                READ_LONG  ("%fx_off%" + 0x04 + ("%index1%" * 0x30)) "eff_param1"
                 READ_LONG  ("%fx_off%" + 0x08 + ("%index1%" * 0x30)) "eff_param2"
                 PATCH_IF ("%eff_opcode%" = 142) AND (("%eff_param2%" = 16) OR ("%eff_param2%" = 26)) BEGIN
                   SET "found" = 1
                 END
+                PATCH_IF ("%eff_opcode%" = 28) AND (((("%eff_param2%" = 0) OR ("%eff_param2%" = 1)) AND ("%eff_param1%" > 0)) OR (("%eff_param2%" = 2) AND ("%eff_param1%" > 100))) BEGIN
+                  SET "foundcoldeffect" = 1
+                END
+                PATCH_IF ("%eff_opcode%" = 142) AND ("%eff_param2%" = 25) BEGIN
+                  SET "foundcoldicon" = 1
+                END
               END
             END
+            PATCH_IF ("%found%" = 0) AND ("%foundcoldeffect%" = 1) AND ("%foundcoldicon%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Adding Resist Fire/Cold Portrait..."
+              LPF ADD_ITEM_EQEFFECT
+                INT_VAR
+                  opcode     = 142
+                  target     = 1
+                  timing     = 2
+                  parameter2 = 26
+              END
+              READ_SHORT 0x70 "fx_num"
+            END ELSE
             PATCH_IF ("%found%" = 0) BEGIN
               PATCH_PRINT "%SOURCE_FILE% error: Adding Protection from Fire Portrait..."
               LPF ADD_ITEM_EQEFFECT
