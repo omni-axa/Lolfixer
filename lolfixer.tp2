@@ -1433,20 +1433,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         END
         PATCH_IF ("%exists%" = 1) BEGIN
 
-          // Spell Level Fixer
-          READ_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) "olevel"
-          READ_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) "type"
-          SET level = %olevel% + 1
-          PATCH_IF (("%level%" != "%spl_level%") AND ("%spl_level%" > 0) AND (("%spl_type%" = 1) OR ("%spl_type%" = 2))) BEGIN
-            SET nlevel = %spl_level% - 1
-            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
-            WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) %nlevel%
-          END
-          PATCH_IF ("%olevel%" > 0) AND ("%spl_type%" = 4) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is INNATE with non-zero level (%olevel%)! Setting to 0 to avoid crash..."
-            WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) 0
-          END
-
           // Spell Slot Fixer
           PATCH_IF (("%spl_type%" = 2) AND ("%type%" != 0)) BEGIN // priest
             PATCH_IF ("%type%" = 1) BEGIN
@@ -1485,10 +1471,31 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             WRITE_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) 2
           END
 
+          // Spell Level Fixer
+          READ_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) "olevel"
+          READ_SHORT ("%known_off%" + 0x0a + ("%index%" * 0x0c)) "type"
+          SET level = %olevel% + 1
+          PATCH_IF (("%level%" != "%spl_level%") AND ("%spl_level%" > 0) AND (("%spl_type%" = 1) OR ("%spl_type%" = 2))) BEGIN
+            SET nlevel = %spl_level% - 1
+            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) has wrong level (%olevel%)! Should be %nlevel%..."
+            WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) %nlevel%
+          END
+          PATCH_IF ("%olevel%" > 0) AND ("%spl_type%" = 4) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Known spell (%resref%.SPL) is INNATE with non-zero level (%olevel%)! Setting to 0 to avoid crash..."
+            WRITE_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) 0
+          END
+
           // Invalid Spell Level Fixer
           READ_SHORT ("%known_off%" + 0x08 + ("%index%" * 0x0c)) "olevel"
-          PATCH_IF (("%olevel%" > 8) AND ("%spl_type%" = 1)) OR (("%olevel%" > 6) AND ("%spl_type%" = 2)) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Spell level out of bounds (%resref%.SPL - level %olevel%)! Removing to avoid crash..."
+          SET nlevel = %olevel% + 1
+          PATCH_IF ("%olevel%" > 6) AND ("%spl_type%" = 2) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Spell level out of bounds (%resref%.SPL is a level %nlevel% PRIEST spell)! Removing to avoid crash..."
+            REMOVE_KNOWN_SPELL ~%resref%~
+            SET "index" = 0 - 1
+            READ_LONG  0x2a4 "known_num"
+          END ELSE
+          PATCH_IF ("%olevel%" > 8) AND ("%spl_type%" = 1) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Spell level out of bounds (%resref%.SPL is a level %nlevel% MAGE spell)! Removing to avoid crash..."
             REMOVE_KNOWN_SPELL ~%resref%~
             SET "index" = 0 - 1
             READ_LONG  0x2a4 "known_num"
@@ -1719,7 +1726,22 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
 
-    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
+
+      // 2-handed Flag Setter
+      READ_BYTE  0x18 "flags"
+      READ_ASCII 0x22 "anim" (2)
+
+      PATCH_IF (("%anim%" STRING_EQUAL_CASE "BW") OR //bow
+                ("%anim%" STRING_EQUAL_CASE "CB") OR //crossbow
+                ("%anim%" STRING_EQUAL_CASE "HB") OR //halberd
+                ("%anim%" STRING_EQUAL_CASE "QS") OR //quarterstaff
+                ("%anim%" STRING_EQUAL_CASE "S2") OR //2-handed sword
+                ("%anim%" STRING_EQUAL_CASE "SP")) AND //spear
+               (("%flags%" BAND 0b00000010) = 0b00000000) BEGIN //2-handed
+        PATCH_PRINT "%SOURCE_FILE% error: Item needs to be 2-handed (%anim% anim) to prevent crash!"
+        WRITE_BYTE 0x18 ("%flags%" BOR 0b00000010)
+      END
 
       // Used Up Item Fixer
       READ_ASCII 0x10 "used_itm"
@@ -1847,13 +1869,19 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         FOR (index = 0; index < abil_num; index = index + 1) BEGIN
           READ_ASCII ("%abil_off%" + 0x04 + (0x38 * "%index%")) "abil_icon"
           PATCH_IF NOT (FILE_EXISTS_IN_GAME ~%abil_icon%.bam~) BEGIN
-            PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% has a non-existent icon (%abil_icon%.BAM)! Assigning Inventory Icon (%inv_icon%.BAM)..."
+            PATCH_IF ("%abil_icon%" STRING_EQUAL_CASE "none") OR ("%abil_icon%" STRING_EQUAL_CASE "") BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% has no icon assigned! Assigning Inventory Icon (%inv_icon%.BAM)..."
+            END ELSE
+            BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Ability #%index% has a non-existent icon (%abil_icon%.BAM)! Assigning Inventory Icon (%inv_icon%.BAM)..."
+            END
             WRITE_ASCIIE ("%abil_off%" + 0x04 + (0x38 * "%index%")) ~%inv_icon%~ #8
           END
         END
       END
 
       // Enchantment Fixer
+      READ_BYTE  0x18 "flags"
       READ_LONG  0x60 "enchantment"
 
       PATCH_IF (("%enchantment%" > 0) AND (("%flags%" BAND 0b01000000) != 0b01000000)) BEGIN
@@ -1903,6 +1931,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
       END
 
       // Animation and Ranged Ability Flag Fixer
+      READ_BYTE  0x18 "flags"
       READ_LONG  0x64 "abil_off" ELSE 0
       READ_SHORT 0x68 "abil_num" ELSE 0
 
@@ -3516,7 +3545,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) BEGIN
     READ_BYTE  0x18 "flags"
 
-    PATCH_IF (("%flags%" BAND 0b00010100) = 0b00000100) BEGIN  // droppable and uncursed
+    PATCH_IF (("%flags%" BAND 0b00000100) = 0b00000100) BEGIN  // droppable
       READ_LONG  0x6a "fx_off" ELSE 0
       READ_SHORT 0x6e "fx_idx" ELSE 0
       READ_SHORT 0x70 "fx_num" ELSE 0
