@@ -12170,8 +12170,6 @@ Z_TAFEL2.ITM error: Unassigned Description Icon! Assigning placeholder icon...
 Installing [Item Stuff - Portrait Icon Assigner] [0.1B]
 Copying and patching 8017 files ...
 
-AAITM103.ITM error: Adding Protection from Magic Portrait...
-
 AAITM105.ITM error: Adding Protection from Magic Portrait...
 
 AAITM105.ITM error: Adding Protection from Fire Portrait...
@@ -12194,7 +12192,19 @@ AAITM128.ITM error: Adding Protection from Fire Portrait...
 
 AAITM128.ITM error: Adding Protection from Electricity Portrait...
 
+AAITM130.ITM error: Removing Protection from Fire Portrait...
+
+AAITM130.ITM error: Removing Protection from Cold Portrait...
+
+AAITM130.ITM error: Adding Resist Fire/Cold Portrait...
+
 AAITM132.ITM error: Adding Protection from Magic Portrait...
+
+AAITM136.ITM error: Removing Protection from Fire Portrait...
+
+AAITM136.ITM error: Removing Protection from Cold Portrait...
+
+AAITM136.ITM error: Adding Resist Fire/Cold Portrait...
 
 AAITM139.ITM error: Adding Infravision Portrait...
 
@@ -12220,7 +12230,9 @@ AGRING03.ITM error: Adding Protection from Magic Portrait...
 
 AMULTF.ITM error: Adding Infravision Portrait...
 
-AR#R2.ITM error: Adding Protection from Cold Portrait...
+AR#R2.ITM error: Removing Protection from Fire Portrait...
+
+AR#R2.ITM error: Adding Resist Fire/Cold Portrait...
 
 AR#R6.ITM error: Adding Protection from Magic Portrait...
 
@@ -12254,6 +12266,8 @@ C2ROBE02.ITM error: Adding Protection from Magic Portrait...
 
 C2ROBE03.ITM error: Adding Protection from Magic Portrait...
 
+C2VALY01.ITM error: Mind Shield Portrait now displays on Self...
+
 CB2HAXE3.ITM error: Adding Protection from Magic Portrait...
 
 CB2HCONV.ITM error: Adding Protection from Magic Portrait...
@@ -12272,6 +12286,24 @@ CBCL058.ITM error: Adding Protection from Magic Portrait...
 
 CBDGCONV.ITM error: Adding Protection from Magic Portrait...
 
+CBDRSTF2.ITM error: Removing Protection from Fire Portrait...
+
+CBDRSTF2.ITM error: Removing Protection from Cold Portrait...
+
+CBDRSTF2.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBDRSTF3.ITM error: Removing Protection from Fire Portrait...
+
+CBDRSTF3.ITM error: Removing Protection from Cold Portrait...
+
+CBDRSTF3.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBEMMOON.ITM error: Removing Protection from Fire Portrait...
+
+CBEMMOON.ITM error: Removing Protection from Cold Portrait...
+
+CBEMMOON.ITM error: Adding Resist Fire/Cold Portrait...
+
 CBHBSLSK.ITM error: Adding Protection from Magic Portrait...
 
 CBHBSLZP.ITM error: Adding Protection from Fire Portrait...
@@ -12286,13 +12318,241 @@ CBMALR6A.ITM error: Adding Cursed Portrait...
 
 CBMNAMUL.ITM error: Adding Regeneration Portrait...
 
+CBMONP1B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP1B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP1B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP1C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP1C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP1C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP1D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP1D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP1D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP2B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP2B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP2B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP2C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP2C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP2C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP2D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP2D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP2D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP3B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP3B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP3B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP3C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP3C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP3C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP3D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP3D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP3D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP4B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP4B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP4B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP4C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP4C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP4C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP4D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP4D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP4D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP5B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP5B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP5B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP5C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP5C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP5C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP5D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP5D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP5D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP6B.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP6B.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP6B.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP6C.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP6C.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP6C.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMONP6D.ITM error: Removing Protection from Fire Portrait...
+
+CBMONP6D.ITM error: Removing Protection from Cold Portrait...
+
+CBMONP6D.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP1.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP1.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP1.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP2.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP2.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP2.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP3.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP3.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP3.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP4.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP4.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP4.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP5.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP5.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP5.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBMOONP6.ITM error: Removing Protection from Fire Portrait...
+
+CBMOONP6.ITM error: Removing Protection from Cold Portrait...
+
+CBMOONP6.ITM error: Adding Resist Fire/Cold Portrait...
+
 CBMSCONV.ITM error: Adding Protection from Magic Portrait...
 
+CBNRTH01.ITM error: Removing Protection from Fire Portrait...
+
+CBNRTH01.ITM error: Removing Protection from Cold Portrait...
+
+CBNRTH01.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBNRTH02.ITM error: Removing Protection from Fire Portrait...
+
+CBNRTH02.ITM error: Removing Protection from Cold Portrait...
+
+CBNRTH02.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBNRTHMM.ITM error: Removing Protection from Fire Portrait...
+
+CBNRTHMM.ITM error: Removing Protection from Cold Portrait...
+
+CBNRTHMM.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBRJR017.ITM error: Removing Protection from Fire Portrait...
+
+CBRJR017.ITM error: Removing Protection from Cold Portrait...
+
+CBRJR017.ITM error: Adding Resist Fire/Cold Portrait...
+
 CBRJR019.ITM error: Adding Infravision Portrait...
+
+CBRNGAX2.ITM error: Removing Protection from Fire Portrait...
+
+CBRNGAX2.ITM error: Removing Protection from Cold Portrait...
+
+CBRNGAX2.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBRNGAX3.ITM error: Removing Protection from Fire Portrait...
+
+CBRNGAX3.ITM error: Removing Protection from Cold Portrait...
+
+CBRNGAX3.ITM error: Adding Resist Fire/Cold Portrait...
 
 CBSHLDWK.ITM error: Adding Protection from Magic Portrait...
 
 CBSPYHP1.ITM error: Adding Mind Shield Portrait...
+
+CBSSLNG1.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG1.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG1.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSLNG2.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG2.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG2.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSLNG3.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG3.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG3.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSLNG4.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG4.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG4.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSLNG5.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG5.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG5.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSLNG6.ITM error: Removing Protection from Fire Portrait...
+
+CBSSLNG6.ITM error: Removing Protection from Cold Portrait...
+
+CBSSLNG6.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBSSSHRT.ITM error: Removing Protection from Fire Portrait...
+
+CBSSSHRT.ITM error: Removing Protection from Cold Portrait...
+
+CBSSSHRT.ITM error: Adding Resist Fire/Cold Portrait...
+
+CBXTJEAA.ITM error: Removing Protection from Fire Portrait...
+
+CBXTJEAA.ITM error: Removing Protection from Cold Portrait...
+
+CBXTJEAA.ITM error: Adding Resist Fire/Cold Portrait...
 
 CBXTSHBB.ITM error: Adding Infravision Portrait...
 
@@ -12410,6 +12670,8 @@ CMHELM04.ITM error: Adding Protection from Electricity Portrait...
 
 CMLEAT2.ITM error: Adding Protection from Cold Portrait...
 
+CMLEAT4.ITM error: Non-detection Portrait now displays while equipped...
+
 CMMM02.ITM error: Adding Cursed Portrait...
 
 CMPLAT04.ITM error: Adding Protection from Magic Portrait...
@@ -12444,6 +12706,12 @@ CMTUPL01.ITM error: Adding Protection from Fire Portrait...
 
 CMTUSD01.ITM error: Adding Protection from Magic Portrait...
 
+CMTUSW03.ITM error: Removing Protection from Fire Portrait...
+
+CMTUSW03.ITM error: Removing Protection from Cold Portrait...
+
+CMTUSW03.ITM error: Adding Resist Fire/Cold Portrait...
+
 CMTUSW05.ITM error: Adding Cursed Portrait...
 
 CMXB02.ITM error: Adding Regeneration Portrait...
@@ -12464,6 +12732,12 @@ CROWN.ITM error: Adding Protection from Magic Portrait...
 
 D1AMUL05.ITM error: Adding Infravision Portrait...
 
+D1BRAC04.ITM error: Removing Protection from Fire Portrait...
+
+D1BRAC04.ITM error: Removing Protection from Cold Portrait...
+
+D1BRAC04.ITM error: Adding Resist Fire/Cold Portrait...
+
 DEITM004.ITM error: Adding Protection from Cold Portrait...
 
 DEITM014.ITM error: Adding Protection from Magic Portrait...
@@ -12474,6 +12748,12 @@ DEITM026.ITM error: Adding Protection from Electricity Portrait...
 
 DEITM078.ITM error: Adding Cursed Portrait...
 
+DEITM088.ITM error: Removing Protection from Fire Portrait...
+
+DEITM088.ITM error: Removing Protection from Cold Portrait...
+
+DEITM088.ITM error: Adding Resist Fire/Cold Portrait...
+
 DEITM088.ITM error: Adding Protection from Acid Portrait...
 
 DEITM089.ITM error: Adding Cursed Portrait...
@@ -12483,6 +12763,12 @@ DEITM120.ITM error: Adding Mind Shield Portrait...
 DEITM125.ITM error: Adding Protection from Fire Portrait...
 
 DIVER.ITM error: Adding Protection from Magic Portrait...
+
+DRAGBRCX.ITM error: Removing Protection from Fire Portrait...
+
+DRAGBRCX.ITM error: Removing Protection from Cold Portrait...
+
+DRAGBRCX.ITM error: Adding Resist Fire/Cold Portrait...
 
 DSAMUL04.ITM error: Adding Cursed Portrait...
 
@@ -12511,6 +12797,12 @@ DSCROWN1.ITM error: Adding Protection from Acid Portrait...
 DSCROWN1.ITM error: Adding Protection from Electricity Portrait...
 
 DSCRYARM.ITM error: Adding Resist Fire/Cold Portrait...
+
+DSCRYHLM.ITM error: Removing Protection from Fire Portrait...
+
+DSCRYHLM.ITM error: Removing Protection from Cold Portrait...
+
+DSCRYHLM.ITM error: Adding Resist Fire/Cold Portrait...
 
 DSCUARM.ITM error: Adding Mind Shield Portrait...
 
@@ -12590,7 +12882,19 @@ FROSTY.ITM error: Adding Protection from Cold Portrait...
 
 F_GOCLAW.ITM error: Adding Cursed Portrait...
 
+F_GOCLAW.ITM error: Removing Protection from Fire Portrait...
+
+F_GOCLAW.ITM error: Removing Protection from Cold Portrait...
+
+F_GOCLAW.ITM error: Adding Resist Fire/Cold Portrait...
+
 F_MAGMAC.ITM error: Adding Mind Shield Portrait...
+
+F_OPALPL.ITM error: Removing Protection from Fire Portrait...
+
+F_OPALPL.ITM error: Removing Protection from Cold Portrait...
+
+F_OPALPL.ITM error: Adding Resist Fire/Cold Portrait...
 
 GCMHAM01.ITM error: Adding Protection from Electricity Portrait...
 
@@ -12602,9 +12906,17 @@ HELM05.ITM error: Adding Infravision Portrait...
 
 HELM05A.ITM error: Adding Infravision Portrait...
 
-HELMGR01.ITM error: Adding Protection from Cold Portrait...
+HELMGR01.ITM error: Removing Protection from Fire Portrait...
+
+HELMGR01.ITM error: Adding Resist Fire/Cold Portrait...
 
 HGWRA02.ITM error: Adding Protection from Magic Portrait...
+
+ICEPLAT.ITM error: Removing Protection from Fire Portrait...
+
+ICEPLAT.ITM error: Removing Protection from Cold Portrait...
+
+ICEPLAT.ITM error: Adding Resist Fire/Cold Portrait...
 
 ISHP1.ITM error: Adding Infravision Portrait...
 
@@ -12625,6 +12937,12 @@ K0BARREL.ITM error: Adding Protection from Magic Portrait...
 K0BARREL.ITM error: Adding Free Action Portrait...
 
 K0BARREL.ITM error: Adding Protection from Poison Portrait...
+
+KING.ITM error: Removing Protection from Fire Portrait...
+
+KING.ITM error: Removing Protection from Cold Portrait...
+
+KING.ITM error: Adding Resist Fire/Cold Portrait...
 
 LASER.ITM error: Adding Protection from Electricity Portrait...
 
@@ -12694,6 +13012,8 @@ PAWSLV7.ITM error: Adding Protection from Fire Portrait...
 
 PLATGR01.ITM error: Adding Resist Fire/Cold Portrait...
 
+PLATWY.ITM error: Protection from Poison Portrait now displays while equipped...
+
 PSAMUL01.ITM error: Adding Infravision Portrait...
 
 PSAMUL05.ITM error: Adding Regeneration Portrait...
@@ -12752,6 +13072,18 @@ ROBE2.ITM error: Adding Protection from Magic Portrait...
 
 RUNEZ10.ITM error: Adding Mind Shield Portrait...
 
+RUNEZ7.ITM error: Removing Protection from Fire Portrait...
+
+RUNEZ7.ITM error: Removing Protection from Cold Portrait...
+
+RUNEZ7.ITM error: Adding Resist Fire/Cold Portrait...
+
+RUNEZ8.ITM error: Removing Protection from Fire Portrait...
+
+RUNEZ8.ITM error: Removing Protection from Cold Portrait...
+
+RUNEZ8.ITM error: Adding Resist Fire/Cold Portrait...
+
 RUNEZ9.ITM error: Adding Mind Shield Portrait...
 
 S#CHAN01.ITM error: Adding Protection from Magic Portrait...
@@ -12760,9 +13092,19 @@ S#STAF02.ITM error: Adding Mind Shield Portrait...
 
 SAMHELMX.ITM error: Adding Mind Shield Portrait...
 
+SAPHIREX.ITM error: Removing Protection from Fire Portrait...
+
+SAPHIREX.ITM error: Removing Protection from Cold Portrait...
+
+SAPHIREX.ITM error: Adding Resist Fire/Cold Portrait...
+
 SGBRAC02.ITM error: Adding Cursed Portrait...
 
+SGCLCK2.ITM error: Non-detection Portrait now displays on Self...
+
 SGHALB2.ITM error: Adding Protection from Electricity Portrait...
+
+SGLEAT2.ITM error: Protection from Acid Portrait now displays on Self...
 
 SGSPLT3.ITM error: Adding Protection from Cold Portrait...
 
@@ -12771,6 +13113,12 @@ SGSW1H3.ITM error: Adding Cursed Portrait...
 SHOON.ITM error: Adding Mind Shield Portrait...
 
 SOAITM10.ITM error: Adding Mind Shield Portrait...
+
+STAFDRAG.ITM error: Removing Protection from Fire Portrait...
+
+STAFDRAG.ITM error: Removing Protection from Cold Portrait...
+
+STAFDRAG.ITM error: Adding Resist Fire/Cold Portrait...
 
 STAFTHA.ITM error: Adding Protection from Magic Portrait...
 
@@ -12782,15 +13130,39 @@ SW1HVAM.ITM error: Adding Cursed Portrait...
 
 SW1P01.ITM error: Adding Cursed Portrait...
 
+SWANARM.ITM error: Removing Protection from Fire Portrait...
+
+SWANARM.ITM error: Removing Protection from Cold Portrait...
+
+SWANARM.ITM error: Adding Resist Fire/Cold Portrait...
+
 SWORDI.ITM error: Adding Non-detection Portrait...
 
 SWORDI.ITM error: Adding Protection from Magic Portrait...
+
+SWZZZ1.ITM error: Removing Protection from Fire Portrait...
+
+SWZZZ1.ITM error: Removing Protection from Cold Portrait...
+
+SWZZZ1.ITM error: Adding Resist Fire/Cold Portrait...
 
 T-HAMM01.ITM error: Adding Protection from Electricity Portrait...
 
 TAMCHAIN.ITM error: Adding Protection from Magic Portrait...
 
+THCLCK02.ITM error: Removing Protection from Fire Portrait...
+
+THCLCK02.ITM error: Removing Protection from Cold Portrait...
+
+THCLCK02.ITM error: Adding Resist Fire/Cold Portrait...
+
 THCLCK03.ITM error: Adding Protection from Magic Portrait...
+
+THHELM01.ITM error: Removing Protection from Fire Portrait...
+
+THHELM01.ITM error: Removing Protection from Cold Portrait...
+
+THHELM01.ITM error: Adding Resist Fire/Cold Portrait...
 
 TU2SW131.ITM error: Adding Protection from Magic Portrait...
 
@@ -12802,7 +13174,37 @@ TUSW1H31.ITM error: Adding Mind Shield Portrait...
 
 U#CLCK02.ITM error: Adding Protection from Acid Portrait...
 
+U#CLCK04.ITM error: Removing Protection from Fire Portrait...
+
+U#CLCK04.ITM error: Removing Protection from Cold Portrait...
+
+U#CLCK04.ITM error: Adding Resist Fire/Cold Portrait...
+
 U#HELM03.ITM error: Adding Protection from Fire Portrait...
+
+U#HELM04.ITM error: Removing Protection from Fire Portrait...
+
+U#HELM04.ITM error: Removing Protection from Cold Portrait...
+
+U#HELM04.ITM error: Adding Resist Fire/Cold Portrait...
+
+U#PLAT02.ITM error: Removing Protection from Fire Portrait...
+
+U#PLAT02.ITM error: Removing Protection from Cold Portrait...
+
+U#PLAT02.ITM error: Adding Resist Fire/Cold Portrait...
+
+U#ROBE01.ITM error: Removing Protection from Fire Portrait...
+
+U#ROBE01.ITM error: Removing Protection from Cold Portrait...
+
+U#ROBE01.ITM error: Adding Resist Fire/Cold Portrait...
+
+U#SHLD01.ITM error: Removing Protection from Fire Portrait...
+
+U#SHLD01.ITM error: Removing Protection from Cold Portrait...
+
+U#SHLD01.ITM error: Adding Resist Fire/Cold Portrait...
 
 U1HAM5B.ITM error: Adding Protection from Magic Portrait...
 
@@ -12843,6 +13245,12 @@ XOMASMUN.ITM error: Adding Mind Shield Portrait...
 XOMSTMUN.ITM error: Adding Mind Shield Portrait...
 
 Z_DKSW.ITM error: Adding Protection from Cold Portrait...
+
+Z_SPEKU.ITM error: Removing Protection from Fire Portrait...
+
+Z_SPEKU.ITM error: Removing Protection from Cold Portrait...
+
+Z_SPEKU.ITM error: Adding Resist Fire/Cold Portrait...
 
 Z_SSW2H.ITM error: Adding Protection from Magic Portrait...
 
@@ -16138,15 +16546,15 @@ CBDRDSWD.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
 CBDRGSW1.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
-CBDRSTF2.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBDRSTF2.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBDRSTF3.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBDRSTF3.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBDRT70A.ITM error: Effect #2 (Opcode 233) matches Effect #1! Removing...
 
 CBEMDM01.ITM error: Effect #37 (Opcode 233) matches Effect #36! Removing...
 
-CBEMMOON.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBEMMOON.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBGRBON2.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
@@ -16192,53 +16600,53 @@ CBMILT14.ITM error: Effect #5 (Opcode 233) matches Effect #4! Removing...
 
 CBMILT22.ITM error: Effect #5 (Opcode 233) matches Effect #4! Removing...
 
-CBMONP1B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP1B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP1C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP1C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP1D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP1D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP2B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP2B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP2C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP2C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP2D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP2D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP3B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP3B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP3C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP3C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP3D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP3D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP4B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP4B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP4C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP4C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP4D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP4D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP5B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP5B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP5C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP5C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP5D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP5D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP6B.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP6B.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP6C.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP6C.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMONP6D.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMONP6D.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP1.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP1.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP2.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP2.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP3.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP3.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP4.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP4.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP5.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP5.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBMOONP6.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBMOONP6.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBMSCONV.ITM error: Effect #7 (Opcode 233) matches Effect #6! Removing...
 
@@ -16294,13 +16702,13 @@ CBMTTHHM.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
 CBMTTWAX.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
-CBNRTH01.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBNRTH01.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBNRTH02.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBNRTH02.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBNRTHM2.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
-CBNRTHMM.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBNRTHMM.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBNRTSTF.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
@@ -16336,9 +16744,9 @@ CBRJR03H.ITM error: Effect #3 (Opcode 233) matches Effect #2! Removing...
 
 CBRJR03I.ITM error: Effect #3 (Opcode 233) matches Effect #2! Removing...
 
-CBRNGAX2.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBRNGAX2.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBRNGAX3.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBRNGAX3.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBROLFSW.ITM error: Effect #5 (Opcode 233) matches Effect #4! Removing...
 
@@ -16400,19 +16808,19 @@ CBSPYHP1.ITM error: Effect #65 (Opcode 206) matches Effect #24! Removing...
 
 CBSPYHP1.ITM error: Effect #39 (Opcode 101) matches Effect #25! Removing...
 
-CBSSLNG1.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG1.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSLNG2.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG2.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSLNG3.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG3.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSLNG4.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG4.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSLNG5.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG5.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSLNG6.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSLNG6.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
-CBSSSHRT.ITM error: Effect #19 (Opcode 233) matches Effect #18! Removing...
+CBSSSHRT.ITM error: Effect #18 (Opcode 233) matches Effect #17! Removing...
 
 CBSTFSKL.ITM error: Effect #3 (Opcode 233) matches Effect #2! Removing...
 
@@ -16718,7 +17126,7 @@ CMTUSW01.ITM error: Effect #14 (Opcode 233) matches Effect #13! Removing...
 
 CMTUSW02.ITM error: Effect #13 (Opcode 233) matches Effect #12! Removing...
 
-CMTUSW03.ITM error: Effect #12 (Opcode 233) matches Effect #11! Removing...
+CMTUSW03.ITM error: Effect #11 (Opcode 233) matches Effect #10! Removing...
 
 CMTUSW04.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
@@ -17015,8 +17423,6 @@ DEITM079.ITM error: Effect #5 (Opcode 233) matches Effect #4! Removing...
 DEITM080.ITM error: Effect #9 (Opcode 233) matches Effect #8! Removing...
 
 DEITM084.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
-
-DEITM088.ITM error: Effect #15 (Opcode 142) matches Effect #14! Removing...
 
 DEITM093.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
@@ -17554,7 +17960,7 @@ F_MOONSW.ITM error: Effect #10 (Opcode 233) matches Effect #9! Removing...
 
 F_MUMFIS.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
-F_OPALPL.ITM error: Effect #8 (Opcode 144) matches Effect #7! Removing...
+F_OPALPL.ITM error: Effect #9 (Opcode 144) matches Effect #8! Removing...
 
 F_SCIM03.ITM error: Effect #6 (Opcode 233) matches Effect #5! Removing...
 
@@ -18810,7 +19216,7 @@ SALKING.ITM error: Effect #6 (Opcode 233) matches Effect #5! Removing...
 
 SANKHEG2.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
-SAPHIREX.ITM error: Effect #13 (Opcode 233) matches Effect #12! Removing...
+SAPHIREX.ITM error: Effect #12 (Opcode 233) matches Effect #11! Removing...
 
 SAREVO.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
@@ -19146,7 +19552,7 @@ STAF24.ITM error: Effect #6 (Opcode 233) matches Effect #5! Removing...
 
 STAFCAD.ITM error: Effect #10 (Opcode 233) matches Effect #9! Removing...
 
-STAFDRAG.ITM error: Effect #11 (Opcode 233) matches Effect #10! Removing...
+STAFDRAG.ITM error: Effect #10 (Opcode 233) matches Effect #9! Removing...
 
 STAFFBES.ITM error: Effect #3 (Opcode 233) matches Effect #2! Removing...
 
@@ -19424,7 +19830,7 @@ SWSPID.ITM error: Effect #1 (Opcode 233) matches Effect #0! Removing...
 
 SWUDROP.ITM error: Effect #4 (Opcode 233) matches Effect #3! Removing...
 
-SWZZZ1.ITM error: Effect #15 (Opcode 233) matches Effect #14! Removing...
+SWZZZ1.ITM error: Effect #14 (Opcode 233) matches Effect #13! Removing...
 
 SWZZZ2.ITM error: Effect #5 (Opcode 233) matches Effect #4! Removing...
 
@@ -19851,19 +20257,19 @@ Copying and patching 8017 files ...
 
 AAITM105.ITM error: Equipped Effect #6 Opcode (30) - Value sets to 100
 
-AAITM130.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+AAITM130.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-AAITM130.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+AAITM130.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-AAITM130.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+AAITM130.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-AAITM130.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+AAITM130.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-AAITM130.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+AAITM130.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
-AAITM136.ITM error: Equipped Effect #7 Opcode (29) - Value sets to 100
+AAITM136.ITM error: Equipped Effect #8 Opcode (29) - Value sets to 100
 
-AAITM136.ITM error: Equipped Effect #9 Opcode (28) - Value sets to 100
+AAITM136.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 100
 
 AAITM136.ITM error: Equipped Effect #11 Opcode (30) - Value sets to 100
 
@@ -19873,11 +20279,11 @@ AAITM156.ITM error: Equipped Effect #1 Opcode (29) - Value sets to 100
 
 AAITM174.ITM error: Equipped Effect #8 Opcode (28) - Value sets to 75
 
-AR#R2.ITM error: Equipped Effect #4 Opcode (28) - Value sets to 100
+AR#R2.ITM error: Equipped Effect #3 Opcode (28) - Value sets to 100
 
-AR#R2.ITM error: Equipped Effect #5 Opcode (30) - Value sets to 100
+AR#R2.ITM error: Equipped Effect #4 Opcode (30) - Value sets to 100
 
-AR#R2.ITM error: Equipped Effect #6 Opcode (29) - Value sets to 100
+AR#R2.ITM error: Equipped Effect #5 Opcode (29) - Value sets to 100
 
 BAND02.ITM error: Equipped Effect #0 Opcode (35) - Value sets to 1
 
@@ -19921,393 +20327,393 @@ CBCL006.ITM error: Equipped Effect #5 Opcode (28) - Value sets to 100
 
 CBDMNSTF.ITM error: Ability #2 Effect #3 Opcode (174) - Non-existent Resource (SLRCHNG2.WAV)
 
-CBDRSTF2.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+CBDRSTF2.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-CBDRSTF2.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+CBDRSTF2.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-CBDRSTF2.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+CBDRSTF2.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-CBDRSTF2.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+CBDRSTF2.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-CBDRSTF2.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+CBDRSTF2.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
-CBDRSTF3.ITM error: Equipped Effect #13 Opcode (27) - Value sets to 50
+CBDRSTF3.ITM error: Equipped Effect #12 Opcode (27) - Value sets to 50
 
-CBDRSTF3.ITM error: Equipped Effect #14 Opcode (30) - Value sets to 50
+CBDRSTF3.ITM error: Equipped Effect #13 Opcode (30) - Value sets to 50
 
-CBDRSTF3.ITM error: Equipped Effect #15 Opcode (28) - Value sets to 50
+CBDRSTF3.ITM error: Equipped Effect #14 Opcode (28) - Value sets to 50
 
-CBDRSTF3.ITM error: Equipped Effect #16 Opcode (29) - Value sets to 50
+CBDRSTF3.ITM error: Equipped Effect #15 Opcode (29) - Value sets to 50
 
-CBDRSTF3.ITM error: Equipped Effect #17 Opcode (173) - Poison Resist set to 50
+CBDRSTF3.ITM error: Equipped Effect #16 Opcode (173) - Poison Resist set to 50
 
-CBEMMOON.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+CBEMMOON.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-CBEMMOON.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+CBEMMOON.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-CBEMMOON.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+CBEMMOON.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-CBEMMOON.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+CBEMMOON.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-CBEMMOON.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+CBEMMOON.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
 CBMALR4A.ITM error: Equipped Effect #3 Opcode (30) - Value sets to 100
 
 CBMALR4A.ITM error: Equipped Effect #4 Opcode (29) - Value sets to 100
 
-CBMONP1B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP1B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP1B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP1B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP1B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP1B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP1B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP1B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP1B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP1B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP1C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP1C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP1C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP1C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP1C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP1C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP1C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP1C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP1C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP1C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP1D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP1D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP1D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP1D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP1D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP1D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP1D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP1D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP1D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP1D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMONP2B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP2B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP2B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP2B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP2B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP2B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP2B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP2B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP2B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP2B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP2C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP2C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP2C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP2C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP2C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP2C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP2C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP2C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP2C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP2C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP2D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP2D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP2D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP2D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP2D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP2D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP2D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP2D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP2D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP2D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMONP3B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP3B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP3B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP3B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP3B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP3B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP3B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP3B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP3B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP3B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP3C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP3C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP3C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP3C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP3C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP3C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP3C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP3C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP3C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP3C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP3D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP3D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP3D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP3D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP3D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP3D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP3D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP3D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP3D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP3D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMONP4B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP4B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP4B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP4B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP4B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP4B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP4B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP4B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP4B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP4B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP4C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP4C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP4C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP4C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP4C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP4C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP4C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP4C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP4C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP4C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP4D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP4D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP4D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP4D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP4D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP4D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP4D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP4D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP4D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP4D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMONP5B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP5B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP5B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP5B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP5B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP5B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP5B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP5B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP5B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP5B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP5C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP5C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP5C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP5C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP5C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP5C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP5C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP5C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP5C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP5C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP5D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP5D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP5D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP5D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP5D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP5D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP5D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP5D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP5D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP5D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMONP6B.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 60
+CBMONP6B.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 60
 
-CBMONP6B.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 60
+CBMONP6B.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 60
 
-CBMONP6B.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 60
+CBMONP6B.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 60
 
-CBMONP6B.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 60
+CBMONP6B.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 60
 
-CBMONP6B.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 60
+CBMONP6B.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 60
 
-CBMONP6C.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBMONP6C.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBMONP6C.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBMONP6C.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBMONP6C.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBMONP6C.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBMONP6C.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBMONP6C.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBMONP6C.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBMONP6C.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBMONP6D.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 85
+CBMONP6D.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 85
 
-CBMONP6D.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 85
+CBMONP6D.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 85
 
-CBMONP6D.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 85
+CBMONP6D.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 85
 
-CBMONP6D.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 85
+CBMONP6D.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 85
 
-CBMONP6D.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 85
+CBMONP6D.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 85
 
-CBMOONP1.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP1.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP1.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP1.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP1.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP1.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP1.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP1.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP1.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP1.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBMOONP2.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP2.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP2.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP2.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP2.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP2.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP2.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP2.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP2.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP2.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBMOONP3.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP3.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP3.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP3.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP3.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP3.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP3.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP3.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP3.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP3.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBMOONP4.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP4.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP4.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP4.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP4.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP4.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP4.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP4.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP4.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP4.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBMOONP5.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP5.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP5.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP5.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP5.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP5.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP5.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP5.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP5.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP5.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBMOONP6.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
+CBMOONP6.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 50
 
-CBMOONP6.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 50
+CBMOONP6.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 50
 
-CBMOONP6.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 50
+CBMOONP6.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 50
 
-CBMOONP6.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 50
+CBMOONP6.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 50
 
-CBMOONP6.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBMOONP6.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBNRTH01.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBNRTH01.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBNRTH02.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 50
+CBNRTH02.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 50
 
-CBNRTHMM.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+CBNRTHMM.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-CBNRTHMM.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+CBNRTHMM.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-CBNRTHMM.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+CBNRTHMM.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-CBNRTHMM.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+CBNRTHMM.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-CBNRTHMM.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+CBNRTHMM.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
 CBPOTNLD.ITM error: Ability #0 Effect #0 Opcode (151) - Non-existent Resource (CBCDLCH2.CRE)
 
 CBRJR015.ITM error: Equipped Effect #4 Opcode (29) - Value sets to 100
 
-CBRJR017.ITM error: Equipped Effect #7 Opcode (29) - Value sets to 100
+CBRJR017.ITM error: Equipped Effect #8 Opcode (29) - Value sets to 100
 
-CBRJR017.ITM error: Equipped Effect #9 Opcode (28) - Value sets to 100
+CBRJR017.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 100
 
 CBRJR017.ITM error: Equipped Effect #11 Opcode (30) - Value sets to 100
 
-CBRNGAX2.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+CBRNGAX2.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-CBRNGAX2.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+CBRNGAX2.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-CBRNGAX2.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+CBRNGAX2.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-CBRNGAX2.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+CBRNGAX2.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-CBRNGAX2.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+CBRNGAX2.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
-CBRNGAX3.ITM error: Equipped Effect #13 Opcode (27) - Value sets to 50
+CBRNGAX3.ITM error: Equipped Effect #12 Opcode (27) - Value sets to 50
 
-CBRNGAX3.ITM error: Equipped Effect #14 Opcode (30) - Value sets to 50
+CBRNGAX3.ITM error: Equipped Effect #13 Opcode (30) - Value sets to 50
 
-CBRNGAX3.ITM error: Equipped Effect #15 Opcode (28) - Value sets to 50
+CBRNGAX3.ITM error: Equipped Effect #14 Opcode (28) - Value sets to 50
 
-CBRNGAX3.ITM error: Equipped Effect #16 Opcode (29) - Value sets to 50
+CBRNGAX3.ITM error: Equipped Effect #15 Opcode (29) - Value sets to 50
 
-CBRNGAX3.ITM error: Equipped Effect #17 Opcode (173) - Poison Resist set to 50
+CBRNGAX3.ITM error: Equipped Effect #16 Opcode (173) - Poison Resist set to 50
 
-CBSSLNG1.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG1.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG1.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG1.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG1.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG1.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG1.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG1.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG1.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG1.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSLNG2.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG2.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG2.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG2.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG2.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG2.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG2.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG2.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG2.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG2.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSLNG3.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG3.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG3.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG3.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG3.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG3.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG3.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG3.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG3.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG3.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSLNG4.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG4.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG4.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG4.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG4.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG4.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG4.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG4.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG4.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG4.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSLNG5.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG5.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG5.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG5.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG5.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG5.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG5.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG5.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG5.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG5.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSLNG6.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 75
+CBSSLNG6.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 75
 
-CBSSLNG6.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 75
+CBSSLNG6.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 75
 
-CBSSLNG6.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 75
+CBSSLNG6.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 75
 
-CBSSLNG6.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 75
+CBSSLNG6.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 75
 
-CBSSLNG6.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 75
+CBSSLNG6.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 75
 
-CBSSSHRT.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 25
+CBSSSHRT.ITM error: Equipped Effect #9 Opcode (27) - Value sets to 25
 
-CBSSSHRT.ITM error: Equipped Effect #9 Opcode (30) - Value sets to 25
+CBSSSHRT.ITM error: Equipped Effect #10 Opcode (30) - Value sets to 25
 
-CBSSSHRT.ITM error: Equipped Effect #10 Opcode (28) - Value sets to 25
+CBSSSHRT.ITM error: Equipped Effect #11 Opcode (28) - Value sets to 25
 
-CBSSSHRT.ITM error: Equipped Effect #11 Opcode (29) - Value sets to 25
+CBSSSHRT.ITM error: Equipped Effect #12 Opcode (29) - Value sets to 25
 
-CBSSSHRT.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
+CBSSSHRT.ITM error: Equipped Effect #13 Opcode (173) - Poison Resist set to 25
 
 CBWTNI6A.ITM error: Equipped Effect #3 Opcode (248) - Non-existent Resource (CBROLFSW.EFF)
 
@@ -20323,9 +20729,9 @@ CMDAQ05.ITM error: Ability #0 Effect #0 Opcode (122) - Non-existent Resource (.I
 
 CMHE05.ITM error: Equipped Effect #12 Opcode (173) - Poison Resist set to 25
 
-CMTUSW03.ITM error: Equipped Effect #7 Opcode (30) - Value sets to 25
+CMTUSW03.ITM error: Equipped Effect #8 Opcode (30) - Value sets to 25
 
-CMTUSW03.ITM error: Equipped Effect #8 Opcode (28) - Value sets to 25
+CMTUSW03.ITM error: Equipped Effect #9 Opcode (28) - Value sets to 25
 
 COMKFC02.ITM error: Ability #0 Effect #3 Opcode (174) - Non-existent Resource (.WAV)
 
@@ -20353,7 +20759,7 @@ HELM32.ITM error: Equipped Effect #7 Opcode (173) - Poison Resist set to 25
 
 HOLYPLAT.ITM error: Equipped Effect #14 Opcode (173) - Poison Resist set to 50
 
-ICEPLAT.ITM error: Equipped Effect #7 Opcode (28) - Value sets to 100
+ICEPLAT.ITM error: Equipped Effect #8 Opcode (28) - Value sets to 100
 
 IOUNX8.ITM error: Equipped Effect #5 Opcode (29) - Value sets to 100
 
@@ -20417,19 +20823,19 @@ SW2H07.ITM error: Ability #0 Effect #2 Opcode (174) - Non-existent Resource (MIS
 
 SW2HAV.ITM error: Ability #0 Effect #2 Opcode (174) - Non-existent Resource (.WAV)
 
-U#HELM04.ITM error: Equipped Effect #2 Opcode (30) - Value sets to 70
+U#HELM04.ITM error: Equipped Effect #3 Opcode (30) - Value sets to 70
 
-U#HELM04.ITM error: Equipped Effect #3 Opcode (28) - Value sets to 25
+U#HELM04.ITM error: Equipped Effect #4 Opcode (28) - Value sets to 25
 
-U#HELM04.ITM error: Equipped Effect #4 Opcode (29) - Value sets to 70
+U#HELM04.ITM error: Equipped Effect #5 Opcode (29) - Value sets to 70
 
 U#HELM04.ITM error: Equipped Effect #7 Opcode (27) - Value sets to 50
 
-U#SHLD01.ITM error: Equipped Effect #3 Opcode (28) - Value sets to 25
+U#SHLD01.ITM error: Equipped Effect #4 Opcode (28) - Value sets to 25
 
-U#SHLD01.ITM error: Equipped Effect #4 Opcode (29) - Value sets to 70
+U#SHLD01.ITM error: Equipped Effect #5 Opcode (29) - Value sets to 70
 
-U#SHLD01.ITM error: Equipped Effect #5 Opcode (30) - Value sets to 70
+U#SHLD01.ITM error: Equipped Effect #6 Opcode (30) - Value sets to 70
 
 U#SHLD01.ITM error: Equipped Effect #8 Opcode (27) - Value sets to 50
 
