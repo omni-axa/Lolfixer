@@ -22129,10 +22129,6 @@ SPCL411F.SPL error: Ability #2 assigned to INNATE slot (was SPELL)...
 
 SPCL411F.SPL error: Ability #3 assigned to INNATE slot (was SPELL)...
 
-SPCL412.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 4...
-
-SPCL414.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 4...
-
 SPCL415.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPCL415.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
@@ -22211,19 +22207,13 @@ SPCL819.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPCL821.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
-SPCL910.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 9...
-
 SPCL910B.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPCL910B.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
-SPCL911.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 9...
-
 SPCL911B.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPCL911B.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
-
-SPCL912.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 9...
 
 SPCL912B.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
@@ -22433,7 +22423,11 @@ SPIN590.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
 SPIN591.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
+SPIN592.SPL error: Innate Spell is not Level 1! Setting level to 1...
+
 SPIN592.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
+
+SPIN593.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN593.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
@@ -22533,7 +22527,7 @@ SPIN640.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
 SPIN641.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
-SPIN642.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 6...
+SPIN642.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN642.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
@@ -22570,8 +22564,6 @@ SPIN661.SPL error: Innate Spell is not Level 1! Setting level to 1...
 SPIN662.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN665.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
-
-SPIN666.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 6...
 
 SPIN666.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
@@ -23133,7 +23125,7 @@ SPIN939.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN939.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
-SPIN940.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 9...
+SPIN940.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN940.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
@@ -23209,7 +23201,7 @@ SPIN978.SPL error: Ability #6 assigned to INNATE slot (was SPELL)...
 
 SPIN978.SPL error: Ability #7 assigned to INNATE slot (was SPELL)...
 
-SPIN979.SPL error: Innate Spell is referenced by CastSpellInnate()! Correcting level to 9...
+SPIN979.SPL error: Innate Spell is not Level 1! Setting level to 1...
 
 SPIN979.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
@@ -23716,6 +23708,85 @@ WWBLET.SPL error: Innate Spell is not Level 1! Setting level to 1...
 Z#GTHAC.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
 
 Z#HIDE.SPL error: Ability #0 assigned to INNATE slot (was SPELL)...
+Copying and patching 10645 files ...
+
+AA057OVR.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SNARE) with SpellCastInnateRES('SPCL412',[GOODCUTOFF])
+
+AA057OVR.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SPECIAL_SNARE) with SpellCastInnateRES('SPCL414',[GOODCUTOFF])
+
+AADRGBRN.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SNARE) with SpellCastInnateRES('SPCL412',[GOODCUTOFF])
+
+AADRGBRN.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SPECIAL_SNARE) with SpellCastInnateRES('SPCL414',[GOODCUTOFF])
+
+AADRGSIL.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_SPIKE_TRAP) with SpellCastInnateRES('SPCL910',[GOODCUTOFF])
+
+AADRGSIL.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_EXPLODING_TRAP) with SpellCastInnateRES('SPCL911',[GOODCUTOFF])
+
+AADRGSIL.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_TIME_TRAP) with SpellCastInnateRES('SPCL912',[GOODCUTOFF])
+
+AADRGSIL.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SNARE) with SpellCastInnateRES('SPCL412',[GOODCUTOFF])
+
+AADRGSIL.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SPECIAL_SNARE) with SpellCastInnateRES('SPCL414',[GOODCUTOFF])
+
+AAPLNEVL.BCS error: Replacing SpellCastInnate([ANYONE],ZOMBIE_LEVEL_DRAIN) with SpellCastInnateRES('SPIN666',[ANYONE])
+
+ABAZDG02.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+ABAZDRAG.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+AR3000.BCS error: Replacing SpellCastInnate([ANYONE],HELM_RITUAL_SCROLL) with SpellCastInnateRES('SPIN592',[ANYONE])
+
+AR3020.BCS error: Replacing SpellCastInnate([ANYONE],ODREN_RITUAL_SCROLL) with SpellCastInnateRES('SPIN593',[ANYONE])
+
+DRAGBLAC.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGBROW.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGGRE2.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGGREE.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGHELL.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGRED.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGSHAD.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DRAGSILV.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DSFORDRG.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SNARE) with SpellCastInnateRES('SPCL412',[GOODCUTOFF])
+
+DSFORDRG.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SPECIAL_SNARE) with SpellCastInnateRES('SPCL414',[GOODCUTOFF])
+
+DSFORDRG.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_SPIKE_TRAP) with SpellCastInnateRES('SPCL910',[GOODCUTOFF])
+
+DSFORDRG.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_EXPLODING_TRAP) with SpellCastInnateRES('SPCL911',[GOODCUTOFF])
+
+DSFORDRG.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_TIME_TRAP) with SpellCastInnateRES('SPCL912',[GOODCUTOFF])
+
+DW#ABBLD.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DW#ABDGY.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DW#ABGRE.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+DW#ABRED.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+GORSAL.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+II2.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
+
+O!TALT.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SPECIAL_SNARE) with SpellCastInnateRES('SPCL414',[GOODCUTOFF])
+
+O!TALT.BCS error: Replacing SpellCastInnate([GOODCUTOFF],THIEF_SET_SNARE) with SpellCastInnateRES('SPCL412',[GOODCUTOFF])
+
+O!TALT.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_TIME_TRAP) with SpellCastInnateRES('SPCL912',[GOODCUTOFF])
+
+O!TALT.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_EXPLODING_TRAP) with SpellCastInnateRES('SPCL911',[GOODCUTOFF])
+
+O!TALT.BCS error: Replacing SpellCastInnate([GOODCUTOFF],ROGUE_SET_SPIKE_TRAP) with SpellCastInnateRES('SPCL910',[GOODCUTOFF])
+
+SHADRA01.BCS error: Replacing SpellCastInnate([ANYONE],DMWW_TRAP_SET) with SpellCastInnateRES('SPIN132',[ANYONE])
 
 
 
