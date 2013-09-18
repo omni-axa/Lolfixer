@@ -1,6 +1,6 @@
 BACKUP ~lolfixer/backup~
 AUTHOR ~Lollorian~
-VERSION ~14012013~
+VERSION ~16082013~
 
 BEGIN ~Area Stuff - MAJESTIC Area Fixer~
   GROUP ~Area Stuff~
@@ -10,6 +10,63 @@ ACTION_IF !(FILE_EXISTS ~override/xr2400.are~) THEN BEGIN
 END
 ACTION_IF !(FILE_EXISTS ~override/xr2600.are~) THEN BEGIN
   COPY_EXISTING ~ar0087.are~ ~override/xr2600.are~
+END
+
+ACTION_CLEAR_ARRAY tutu_convert_itm
+ACTION_DEFINE_ASSOCIATIVE_ARRAY tutu_convert_itm BEGIN
+  _AROW01    =>    AROW01
+  _AROW02    =>    AROW02
+  _AROW07    =>    AROW07
+  _BOW01     =>    BOW01
+  _BOW03     =>    BOW03
+  _BOW08     =>    BOW08
+  _BLUN02    =>    BLUN02
+  _BULL02    =>    BULL02
+  _BRAC04    =>    BRAC04
+  _CHAN04    =>    CHAN04
+  _CHAN05    =>    CHAN05
+  _CHAN07    =>    CHAN07
+  _DAGG01    =>    DAGG01
+  _DAGG03    =>    DAGG03
+  _DAGG05    =>    DAGG05
+  _DART01    =>    DART01
+  _DART02    =>    DART02
+  _HELM01    =>    HELM01
+  _HELM09    =>    HELM09
+  _HELM11    =>    HELM11
+  _JELLGR1   =>    JELLGR1
+  _LEAT01    =>    LEAT01
+  _LEAT02    =>    LEAT02
+  _LEAT04    =>    LEAT04
+  _MAGE01    =>    MAGE02
+  _MAGE02    =>    MAGE02
+  _MAGE05    =>    MAGE05
+  _AGEBRAC   =>    MAGEBRAC
+  _MISC33    =>    MISC33
+  _PLAT01    =>    PLAT01
+  _PLAT04    =>    PLAT04
+  _POTN08    =>    POTN08
+  _POTN20    =>    POTN20
+  _POTN21    =>    POTN21
+  _POTN36    =>    POTN36
+  _POTN37    =>    POTN37
+  _POTN45    =>    POTN45
+  _RING95    =>    RING95
+  _SCRL96    =>    SCRL96
+  _SHLD01    =>    SHLD01
+  _SHLD08    =>    SHLD08
+  _SLNG02    =>    SLNG02
+  _SPER01    =>    SPER01
+  _SPER02    =>    SPER02
+  _STAF01    =>    STAF01
+  _STAF02    =>    STAF02
+  _STAF07    =>    STAF07
+  _SW1H01    =>    SW1H01
+  _SW1H04    =>    SW1H04
+  _SW1H07    =>    SW1H07
+  _SW1H08    =>    SW1H08
+  _SW1H24    =>    SW1H24
+  _SW2H01    =>    SW2H01
 END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
@@ -58,6 +115,39 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
       END
     END
 
+    // Container Content Validator
+    READ_LONG  0x70 "cont_off" ELSE 0
+    READ_SHORT 0x74 "cont_num" ELSE 0
+    READ_SHORT 0x76 "itm_num"  ELSE 0
+    READ_LONG  0x78 "itm_off"  ELSE 0
+
+    PATCH_IF (cont_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < cont_num ; index = index + 1) BEGIN
+        READ_LONG  ("%cont_off%" + 0x40 + (0xc0 * "%index%")) "cont_itm_idx"
+        READ_LONG  ("%cont_off%" + 0x44 + (0xc0 * "%index%")) "cont_itm_num"
+        FOR (index2 = 0 ; index2 < cont_itm_num ; index2 = index2 + 1) BEGIN
+          READ_ASCII ("%itm_off%" + (("%index2%" + "%cont_itm_idx%") * 0x14)) "resref"
+          SET "exists" = 0
+          INNER_PATCH_FILE ~%resref%.itm~ BEGIN
+            SET "exists" = 1
+          END
+          PATCH_IF ("%exists%" = 0) BEGIN
+            SET "converted" = 0
+            PHP_EACH tutu_convert_itm AS tutu_itm => bgt_itm BEGIN
+              PATCH_IF ("%resref%" STRING_EQUAL_CASE "%tutu_itm%") AND (FILE_EXISTS_IN_GAME "%bgt_itm%.itm") BEGIN
+                WRITE_ASCIIE ("%itm_off%" + (("%index2%" + "%cont_itm_idx%") * 0x14)) "%bgt_itm%" #8
+                SET "converted" = 1
+                PATCH_PRINT "%SOURCE_FILE% error: Container #%index% Item #%index2% had Tutu item! (%resref% -> %bgt_itm%)!"
+              END
+            END
+            PATCH_IF ("%converted%" = 0) BEGIN
+              PATCH_PRINT "%SOURCE_FILE% error: Container #%index% Item #%index2% does not exist (%resref%.itm)!"
+            END
+          END
+        END
+      END
+    END
+
     // Missing Ambient Remover
     READ_SHORT 0x82 "amb_num" ELSE 0
     READ_LONG  0x84 "amb_off" ELSE 0
@@ -90,14 +180,10 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
         READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
         PATCH_IF ("%resref%" STRING_COMPARE_REGEXP "^[Rr][Dd].+$") BEGIN // ignore creatures starting with RD
           SET "exists" = 0
-          SET "attached" = 0
           INNER_PATCH_FILE ~%resref%.cre~ BEGIN
             SET "exists" = 1
           END
-          PATCH_IF (("%flags%" BAND 0b10000000) = 0b00000000) BEGIN
-            SET "attached" = 1
-          END
-          PATCH_IF (("%exists%" = 0) AND ("%attached%" = 0)) BEGIN
+          PATCH_IF (("%exists%" = 0) AND (("%flags%" BAND 0b00000001) = 0b00000001)) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% does not exist (%resref%.cre)! Removing actor..."
             LPF fj_are_structure
               INT_VAR fj_delete_mode    = "%index%"
@@ -106,6 +192,36 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
             SET "index" = 0 - 1
             READ_SHORT 0x58 "actor_num"
           END
+        END
+      END
+    END
+
+    // Actor Miscellaneous Patching
+    READ_LONG  0x54 "actor_off" ELSE 0
+    READ_SHORT 0x58 "actor_num" ELSE 0
+
+    PATCH_IF (actor_off > 0x11b) THEN BEGIN
+      FOR (index = 0 ; index < actor_num ; index = index + 1) BEGIN
+
+        // Invalid Embedded CRE Status Patching
+        READ_BYTE  ("%actor_off%" + 0x28 + (0x110 * "%index%")) "flags"  // flags first byte
+        READ_ASCII ("%actor_off%" + 0x80 + (0x110 * "%index%")) "resref" // cre file
+        PATCH_IF NOT (("%resref%" STRING_EQUAL_CASE "NONE") OR ("%resref%" STRING_EQUAL_CASE "")) BEGIN
+          PATCH_IF (("%flags%" BAND 0b00000001) = 0b00000000) BEGIN
+            PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% (%resref%.CRE) exists and should not be attached to the ARE..."
+            WRITE_BYTE ("%actor_off%" + 0x28 + (0x110 * "%index%")) ("%flags%" BOR 0b00000001)
+          END
+        END
+
+        // Actor Removal Prevention
+        READ_LONG  ("%actor_off%" + 0x38 + (0x110 * "%index%")) "removal_timer"
+        PATCH_IF ("%removal_timer%" = 0) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% set to disappear after %removal_timer% seconds! Setting to -1..."
+          WRITE_LONG ("%actor_off%" + 0x38 + (0x110 * "%index%")) 0xffffffff
+        END ELSE
+        PATCH_IF ("%removal_timer%" != 0xffffffff) BEGIN
+          PATCH_PRINT "%SOURCE_FILE% error: Actor #%index% set to disappear after %removal_timer% seconds!"
+//        WRITE_LONG ("%actor_off%" + 0x38 + (0x110 * "%index%")) 0xffffffff
         END
       END
     END
@@ -276,6 +392,72 @@ BUT_ONLY_IF_IT_CHANGES
 BEGIN ~Creature Stuff - Inventory Cleaner (removes items that don't exist and converts them into already present items where applicable)~
   GROUP ~Creature Stuff~
 
+ACTION_CLEAR_ARRAY tutu_convert_itm
+ACTION_DEFINE_ASSOCIATIVE_ARRAY tutu_convert_itm BEGIN
+  _AROW01    =>    AROW01
+  _AROW02    =>    AROW02
+  _AROW07    =>    AROW07
+  _BOW01     =>    BOW01
+  _BOW03     =>    BOW03
+  _BOW08     =>    BOW08
+  _BLUN02    =>    BLUN02
+  _BULL02    =>    BULL02
+  _BRAC04    =>    BRAC04
+  _CHAN04    =>    CHAN04
+  _CHAN05    =>    CHAN05
+  _CHAN07    =>    CHAN07
+  _DAGG01    =>    DAGG01
+  _DAGG03    =>    DAGG03
+  _DAGG05    =>    DAGG05
+  _DART01    =>    DART01
+  _DART02    =>    DART02
+  _HELM01    =>    HELM01
+  _HELM09    =>    HELM09
+  _HELM11    =>    HELM11
+  _JELLGR1   =>    JELLGR1
+  _LEAT01    =>    LEAT01
+  _LEAT02    =>    LEAT02
+  _LEAT04    =>    LEAT04
+  _MAGE01    =>    MAGE02
+  _MAGE02    =>    MAGE02
+  _MAGE05    =>    MAGE05
+  _AGEBRAC   =>    MAGEBRAC
+  _MISC33    =>    MISC33
+  _PLAT01    =>    PLAT01
+  _PLAT04    =>    PLAT04
+  _POTN08    =>    POTN08
+  _POTN20    =>    POTN20
+  _POTN21    =>    POTN21
+  _POTN36    =>    POTN36
+  _POTN37    =>    POTN37
+  _POTN45    =>    POTN45
+  _RING95    =>    RING95
+  _SCRL96    =>    SCRL96
+  _SHLD01    =>    SHLD01
+  _SHLD08    =>    SHLD08
+  _SLNG02    =>    SLNG02
+  _SPER01    =>    SPER01
+  _SPER02    =>    SPER02
+  _STAF01    =>    STAF01
+  _STAF02    =>    STAF02
+  _STAF07    =>    STAF07
+  _SW1H01    =>    SW1H01
+  _SW1H04    =>    SW1H04
+  _SW1H07    =>    SW1H07
+  _SW1H08    =>    SW1H08
+  _SW1H24    =>    SW1H24
+  _SW2H01    =>    SW2H01
+
+  // Typoed Items
+  ANKSHELL   =>    MISC1A
+  HRZRSHED   =>    SD_HRZR
+  IOUNX6     =>    IOUNX8
+  MIN1HP     =>    MINHP1
+  RNGDEMN    =>    RINGDEMN
+  SCRL1R     =>   "U!SCRL03" // 'cause WeiDU don't like dem exclamations in filenames
+  SLING04    =>    SLNG04
+END
+
 COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
   PATCH_IF ((SOURCE_SIZE > 0x2d3)) THEN BEGIN
     READ_LONG  0x2bc "itm_off" ELSE 0
@@ -285,307 +467,15 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
       FOR (index = 0 ; index < itm_num ; index = index + 1) BEGIN
         READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item"
         PATCH_IF (NOT (FILE_EXISTS_IN_GAME ~%item%.itm~) AND ("%item%" STRING_COMPARE_REGEXP "^[Rr][Nn][Dd].+$")) BEGIN
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_AROW01") AND (FILE_EXISTS_IN_GAME ~AROW01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_AROW02") AND (FILE_EXISTS_IN_GAME ~AROW02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_AROW07") AND (FILE_EXISTS_IN_GAME ~AROW07.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "AROW07" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW01") AND (FILE_EXISTS_IN_GAME ~BOW01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW03") AND (FILE_EXISTS_IN_GAME ~BOW03.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW03" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BOW08") AND (FILE_EXISTS_IN_GAME ~BOW08.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BOW08" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BLUN02") AND (FILE_EXISTS_IN_GAME ~BLUN02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BLUN02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BULL02") AND (FILE_EXISTS_IN_GAME ~BULL02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BULL02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_BRAC04") AND (FILE_EXISTS_IN_GAME ~BRAC04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "BRAC04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN04") AND (FILE_EXISTS_IN_GAME ~CHAN04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN05") AND (FILE_EXISTS_IN_GAME ~CHAN05.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN05" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_CHAN07") AND (FILE_EXISTS_IN_GAME ~CHAN07.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "CHAN07" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG01") AND (FILE_EXISTS_IN_GAME ~DAGG01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG03") AND (FILE_EXISTS_IN_GAME ~DAGG03.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG03" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_DAGG05") AND (FILE_EXISTS_IN_GAME ~DAGG05.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DAGG05" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_DART01") AND (FILE_EXISTS_IN_GAME ~DART01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_DART02") AND (FILE_EXISTS_IN_GAME ~DART02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "DART02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM01") AND (FILE_EXISTS_IN_GAME ~HELM01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM09") AND (FILE_EXISTS_IN_GAME ~HELM09.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM09" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_HELM11") AND (FILE_EXISTS_IN_GAME ~HELM11.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "HELM11" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_JELLGR1") AND (FILE_EXISTS_IN_GAME ~JELLGR1.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "JELLGR1" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT01") AND (FILE_EXISTS_IN_GAME ~LEAT01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT02") AND (FILE_EXISTS_IN_GAME ~LEAT02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_LEAT04") AND (FILE_EXISTS_IN_GAME ~LEAT04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "LEAT04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE01") AND (FILE_EXISTS_IN_GAME ~MAGE02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE02") AND (FILE_EXISTS_IN_GAME ~MAGE02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_MAGE05") AND (FILE_EXISTS_IN_GAME ~MAGE05.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGE05" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_AGEBRAC") AND (FILE_EXISTS_IN_GAME ~MAGEBRAC.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MAGEBRAC" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_MISC33") AND (FILE_EXISTS_IN_GAME ~MISC33.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC33" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_PLAT01") AND (FILE_EXISTS_IN_GAME ~PLAT01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_PLAT04") AND (FILE_EXISTS_IN_GAME ~PLAT04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "PLAT04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN08") AND (FILE_EXISTS_IN_GAME ~POTN08.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN08" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN20") AND (FILE_EXISTS_IN_GAME ~POTN20.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN20" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN21") AND (FILE_EXISTS_IN_GAME ~POTN21.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN21" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN36") AND (FILE_EXISTS_IN_GAME ~POTN36.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN36" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN37") AND (FILE_EXISTS_IN_GAME ~POTN37.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN37" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_POTN45") AND (FILE_EXISTS_IN_GAME ~POTN45.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "POTN45" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_RING95") AND (FILE_EXISTS_IN_GAME ~RING95.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RING95" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SCRL96") AND (FILE_EXISTS_IN_GAME ~SCRL96.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SCRL96" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SHLD01") AND (FILE_EXISTS_IN_GAME ~SHLD01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SHLD08") AND (FILE_EXISTS_IN_GAME ~SHLD08.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SHLD08" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SLNG02") AND (FILE_EXISTS_IN_GAME ~SLNG02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SPER01") AND (FILE_EXISTS_IN_GAME ~SPER01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SPER02") AND (FILE_EXISTS_IN_GAME ~SPER02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SPER02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF01") AND (FILE_EXISTS_IN_GAME ~STAF01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF02") AND (FILE_EXISTS_IN_GAME ~STAF02.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF02" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_STAF07") AND (FILE_EXISTS_IN_GAME ~STAF07.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "STAF07" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H01") AND (FILE_EXISTS_IN_GAME ~SW1H01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H04") AND (FILE_EXISTS_IN_GAME ~SW1H04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H07") AND (FILE_EXISTS_IN_GAME ~SW1H07.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H07" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H08") AND (FILE_EXISTS_IN_GAME ~SW1H08.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H08" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW1H24") AND (FILE_EXISTS_IN_GAME ~SW1H24.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW1H24" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF (("%item%" STRING_EQUAL_CASE "_SW2H01") AND (FILE_EXISTS_IN_GAME ~SW2H01.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SW2H01" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~ANKSHELL~) AND (FILE_EXISTS_IN_GAME ~MISC1A.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MISC1A" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~HRZRSHED~) AND (FILE_EXISTS_IN_GAME ~SD_HRZR.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SD_HRZR" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~IOUNX6~) AND (FILE_EXISTS_IN_GAME ~IOUNX8.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "IOUNX8" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~MIN1HP~) AND (FILE_EXISTS_IN_GAME ~MINHP1.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "MINHP1" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~RNGDEMN~) AND (FILE_EXISTS_IN_GAME ~RINGDEMN.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "RINGDEMN" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~SCRL1R~) AND (FILE_EXISTS_IN_GAME ~U!SCRL03.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "U!SCRL03" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~SLING04~) AND (FILE_EXISTS_IN_GAME ~SLNG04.itm~)) BEGIN
-            WRITE_ASCII ("%itm_off%" + (0x14 * "%index%")) "SLNG04" #8
-            READ_ASCII ("%itm_off%" + (0x14 * "%index%")) "item1"
-            PATCH_PRINT "%SOURCE_FILE% error: Replacing %item%.itm with %item1%.itm..."
-          END ELSE
-          BEGIN
+          SET "converted" = 0
+          PHP_EACH tutu_convert_itm AS tutu_itm => bgt_itm BEGIN
+            PATCH_IF ("%item%" STRING_EQUAL_CASE "%tutu_itm%") AND (FILE_EXISTS_IN_GAME "%bgt_itm%.itm") BEGIN
+              WRITE_ASCIIE ("%itm_off%" + (0x14 * "%index%")) "%bgt_itm%" #8
+              SET "converted" = 1
+              PATCH_PRINT "%SOURCE_FILE% error: Replacing %tutu_itm%.itm with %bgt_itm%.itm..."
+            END
+          END
+          PATCH_IF ("%converted%" = 0) BEGIN
             PATCH_PRINT "%SOURCE_FILE% error: Inventory Item #%index% (%item%.itm) does not exist! Removing item..."
             REMOVE_CRE_ITEM ~%item%~
             SET "index" = 0 - 1
@@ -639,21 +529,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
         PATCH_IF ("%ref%" != 0xffff) BEGIN
           READ_ASCII ("%itm_off%" +        (0x14 * "%ref%")) "item"
           READ_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) "cre_flags"
-          SET "ignore" = 0
-          PATCH_IF ((~%item%~ STRING_EQUAL_CASE ~MISC86~) OR                                                           //Bandit Scalp
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC54~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~JALANT~)) OR          //Child's Body
-                   ((~%item%~ STRING_EQUAL_CASE ~RING07~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~RAMAZI~)) OR          //Ramazith's Prot Ring
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC2H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~SHANDAL2~)) OR        //Shandalar's Wardstone
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC6Z~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~GEMCH02~)) OR         //Imnesvale Chicken's Beljuril
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCB7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HELLGEN~)) OR         //Genie's Tears of Bhaal
-                   ((~%item%~ STRING_EQUAL_CASE ~RING39~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~HLKANG~)) OR          //Kangaxx's Gaxx Ring
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC8K~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~TRRAK01~)) OR         //Ihtafeer's Head
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCA7~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDPRINCE~)) OR        //Kuo-Tuan Prince's Blood
-                   ((~%item%~ STRING_EQUAL_CASE ~MISC8H~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~)) OR        //Adalon's Blood
-                   ((~%item%~ STRING_EQUAL_CASE ~MISCCC~) AND (~%SOURCE_RES%~ STRING_EQUAL_CASE ~UDSILVER~))           //Adalon's Note
-                   ) THEN BEGIN
-            SET "ignore" = 1
-          END
           PATCH_IF ((FILE_EXISTS_IN_GAME ~%item%.itm~)) THEN BEGIN
             INNER_PATCH_FILE ~%item%.itm~ BEGIN
               READ_SHORT 0x1c "type"
@@ -661,7 +536,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 0) BEGIN // helm slot
               SET "helm" = 1
-              PATCH_IF (("%type%" != 7) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // helm
+              PATCH_IF (("%type%" != 7) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // helm
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -672,6 +547,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid HELM: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "helm" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -682,7 +558,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 1) BEGIN // armor slot
               SET "armor" = 1
-              PATCH_IF (("%type%" != 2) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // armor
+              PATCH_IF (("%type%" != 2) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // armor
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -693,6 +569,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid ARMOR: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "armor" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -703,7 +580,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 2) BEGIN // shield slot
               SET "offhand" = 1
-              PATCH_IF ((("%flags%" BAND 0b00010110) = 0b00000110) AND ("%ignore%" = 0)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // 2h, uncursed and droppable check
+              PATCH_IF (("%flags%" BAND 0b00010110) = 0b00000110) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // 2h, uncursed and droppable check
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -714,6 +591,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "offhand" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -721,7 +599,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: 2-HANDED OFFHAND: %item%.itm! Cannot move because Inventory full!~
                 END
               END ELSE
-              PATCH_IF (("%type%" != 12) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // if not shield, check for valid melee abilities
+              PATCH_IF (("%type%" != 12) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // if not shield, check for valid melee abilities
                 SET "legit_offhand" = 0
                 INNER_PATCH_FILE ~%item%.itm~ BEGIN
                   READ_LONG  0x64 "abil_off"
@@ -744,6 +622,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     PATCH_PRINT ~%SOURCE_FILE% error: Invalid OFFHAND: %item%.itm! Moving to Inventory Slot #%slot%~
                     WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                     WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                    WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                     SET "offhand" = 0
                     SET "index" = 0 - 1
                   END ELSE
@@ -816,6 +695,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     PATCH_PRINT ~%SOURCE_FILE% error: OFFHAND with 2-HAND: %item%.itm! Moving to Inventory Slot #%slot%~
                     WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                     WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                    WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                     SET "offhand" = 0
                     SET "index" = 0 - 1
                   END ELSE
@@ -827,7 +707,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 3) BEGIN // glove slot
               SET "gloves" = 1
-              PATCH_IF (("%type%" != 6) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // gloves
+              PATCH_IF (("%type%" != 6) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // gloves
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -838,6 +718,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid GLOVES: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "gloves" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -848,7 +729,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 4) BEGIN // left ring slot
               SET "lring" = 1
-              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // rings
+              PATCH_IF (("%type%" != 10) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // rings
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -859,6 +740,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid LRING: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "lring" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -869,7 +751,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 5) BEGIN // right ring slot
               SET "rring" = 1
-              PATCH_IF (("%type%" != 10) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // rings
+              PATCH_IF (("%type%" != 10) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // rings
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -880,6 +762,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid RRING: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "rring" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -890,7 +773,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 6) BEGIN // amulet slot
               SET "amulet" = 1
-              PATCH_IF (("%type%" != 1) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // amulet
+              PATCH_IF (("%type%" != 1) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // amulet
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -901,6 +784,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid AMULET: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "amulet" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -911,7 +795,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 7) BEGIN // belt slot
               SET "belt" = 1
-              PATCH_IF (("%type%" != 3) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // belt
+              PATCH_IF (("%type%" != 3) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // belt
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -922,6 +806,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid BELT: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "belt" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -932,7 +817,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 8) BEGIN // boot slot
               SET "boots" = 1
-              PATCH_IF (("%type%" != 4) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // boot
+              PATCH_IF (("%type%" != 4) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // boot
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -943,6 +828,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid BOOTS: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "boots" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -968,7 +854,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -979,6 +865,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON1: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "weapon1" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1004,7 +891,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1015,6 +902,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON2: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "weapon2" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1040,7 +928,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1051,6 +939,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON3: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "weapon3" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1076,7 +965,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                     SET "2handedequip" = 1
                 END
               END
-              PATCH_IF (("%legit_weapon%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (("%legit_weapon%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1087,6 +976,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid WEAPON4: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "weapon4" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1097,7 +987,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 13) BEGIN // first quiver slot
               SET "quiver1" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1108,6 +998,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER1: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "quiver1" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1118,7 +1009,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 14) BEGIN // second quiver slot
               SET "quiver2" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1129,6 +1020,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER2: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "quiver2" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1139,7 +1031,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 15) BEGIN // third quiver slot
               SET "quiver3" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1150,6 +1042,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER3: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "quiver3" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1160,7 +1053,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 16) BEGIN // fourth quiver slot
               SET "quiver4" = 1
-              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN
+              PATCH_IF (NOT (("%type%" = 5) OR ("%type%" = 31) OR ("%type%" = 14)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1171,6 +1064,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid QUIVER4: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "quiver4" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1181,7 +1075,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END
             PATCH_IF ("%index%" = 17) BEGIN // cloak
               SET "cloak" = 1
-              PATCH_IF (("%type%" != 32) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001010) = 0b00000000) BEGIN // cloak
+              PATCH_IF (("%type%" != 32) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND (("%cre_flags%" BAND 0b00001000) = 0b00000000) BEGIN // cloak
                 SET "ref2" = 1
                 FOR (index3 = 21 ; ref2 != 0xffff && index3 < 37 ; index3 = index3 + 1) BEGIN
                   READ_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref2"
@@ -1192,6 +1086,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                   PATCH_PRINT ~%SOURCE_FILE% error: Invalid CLOAK: %item%.itm! Moving to Inventory Slot #%slot%~
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
                   WRITE_SHORT ("%slot_off%" + (0x02 * "%index3%")) "ref"
+                  WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
                   SET "cloak" = 0
                   SET "index" = 0 - 1
                 END ELSE
@@ -1200,7 +1095,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 END
               END
             END
-            PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" =  2) AND ("%armor%" = 0)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping ARMOR~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02))             "ref"
@@ -1208,7 +1103,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver1%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER1~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 13))        "ref"
@@ -1216,15 +1111,16 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver2%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER2~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 14))        "ref"
+              WRITE_BYTE  ("%itm_off%" + 0x10 + (0x14 * "%ref%")) ("%cre_flags%" BOR 0b00000010)
               SET "quiver2" = 1
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver3%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER3~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 15))        "ref"
@@ -1232,13 +1128,13 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
             END ELSE
             PATCH_IF (((("%type%" =  5) OR
                         ("%type%" = 14) OR
-                        ("%type%" = 31)) AND ("%quiver4%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)) BEGIN
+                        ("%type%" = 31)) AND ("%quiver4%" = 0)) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping QUIVER4~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 16))        "ref"
               SET "quiver4" = 1
             END ELSE
-            PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" =  7) AND ("%helm%" = 0)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping HELM~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%")                      "ref"
@@ -1260,7 +1156,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon1%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon1%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON1~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1284,7 +1180,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon2%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon2%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON2~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1308,7 +1204,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon3%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon3%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON3~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1332,7 +1228,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                         ("%type%" = 28) OR // hand to hand
                         ("%type%" = 29) OR // Spear
                         ("%type%" = 30) OR // halberd
-                        ("%type%" = 44)) AND ("%weapon4%" = 0) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
+                        ("%type%" = 44)) AND ("%weapon4%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100) AND ("%index%" > 17)))  BEGIN
               PATCH_IF ((("%flags%" BAND 0b00000010) != 0b00000010) AND ("%offhand%" = 0)) BEGIN
                 PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping WEAPON4~
                 WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
@@ -1340,7 +1236,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
                 SET "weapon4" = 1
               END
             END ELSE
-            PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND ("%ignore%" = 0) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
+            PATCH_IF ((("%type%" = 12) AND ("%offhand%" = 0) AND ("2handedequip" = 0)) AND (("%flags%" BAND 0b00010100) = 0b00000100)) AND ("%index%" > 17) BEGIN
               PATCH_PRINT ~%SOURCE_FILE% error: Equippable items in inventory: %item%.itm! Equipping SHIELD~
               WRITE_SHORT ("%slot_off%" + (0x02 * "%index%")) 0xffff
               WRITE_SHORT ("%slot_off%" + (0x02 * 2))         "ref"
@@ -1720,6 +1616,95 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
     PATCH_INCLUDE ~lolfixer/lib/fj_spl_itm_reindex.tpp~
   END
 BUT_ONLY_IF_IT_CHANGES
+
+// BG2Fixpack BETA Core fixes causing self-inflicting burns on flaming swords and miscellany
+ACTION_IF !(FILE_EXISTS_IN_GAME ~cdhalb04.eff~) THEN BEGIN
+  COPY_EXISTING ~dragdam3.eff~ ~override/cdhalb04.eff~
+END
+ACTION_IF !(FILE_EXISTS_IN_GAME ~cdsw1h03.eff~) THEN BEGIN
+  COPY_EXISTING ~lycandam.eff~ ~override/cdsw1h03.eff~
+END
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_LONG   0x64 "abil_off"
+    READ_SHORT  0x68 "abil_num"
+    READ_LONG   0x6a "fx_off"
+    READ_SHORT  0x70 "fx_num"
+    SET delta = 0
+    FOR (index = 0 ; index < fx_num ; ++index) BEGIN
+      READ_SHORT ("%fx_off%" +        ("%index%" * 0x30)) "type"
+      READ_ASCII ("%fx_off%" + 0x14 + ("%index%" * 0x30)) "eff_file"
+      PATCH_IF (("%type%" = 177) AND
+                (("%eff_file%" STRING_COMPARE_CASE "DAMACEA" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "DOPPDAM" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "DRAGDAM3" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "EVILDAM2" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "FLAMENOR" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "GIANTDAM" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "HOLYAVEN" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "LYCANDAM" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "LYCNDAM3" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "LYCNDAM4" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "PHANBLAD" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "SKULLCR" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "SW2H19A" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "UNDDAM1" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_CASE "TROLLD1" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_REGEXP "EQUAL0[1-8]" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_REGEXP "FT[1-3]DAM" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_REGEXP "SW1H6[45]A" = 0) OR
+                 ("%eff_file%" STRING_COMPARE_REGEXP "SW1H62[BCDEF]" = 0))) BEGIN
+        PATCH_IF ("%eff_file%" STRING_COMPARE_CASE "lycandam" = 0) BEGIN
+          SPRINT eff_file "cdsw1h03"
+        END
+        PATCH_IF ("%eff_file%" STRING_COMPARE_CASE "dragdam3" = 0) BEGIN
+          SPRINT eff_file "cdhalb04"
+        END
+        READ_ASCII   ("%fx_off%" +        ("%index%" * 0x30)) "clone" (48)
+        PATCH_PRINT "%SOURCE_FILE% patched for BG2Fixpack EFF fixes..."
+        DELETE_BYTES ("%fx_off%" +        ("%index%" * 0x30)) 0x30
+        SET fx_num = (fx_num - 1)
+        SET delta  = (delta - 1)
+        SET index  = (index - 1)
+        INNER_ACTION BEGIN
+          COPY_EXISTING ~%eff_file%.eff~ ~override~
+            READ_ASCII 0x1c "ids" (8)
+          BUT_ONLY
+        END
+        FOR (index2 = 0 ; index2 < abil_num ; index2 = index2 + 1) BEGIN
+          READ_BYTE   ("%abil_off%" +        ("%index2%" * 0x38)) "type"
+          READ_SHORT  ("%abil_off%" + 0x20 + ("%index2%" * 0x38)) "abil_fx_idx"
+          SET "abil_fx_idx" = "%abil_fx_idx%" + "%delta%"
+          WRITE_SHORT ("%abil_off%" + 0x20 + ("%index2%" * 0x38)) "%abil_fx_idx%"
+          PATCH_IF (("%type%" = 1) OR ("%type%" = 2)) BEGIN
+            INSERT_BYTES (fx_off +        (0x30 * abil_fx_idx)) 0x30
+            WRITE_ASCIIE (fx_off +        (0x30 * abil_fx_idx)) "%clone%"
+            WRITE_SHORT  (fx_off +        (0x30 * abil_fx_idx)) 177     // use eff
+            WRITE_BYTE   (fx_off + 0x02 + (0x30 * abil_fx_idx))   2     // preset target
+            WRITE_ASCIIE (fx_off + 0x04 + (0x30 * abil_fx_idx)) "%ids%" // ids target from eff
+            WRITE_BYTE   (fx_off + 0x0c + (0x30 * abil_fx_idx))   1     // instant/perm
+            WRITE_ASCIIE (fx_off + 0x14 + (0x30 * abil_fx_idx)) "%eff_file%" #8 // for the items with changing effs
+            READ_SHORT  ("%abil_off%" + 0x1e + ("%index2%" * 0x38)) "abil_fx_num"
+            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index2%" * 0x38)) ("%abil_fx_num%" + 1)
+            SET delta = (delta + 1)
+          END
+        END
+      END
+    END
+    WRITE_SHORT  0x70 "%fx_num%"
+  END
+BUT_ONLY
+
+// 1PPv4 causing crashes on NPCs with BG1 animations wearing helms with animset JC
+ACTION_IF (FILE_EXISTS_IN_GAME ~WPLJ8A1.bam~) AND NOT (FILE_EXISTS_IN_GAME ~WPLJCA1.bam~) THEN BEGIN
+  PRINT "1PP detected! Adding missing JC Helm animation set frames for BG1 animation compatibility..."
+  ACTION_FOR_EACH category IN ~L~ ~M~ ~S~ ~T~ BEGIN
+    ACTION_FOR_EACH sequence IN ~A1~ ~A1E~ ~A2~ ~A2E~ ~A3~ ~A3E~ ~A4~ ~A4E~ ~A5~ ~A5E~ ~A6~ ~A6E~ ~CA~ ~CAE~ ~G1~ ~G1E~ ~SA~ ~SAE~ ~SX~ ~SXE~ ~W2~ ~W2E~ BEGIN
+      COPY_EXISTING ~WP%category%J8%sequence%.BAM~ ~override/WP%category%JC%sequence%.BAM~
+    END
+  END
+END
 
 BEGIN ~Item Stuff - MAJESTIC Item Fixer~
   GROUP ~Item Stuff~

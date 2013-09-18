@@ -1,40 +1,39 @@
-[setup-lolfixer.exe] WeiDU version 23104
+[setup-lolfixer.exe] WeiDU version 23113
 This is a non-stable version. Unless you're sure about what you're doing, consider downgrading.
-[setup-lolfixer.exe] Using scripting style "BG2"
 
 Removing [Area Stuff - MAJESTIC Area Fixer] (component #0)
-Will uninstall  25 files for [LOLFIXER.TP2] component 15.
-Uninstalled     25 files for [LOLFIXER.TP2] component 15.
-Will uninstall 1030 files for [LOLFIXER.TP2] component 14.
-Uninstalled    1030 files for [LOLFIXER.TP2] component 14.
-Will uninstall   1 files for [LOLFIXER.TP2] component 13.
-Uninstalled      1 files for [LOLFIXER.TP2] component 13.
-Will uninstall   0 files for [LOLFIXER.TP2] component 12.
-Uninstalled      0 files for [LOLFIXER.TP2] component 12.
-Will uninstall 2144 files for [LOLFIXER.TP2] component 11.
-Uninstalled    2144 files for [LOLFIXER.TP2] component 11.
-Will uninstall 143 files for [LOLFIXER.TP2] component 10.
-Uninstalled    143 files for [LOLFIXER.TP2] component 10.
-Will uninstall 363 files for [LOLFIXER.TP2] component 9.
-Uninstalled    363 files for [LOLFIXER.TP2] component 9.
-Will uninstall 594 files for [LOLFIXER.TP2] component 8.
-Uninstalled    594 files for [LOLFIXER.TP2] component 8.
-Will uninstall   0 files for [LOLFIXER.TP2] component 7.
-Uninstalled      0 files for [LOLFIXER.TP2] component 7.
-Will uninstall 142 files for [LOLFIXER.TP2] component 6.
-Uninstalled    142 files for [LOLFIXER.TP2] component 6.
-Will uninstall 1361 files for [LOLFIXER.TP2] component 5.
-Uninstalled    1361 files for [LOLFIXER.TP2] component 5.
-Will uninstall 584 files for [LOLFIXER.TP2] component 4.
-Uninstalled    584 files for [LOLFIXER.TP2] component 4.
-Will uninstall  42 files for [LOLFIXER.TP2] component 3.
-Uninstalled     42 files for [LOLFIXER.TP2] component 3.
-Will uninstall 304 files for [LOLFIXER.TP2] component 2.
-Uninstalled    304 files for [LOLFIXER.TP2] component 2.
-Will uninstall   9 files for [LOLFIXER.TP2] component 1.
-Uninstalled      9 files for [LOLFIXER.TP2] component 1.
-Will uninstall  19 files for [LOLFIXER.TP2] component 0.
-Uninstalled     19 files for [LOLFIXER.TP2] component 0.
+Will uninstall  25 files for [SETUP-LOLFIXER.TP2] component 15.
+Uninstalled     25 files for [SETUP-LOLFIXER.TP2] component 15.
+Will uninstall 1005 files for [SETUP-LOLFIXER.TP2] component 14.
+Uninstalled    1005 files for [SETUP-LOLFIXER.TP2] component 14.
+Will uninstall   0 files for [SETUP-LOLFIXER.TP2] component 13.
+Uninstalled      0 files for [SETUP-LOLFIXER.TP2] component 13.
+Will uninstall   0 files for [SETUP-LOLFIXER.TP2] component 12.
+Uninstalled      0 files for [SETUP-LOLFIXER.TP2] component 12.
+Will uninstall 2122 files for [SETUP-LOLFIXER.TP2] component 11.
+Uninstalled    2122 files for [SETUP-LOLFIXER.TP2] component 11.
+Will uninstall 140 files for [SETUP-LOLFIXER.TP2] component 10.
+Uninstalled    140 files for [SETUP-LOLFIXER.TP2] component 10.
+Will uninstall 367 files for [SETUP-LOLFIXER.TP2] component 9.
+Uninstalled    367 files for [SETUP-LOLFIXER.TP2] component 9.
+Will uninstall 604 files for [SETUP-LOLFIXER.TP2] component 8.
+Uninstalled    604 files for [SETUP-LOLFIXER.TP2] component 8.
+Will uninstall  32 files for [SETUP-LOLFIXER.TP2] component 7.
+Uninstalled     32 files for [SETUP-LOLFIXER.TP2] component 7.
+Will uninstall 110 files for [SETUP-LOLFIXER.TP2] component 6.
+Uninstalled    110 files for [SETUP-LOLFIXER.TP2] component 6.
+Will uninstall 1550 files for [SETUP-LOLFIXER.TP2] component 5.
+Uninstalled    1550 files for [SETUP-LOLFIXER.TP2] component 5.
+Will uninstall 653 files for [SETUP-LOLFIXER.TP2] component 4.
+Uninstalled    653 files for [SETUP-LOLFIXER.TP2] component 4.
+Will uninstall  60 files for [SETUP-LOLFIXER.TP2] component 3.
+Uninstalled     60 files for [SETUP-LOLFIXER.TP2] component 3.
+Will uninstall 315 files for [SETUP-LOLFIXER.TP2] component 2.
+Uninstalled    315 files for [SETUP-LOLFIXER.TP2] component 2.
+Will uninstall  10 files for [SETUP-LOLFIXER.TP2] component 1.
+Uninstalled     10 files for [SETUP-LOLFIXER.TP2] component 1.
+Will uninstall  42 files for [SETUP-LOLFIXER.TP2] component 0.
+Uninstalled     42 files for [SETUP-LOLFIXER.TP2] component 0.
 
 
 SUCCESSFULLY REMOVED [Area Stuff - MAJESTIC Area Fixer] (component #0)
