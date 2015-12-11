@@ -53,6 +53,7 @@ The *MAJESTIC Fixer* components are the ones that have the most obvious fixes. T
 
 #### MAJESTIC Creature Fixer
 
+- assigns the Gibberling animation to creatures without a valid animation from the ANIMATE.IDS (prevents crashes)
 - removes missing scripts from creatures or fixes them if typo
 - removes missing dialogue from creatures or assigns unassigned dialogue if CRE-name matches DLG-name
 - fixes wrong spell slots assignments. Eg: Minor Heal in the mage spell book
