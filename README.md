@@ -10,6 +10,8 @@ Things to note though:
 
 If you find a case where the above aren't true, I'm usually a really nice guy so would love to either change/remove whatever's bothersome (or make it optional and separate it into a new component :P)
 
+Discuss and diss the mod [here](http://www.shsforums.net/topic/52508-lolfixer-thread/) :)
+
 The lolfixer has the following components divided into 5 major groups based on the 5 major patchable file types in the BGII-ToB engine: (Area, Creature, Item, Spell, Store)
 
 The *MAJESTIC Fixer* components are the ones that have the most obvious fixes. The others can be considered tweaks even though they do try to fix stuff.
